@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pusat Kendali - TeratePay</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@0.292.0"></script>
+    <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #020617; 
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent; 
+        }
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(160, 100%, 25%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(38, 92%, 50%, 0.1) 0px, transparent 50%);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+        }
+        [v-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="selection:bg-emerald-500 selection:text-white lg:p-6 min-h-screen relative">
+    <div class="mesh-bg"></div>
+
+    <div id="app" v-cloak>
+        
+        <!-- Toast -->
+        <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[999] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4">
+            <transition-group name="fade" tag="div">
+                <div v-for="t in toasts" :key="t.id" class="bg-emerald-500 text-slate-900 px-5 py-3.5 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] font-black text-sm text-center pointer-events-auto mb-2 flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> {{ t.msg }}
+                </div>
+            </transition-group>
+        </div>
+
+        <main class="mx-auto w-full max-w-4xl glass-panel lg:rounded-[2.5rem] overflow-hidden flex flex-col relative z-10 min-h-screen lg:min-h-min pb-24">
+            
+            <!-- Navbar Admin -->
+            <header class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center border border-slate-700">
+                        <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-lg text-white tracking-tight leading-none">System Maintenance</h1>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Super Admin Role</p>
+                    </div>
+                </div>
+                <button @click="keluar" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 hover:text-red-400 border border-slate-700 active:scale-95 transition-all">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </header>
+
+            <div class="p-5 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8">
+                
+                <!-- KOLOM KIRI: API & KEAMANAN -->
+                <div class="w-full lg:w-1/2 space-y-6">
+                    <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <i data-lucide="shield-alert" class="w-4 h-4"></i> Database & Keamanan
+                    </h2>
+
+                    <!-- Konfigurasi API -->
+                    <div class="bg-slate-800/50 p-5 rounded-3xl border border-slate-700">
+                        <label class="block text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1.5 ml-1">URL Google Sheets API</label>
+                        <input type="url" v-model="form.googleUrl" placeholder="https://script.google.com/..." class="w-full px-4 py-3.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-medium text-slate-300 outline-none focus:border-emerald-500 transition-all mb-4">
+                        
+                        <label class="block text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1.5 ml-1">Gemini AI Key</label>
+                        <input type="password" v-model="form.geminiKey" placeholder="AIzaSy..." class="w-full px-4 py-3.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-medium text-slate-300 outline-none focus:border-blue-500 transition-all">
+                    </div>
+
+                    <!-- Manajemen PIN -->
+                    <div class="bg-slate-800/50 p-5 rounded-3xl border border-slate-700">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1.5 ml-1">PIN Pelatih (Kasir)</label>
+                                <input type="password" inputmode="numeric" maxlength="6" v-model="form.pinPelatih" @input="form.pinPelatih = form.pinPelatih.replace(/[^0-9]/g, '')" placeholder="192201" class="w-full text-center py-3 bg-slate-900 border border-slate-700 rounded-xl font-black text-sm text-white tracking-[0.3em] outline-none focus:border-amber-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-rose-400 uppercase tracking-widest mb-1.5 ml-1">PIN Maintenance</label>
+                                <input type="password" inputmode="numeric" maxlength="6" v-model="form.pinAdmin" @input="form.pinAdmin = form.pinAdmin.replace(/[^0-9]/g, '')" placeholder="192299" class="w-full text-center py-3 bg-slate-900 border border-slate-700 rounded-xl font-black text-sm text-white tracking-[0.3em] outline-none focus:border-rose-500 transition-all">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KOLOM KANAN: CMS PENGUMUMAN -->
+                <div class="w-full lg:w-1/2 space-y-6">
+                    <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <i data-lucide="radio" class="w-4 h-4"></i> Papan Pengumuman Digital
+                    </h2>
+
+                    <div class="bg-gradient-to-b from-slate-800/80 to-slate-800/30 p-5 rounded-3xl border border-slate-700 relative overflow-hidden">
+                        
+                        <div class="flex gap-2 mb-4">
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" value="info" v-model="form.tipePengumuman" class="peer sr-only">
+                                <div class="px-3 py-2 rounded-lg border border-slate-600 bg-slate-900 text-slate-500 font-bold text-[10px] text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500/20 peer-checked:text-emerald-400 transition-all uppercase tracking-wider">Info Biasa</div>
+                            </label>
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" value="penting" v-model="form.tipePengumuman" class="peer sr-only">
+                                <div class="px-3 py-2 rounded-lg border border-slate-600 bg-slate-900 text-slate-500 font-bold text-[10px] text-center peer-checked:border-amber-500 peer-checked:bg-amber-500/20 peer-checked:text-amber-400 transition-all uppercase tracking-wider">Penting!</div>
+                            </label>
+                        </div>
+
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-1.5 ml-1">Judul Agenda</label>
+                        <input type="text" v-model="form.judulPengumuman" placeholder="Contoh: Tes Sabuk Hijau" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-sm font-bold text-white outline-none focus:border-slate-500 transition-all mb-4">
+                        
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-1.5 ml-1">Isi Pesan (Maks 150 Karakter)</label>
+                        <textarea v-model="form.isiPengumuman" rows="3" maxlength="150" placeholder="Ketik detail pengumuman yang akan muncul di HP siswa..." class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-xs font-medium text-slate-300 outline-none focus:border-slate-500 transition-all resize-none"></textarea>
+                        <p class="text-[9px] text-right mt-1" :class="form.isiPengumuman.length >= 140 ? 'text-rose-400' : 'text-slate-500'">{{ form.isiPengumuman.length }}/150</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tombol Simpan Mengambang -->
+            <div class="absolute bottom-0 left-0 w-full p-5 lg:p-8 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent">
+                <button @click="simpanPengaturan" :disabled="isSaving" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black py-4.5 lg:py-5 rounded-2xl active:scale-95 flex justify-center items-center gap-2 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 text-sm uppercase tracking-widest">
+                    <i v-if="isSaving" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+                    <span v-else class="flex items-center gap-2">
+                        <i data-lucide="upload-cloud" class="w-5 h-5"></i> Publikasi & Simpan
+                    </span>
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+        <script>
+        const { createApp, ref, reactive, onMounted, nextTick } = Vue;
+
+        createApp({
+            setup() {
+                const toasts = ref([]);
+                const isSaving = ref(false);
+
+                // Form Reactive terikat dengan Data Default
+                const form = reactive({
+                    // API Google Sheets langsung terpasang di sini
+                    googleUrl: 'https://script.google.com/macros/s/AKfycbyNCQPSbVNz7-xkEOScOWsKZyPogIGDlI7fRyHDa1jjvvvU4PjCZqB7GnzddNMbwuW_/exec',
+                    geminiKey: '',
+                    pinPelatih: '192201', // PIN Default Pelatih
+                    pinAdmin: '192299',   // PIN Default Maintenance
+                    tipePengumuman: 'info',
+                    judulPengumuman: 'Latihan Gabungan',
+                    isiPengumuman: 'Malam minggu besok latihan gabungan se-Ranting Kemlagi. Wajib hadir bawa sakral lengkap.'
+                });
+
+                const showToast = (msg) => {
+                    const id = Date.now();
+                    toasts.value.push({ id, msg });
+                    setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
+                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                };
+
+                const muatPengaturanLokal = () => {
+                    // Tarik URL API & Gemini Key yang terpisah
+                    const savedUrl = localStorage.getItem('terate_google_url');
+                    const savedGemini = localStorage.getItem('terate_gemini_key');
+                    
+                    if (savedUrl) form.googleUrl = savedUrl;
+                    if (savedGemini) form.geminiKey = savedGemini;
+
+                    // Tarik data konfigurasi CMS & PIN
+                    const savedConfig = JSON.parse(localStorage.getItem('terate_config') || '{}');
+                    
+                    if (savedConfig.pinPelatih) form.pinPelatih = savedConfig.pinPelatih;
+                    if (savedConfig.pinAdmin) form.pinAdmin = savedConfig.pinAdmin;
+                    if (savedConfig.judulPengumuman) form.judulPengumuman = savedConfig.judulPengumuman;
+                    if (savedConfig.isiPengumuman) form.isiPengumuman = savedConfig.isiPengumuman;
+                    if (savedConfig.tipePengumuman) form.tipePengumuman = savedConfig.tipePengumuman;
+                };
+
+                const simpanPengaturan = () => {
+                    isSaving.value = true;
+                    setTimeout(() => {
+                        // Simpan API URL & Gemini Key ke kunci khusus (Agar terbaca di kasir.html & report.html)
+                        localStorage.setItem('terate_google_url', form.googleUrl);
+                        localStorage.setItem('terate_gemini_key', form.geminiKey);
+
+                        // Simpan seluruh objek config PIN & Pengumuman ke LocalStorage
+                        localStorage.setItem('terate_config', JSON.stringify({
+                            pinPelatih: form.pinPelatih,
+                            pinAdmin: form.pinAdmin,
+                            tipePengumuman: form.tipePengumuman,
+                            judulPengumuman: form.judulPengumuman,
+                            isiPengumuman: form.isiPengumuman
+                        }));
+                        
+                        isSaving.value = false;
+                        showToast("Pembaruan Sistem Berhasil di-Push!");
+                    }, 1000);
+                };
+
+                const keluar = () => {
+                    window.location.href = 'index.html';
+                };
+
+                onMounted(() => {
+                    muatPengaturanLokal();
+                    if (window.lucide) lucide.createIcons();
+                });
+
+                return {
+                    toasts, isSaving, form, simpanPengaturan, keluar
+                };
+            }
+        }).mount('#app');
+    </script>
+
+</body>
+</html>
