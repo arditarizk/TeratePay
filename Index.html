@@ -195,14 +195,23 @@
                     <a href="#edaran" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">Surat Edaran</a>
                 </nav>
 
-                <div class="flex items-center gap-2 pr-1">
-                    <button @click="bukaModalLogin('pelatih')" class="hidden sm:flex px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-700 transition-all items-center gap-2">
-                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Pelatih
-                    </button>
-                    <button @click="bukaModalLogin('siswa')" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 rounded-xl text-xs font-bold text-white transition-all shadow-lg active:scale-95 flex items-center gap-2">
-                        <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-400"></i> Login Siswa
-                    </button>
-                </div>
+                <!-- Area Tombol Login di Header -->
+<div class="flex items-center gap-2">
+    
+    <!-- Tombol Pelatih: Kotak Ikon yang proporsional -->
+    <button @click="bukaModalLogin('pelatih')" class="w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-600 transition-all active:scale-95 shrink-0">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span class="hidden sm:block ml-2 text-xs font-bold">Pelatih</span>
+    </button>
+    
+    <!-- Tombol Siswa: Teks tidak bertumpuk (nowrap) dan disingkat di HP -->
+    <button @click="bukaModalLogin('siswa')" class="h-10 px-4 sm:px-6 bg-slate-900 hover:bg-slate-800 rounded-xl text-white transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 shrink-0">
+        <i data-lucide="user" class="w-4 h-4 text-emerald-400"></i>
+        <span class="text-xs font-bold whitespace-nowrap">Login<span class="hidden sm:inline"> Siswa</span></span>
+    </button>
+
+</div>
+
             </header>
 
             <!-- HERO SECTION -->
@@ -261,31 +270,46 @@
     </div>
 </div>
                     <!-- Sisi Teks / Jalur -->
-                    <div class="w-full md:w-1/2 p-8 lg:p-12 bg-white flex flex-col justify-center">
-                        <h4 class="text-[10px] font-black text-emerald-500 tracking-widest uppercase mb-2">Pendaftaran Dibuka</h4>
-                        <h3 class="text-3xl font-black text-slate-800 tracking-tight mb-6">Pilih Jalur Latihan</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="p-5 border-2 border-slate-100 rounded-2xl hover:border-emerald-500 hover:bg-emerald-50 transition-all group">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h5 class="font-black text-slate-800 text-lg group-hover:text-emerald-700">Jalur Reguler</h5>
-                                    <i data-lucide="users" class="text-emerald-500 w-5 h-5"></i>
-                                </div>
-                                <p class="text-sm text-slate-500 font-medium">Bagi pelajar dan pemuda. Latihan rutin dengan jadwal reguler rayon.</p>
-                            </div>
-                            
-                            <div class="p-5 border-2 border-slate-100 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all group">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h5 class="font-black text-slate-800 text-lg group-hover:text-blue-700">Jalur Privat (Dewasa)</h5>
-                                    <i data-lucide="briefcase" class="text-blue-500 w-5 h-5"></i>
-                                </div>
-                                <p class="text-sm text-slate-500 font-medium">Waktu fleksibel, dikhususkan untuk warga usia 25+ atau yang sudah bekerja/berkeluarga.</p>
-                            </div>
-                        </div>
-                        <button class="mt-8 w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
-                            Hubungi Pelatih Rayon <i data-lucide="message-circle" class="w-5 h-5"></i>
-                        </button>
-                    </div>
+<div class="w-full md:w-1/2 p-8 lg:p-12 bg-white flex flex-col justify-center">
+    <h4 class="text-[10px] font-black text-emerald-500 tracking-widest uppercase mb-2">Pendaftaran Dibuka</h4>
+    <h3 class="text-3xl font-black text-slate-800 tracking-tight mb-6">Pilih Jalur Latihan</h3>
+    
+    <div class="space-y-4">
+        <!-- Tautan ke Formulir Reguler -->
+        <a href="form-pendaftaran.html" class="block p-5 border-2 border-slate-100 rounded-2xl hover:border-emerald-500 hover:bg-emerald-50 hover:shadow-md transition-all group active:scale-[0.98] cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="users" class="text-emerald-500 w-5 h-5"></i>
+                    <h5 class="font-black text-slate-800 text-lg group-hover:text-emerald-700">Jalur Reguler</h5>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                    <i data-lucide="arrow-right" class="text-emerald-600 w-4 h-4 group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
+                </div>
+            </div>
+            <p class="text-sm text-slate-500 font-medium mt-1">Bagi pelajar dan pemuda. Latihan rutin dengan jadwal reguler rayon.</p>
+        </a>
+        
+        <!-- Tautan ke Formulir Privat -->
+        <a href="form-pendaftaran-privat.html" class="block p-5 border-2 border-slate-100 rounded-2xl hover:border-blue-500 hover:bg-blue-50 hover:shadow-md transition-all group active:scale-[0.98] cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="briefcase" class="text-blue-500 w-5 h-5"></i>
+                    <h5 class="font-black text-slate-800 text-lg group-hover:text-blue-700">Jalur Privat (Dewasa)</h5>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                    <i data-lucide="arrow-right" class="text-blue-600 w-4 h-4 group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
+                </div>
+            </div>
+            <p class="text-sm text-slate-500 font-medium mt-1">Waktu fleksibel, dikhususkan untuk warga usia 25+ atau yang sudah bekerja/berkeluarga.</p>
+        </a>
+    </div>
+
+    <!-- Tombol Hubungi Pelatih untuk yang masih ragu/butuh info -->
+    <a href="https://wa.me/6289660061234?text=Halo%20Pelatih,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20siswa%20baru." target="_blank" class="mt-8 w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
+        Hubungi Pelatih Rayon <i data-lucide="message-circle" class="w-5 h-5"></i>
+    </a>
+</div>
+
                 </div>
             </section>
             <!-- FAQ (TANYA JAWAB) -->
