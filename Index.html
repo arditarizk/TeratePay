@@ -155,10 +155,10 @@
         <!-- RUNNING TEXT PENGUMUMAN -->
         <div class="bg-slate-900 text-white text-[11px] font-bold tracking-widest uppercase py-2.5 marquee-container">
             <div class="marquee-content flex gap-8 items-center">
-                <span>🔥 <span class="text-emerald-400">INFO:</span> {{ liveUpdateTitle }}</span>
-                <span>•</span>
+                <span> <span class="text-emerald-400">INFO:</span> {{ liveUpdateTitle }}</span>
+                <span></span>
                 <span>MEMAYU HAYUNING BAWONO</span>
-                <span>•</span>
+                <span></span>
                 <span>SELAMA MATAHARI MASIH TERBIT DARI TIMUR, PSHT AKAN TETAP JAYA SELAMA-LAMANYA</span>
             </div>
         </div>
@@ -321,52 +321,134 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Sejarah -->
-                    <div id="sejarah" class="glass-card p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform">
-                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                            <i data-lucide="book-open" class="w-6 h-6"></i>
-                        </div>
-                        <h4 class="text-xl font-black text-slate-800 mb-3">Sejarah Singkat</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed font-medium">Persaudaraan Setia Hati Terate (PSHT) didirikan pada tahun 1922 oleh Ki Hadjar Hardjo Oetomo di Desa Pilangbango, Madiun. Organisasi ini lahir sebagai wadah perlawanan melawan penjajah sekaligus mendidik bangsa agar merdeka secara fisik dan mental.</p>
-                    </div>
+<div id="sejarah" class="relative glass-card p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform mt-10">
+    <!-- Logo diletakkan sebagai elemen dekoratif di luar kotak putih -->
+    <div class="absolute -top-10 left-8 w-20 h-20 bg-white rounded-3xl shadow-xl border border-slate-100 flex items-center justify-center p-2 z-20">
+        <img src="https://upload.wikimedia.org/wikipedia/id/6/6c/Logo-psht.jpg" 
+             alt="Logo PSHT" 
+             class="w-full h-full object-contain">
+    </div>
+
+    <!-- Padding atas ditambah (pt-12) agar teks tidak menabrak logo -->
+    <div class="pt-10">
+        <h4 class="text-xl font-black text-slate-800 mb-3">Sejarah Singkat</h4>
+        <p class="text-sm text-slate-600 leading-relaxed font-medium">
+            Persaudaraan Setia Hati Terate (PSHT) didirikan pada tahun 1922 oleh Ki Hadjar Hardjo Oetomo di Desa Pilangbango, Madiun. Organisasi ini lahir sebagai wadah perlawanan melawan penjajah sekaligus mendidik bangsa agar merdeka secara fisik dan mental.
+        </p>
+    </div>
+</div>
+
 
                     <!-- Visi Misi -->
-                    <div class="glass-card p-8 rounded-[2.5rem] bg-slate-900 text-white hover:-translate-y-2 transition-transform shadow-xl shadow-slate-900/20">
-                        <div class="w-12 h-12 bg-slate-800 text-emerald-400 border border-slate-700 rounded-2xl flex items-center justify-center mb-6">
-                            <i data-lucide="target" class="w-6 h-6"></i>
-                        </div>
-                        <h4 class="text-xl font-black text-white mb-3">Tujuan PSHT</h4>
-                        <p class="text-sm text-slate-300 leading-relaxed font-medium">Mendidik manusia berbudi pekerti luhur, tahu benar dan salah, serta ikut serta "Memayu Hayuning Bawono" (menjaga kelestarian dan kedamaian dunia). Mengutamakan persaudaraan yang kekal dan abadi.</p>
-                    </div>
+<div class="relative glass-card p-8 rounded-[2.5rem] bg-slate-900 text-white hover:-translate-y-2 transition-transform shadow-xl shadow-slate-900/20 overflow-hidden">
+    <!-- Overlay Background Gambar -->
+    <div class="absolute inset-0 z-0 opacity-20" 
+         style="background-image: url('https://www.shterate.com/wp-content/uploads/2020/09/psht-tingkat2-c.jpg'); background-size: cover; background-position: center;">
+    </div>
+    
+    <div class="relative z-10">
+    <!-- Wadah Ikon dengan teknik Autocrop -->
+    <div class="mb-6">
+        <div class="w-16 h-16 rounded-3xl bg-slate-800/50 backdrop-blur-md border border-slate-700/50 flex items-center justify-center shadow-inner overflow-hidden">
+            <!-- Gunakan object-cover dan scale-125 untuk autocrop -->
+            <img src="hati_bersinar.webp" 
+                 alt="Ikon Hati Bersinar" 
+                 class="w-full h-full object-cover scale-125 brightness-110">
+        </div>
+    </div>
 
-                    <!-- Leluhur -->
-                    <div id="leluhur" class="glass-card p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform">
-                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                        </div>
-                        <h4 class="text-xl font-black text-slate-800 mb-3">Tokoh Leluhur</h4>
-                        <ul class="text-sm text-slate-600 font-medium space-y-2">
-                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div> Ki Ngabehi Soerodiwirjo</li>
-                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div> Ki Hadjar Hardjo Oetomo</li>
-                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div> RM. Imam Koesoepangat</li>
-                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div> Kangmas Tarmadji Boedi Harsono</li>
-                        </ul>
+    <h4 class="text-xl font-black text-white mb-3">Tujuan PSHT</h4>
+    <p class="text-sm text-slate-300 leading-relaxed font-medium">
+        Mendidik manusia berbudi pekerti luhur, tahu benar dan salah, serta ikut serta "Memayu Hayuning Bawono" (menjaga kelestarian dan kedamaian dunia). Mengutamakan persaudaraan yang kekal dan abadi.
+    </p>
+</div>
+</div>
+
+<!-- Leluhur (Tanpa Ikon) -->
+<div id="leluhur" class="glass-card p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform">
+    <!-- Judul diperbesar dan diberi sedikit margin bawah -->
+    <h4 class="text-2xl font-black text-slate-800 mb-8 tracking-tight">Tokoh Leluhur</h4>
+    
+    <div class="space-y-6"> <!-- Spasi antar tokoh diperbesar agar tidak sesak -->
+        
+        
+    <!-- Eyang Suro -->
+        <a href="https://www.shterate.com/riwayat-singkat-ki-ngabei-ageng-soerodiwirdjo-eyang-suro/" target="_blank" 
+           class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white hover:shadow-md border border-transparent hover:border-slate-100 transition-all group">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1DsJz2ASD6zZbpEqPt8-RzNohHR9pHh08s2XaKfBauvG-LABl2wURxUwMKiMm9hUlthpH6hrG3ouT-DV7fVQoAQuahFDt2uezW-dc_wgKBvS_uLdmC4K25gtdHai1iLMongtrlzY7Yhq-A0WH2_GeYoKwqtoHFZIFg5qWCgn6geSZ9k_9-0-U3coyKg/s1280/WhatsApp%20Image%202024-01-30%20at%2001.37.49.jpeg" 
+                 class="w-10 h-10 rounded-full object-cover shadow-sm" alt="Ki Ngabehi Soerodiwirjo">
+            <div>
+                <p class="text-sm font-black text-slate-800 group-hover:text-indigo-600 transition-colors">Ki Ngabehi Soerodiwirjo</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pendiri SH</p>
+            </div>
+            <i data-lucide="external-link" class="w-3 h-3 ml-auto text-slate-300"></i>
+        </a>
+
+    <!-- Item Tokoh 2 -->
+    <a href="https://psht.or.id/ki-hadjar-hardjo-oetomo/" target="_blank" 
+       class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white hover:shadow-md border border-transparent hover:border-slate-100 transition-all group">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Ki_Hadjar_Hardjo_Oetomo.jpg/500px-Ki_Hadjar_Hardjo_Oetomo.jpg" 
+                 class="w-10 h-10 rounded-full object-cover shadow-sm" alt="Ki Hadjar Hardjo Oetomo">
+        <div>
+            <p class="text-sm font-black text-slate-800 group-hover:text-emerald-600 transition-colors">Ki Hadjar Hardjo Oetomo</p>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pendiri PSHT</p>
+        </div>
+        <i data-lucide="external-link" class="w-3 h-3 ml-auto text-slate-300 group-hover:text-emerald-500"></i>
+    </a>
+
+    <!-- Item Tokoh 3 -->
+    <a href="https://psht.or.id/r-m-imam-koesoepangat/" target="_blank" 
+       class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white hover:shadow-md border border-transparent hover:border-slate-100 transition-all group">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEisfyy13FyNxXDdDkdxso2BqsjVQ1lli7ItrrbsBVgZN-0iWwyFE0wmA3eubNaGIY892gCICiVU_rDbIIZ0JvnwGhn0ev9SpO3eIlh6vYVP9JbrCj7QVVX3HcDti5fnfVvMYfG569I_BqDw_sXDsNhoTLqICfs-fOWVlhOfpgnqY6axsaEnX5vOpL4/s16000/05%20Alm.%20R.M.%20Imam%20Koesoepangat-3.jpg" 
+                 class="w-10 h-10 rounded-full object-cover shadow-sm" alt="RM. Imam Koesoepangat">
+        <div>
+            <p class="text-sm font-black text-slate-800 group-hover:text-blue-600 transition-colors">RM. Imam Koesoepangat</p>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pandhita Wesi Kuning</p>
+        </div>
+        <i data-lucide="external-link" class="w-3 h-3 ml-auto text-slate-300 group-hover:text-blue-500"></i>
+    </a>
+
+    <!-- Item Tokoh 4 -->
+    <a href="https://psht.or.id/h-tarmadji-boedi-harsono-s-e/" target="_blank" 
+       class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white hover:shadow-md border border-transparent hover:border-slate-100 transition-all group">
+        <img src="https://psht.or.id/konten/uploads/2023/05/Tarmadji-Boedi-Harsono_FotoUtama-634x640.jpg" 
+                 class="w-10 h-10 rounded-full object-cover shadow-sm" alt="Kangmas Tarmadji">
+        <div>
+            <p class="text-sm font-black text-slate-800 group-hover:text-amber-600 transition-colors">Kangmas Tarmadji</p>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Ketua Umum</p>
+        </div>
+        <i data-lucide="external-link" class="w-3 h-3 ml-auto text-slate-300 group-hover:text-amber-500"></i>
+    </a>
+</div>
+
                     </div>
                 </div>
             </section>
 
             <!-- FALSAFAH (Aesthetic Typography Decoration) -->
-            <section class="mb-24 py-16 relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-slate-900 to-emerald-900 text-center flex flex-col items-center justify-center px-6">
-                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-                <i data-lucide="quote" class="w-12 h-12 text-emerald-500/50 mb-6 relative z-10"></i>
-                <h2 class="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight max-w-4xl relative z-10 font-serif italic">
-                    "Manusia dapat dihancurkan, manusia dapat dimatikan, tetapi manusia tidak dapat dikalahkan selama manusia itu setia pada hatinya sendiri."
-                </h2>
-                <div class="mt-8 flex flex-wrap justify-center gap-4 relative z-10">
-                    <span class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-emerald-300 border border-white/20">Ojo Gumunan</span>
-                    <span class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-emerald-300 border border-white/20">Ojo Kagetan</span>
-                    <span class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-emerald-300 border border-white/20">Ojo Dumeh</span>
-                </div>
-            </section>
+<section class="mb-24 py-16 relative overflow-hidden rounded-[3rem] bg-slate-950 text-center flex flex-col items-center justify-center px-6">
+    
+    <!-- Background Image Layer yang ditingkatkan -->
+<div class="absolute inset-0 z-0 bg-cover bg-center opacity-45 grayscale-[50%] contrast-[110%]" 
+     style="background-image: url('sesepuh.webp');">
+</div>
+
+    
+    <!-- Dark Gradient Overlay (Menyatu dengan warna background) -->
+    <div class="absolute inset-0 z-0 bg-gradient-to-b from-slate-900/80 via-emerald-900/60 to-slate-900/90"></div>
+
+    <!-- Content -->
+    <i data-lucide="quote" class="w-12 h-12 text-emerald-500/50 mb-6 relative z-10"></i>
+    <h2 class="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight max-w-4xl relative z-10 font-serif italic">
+        "Manusia dapat dihancurkan, manusia dapat dimatikan, tetapi manusia tidak dapat dikalahkan selama manusia itu setia pada hatinya sendiri."
+    </h2>
+    <div class="mt-8 flex flex-wrap justify-center gap-4 relative z-10">
+        <span class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-emerald-300 border border-white/20">Ojo Gumunan</span>
+        <span class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-emerald-300 border border-white/20">Ojo Kagetan</span>
+        <span class="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-emerald-300 border border-white/20">Ojo Dumeh</span>
+    </div>
+</section>
+
 
             <!-- AGENDA DINAMIS & PDF VIEWER -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
@@ -489,24 +571,37 @@
                     </div>
 
                     <div class="max-w-2xl mx-auto bg-white p-8 rounded-3xl border border-slate-100 shadow-inner text-center">
-    <!-- MARS BARU (Cipt. Adi Pracihno/Adi Jasco) -->
+    
+    <!-- MARS BARU -->
     <div v-if="tabLagu === 'mars'" class="animate-fade-in space-y-4 text-sm font-medium text-slate-700 leading-relaxed italic">
         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 not-italic">Cipt. Kangmas Adi Pracihno / Adi Jasco</p>
         <p>Setia Hati Terate Pembina Persaudaraan<br>Semboyan Kami Bersama Bersatu Teguh Jaya<br>Mengabdi Nusa dan Bangsa Dengan Tulus Ikhlas<br>Menjunjung Tinggi Pancasila Demi Indonesia Raya</p>
-        <p class="font-bold text-emerald-600 not-italic mt-4">
-            Jayalah Setia Hati Terate Sepanjanglah Masa<br>
-            Jayalah Setia Hati Terate Sepanjanglah Masa
-        </p>
+        <p class="font-bold text-emerald-600 not-italic mt-4">Jayalah Setia Hati Terate Sepanjanglah Masa<br>Jayalah Setia Hati Terate Sepanjanglah Masa</p>
+        
+        <!-- Pemutar Audio -->
+        <div class="mt-6 pt-6 border-t border-slate-100">
+            <audio controls class="w-full h-10 accent-emerald-500">
+                <source src="Mars PSHT.mp3" type="audio/mpeg">
+                Browser Anda tidak mendukung pemutar audio.
+            </audio>
+        </div>
     </div>
 
-    <!-- HYMNE PSHT (Cipt. Andreas Ekasakti Judhyawan, SE) -->
+     <!-- HYMNE PSHT -->
     <div v-if="tabLagu === 'hymne'" class="animate-fade-in space-y-4 text-sm font-medium text-slate-700 leading-relaxed italic">
         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 not-italic">Cipt. Andreas Ekasakti Judhyawan, SE</p>
+        <!-- ... (Lirik Hymne tetap di sini) ... -->
         <p>Ku Berdiri Tegak Dibawah Panjimu<br>Sang Setia Hati Terate<br>Kan ku Persembahkan Jiwa Dan Ragaku<br>Mengabdi Untuk Setia Hati Terate</p>
         <p>Baju Hitam Perisai Di Badanku<br>Jantung Bersinar Perisai Jiwaku<br>Tugas Nan Luhur Kesetiaanku<br>Ikhlas Berjuang Demi Setia Hati Terate</p>
         <p>Saat Setia Hati Memanggilmu<br>Jangan Pamrih dan menghitung Rugi<br>Karena itu Wujud Bhaktimu<br>Untuk Kejayaan Setia Hati Terate</p>
         <p>Selama Matahari Masih tetap Bersinar<br>Selama Bumi Masih Dihuni Manusia<br>Selama Itu Pula Persaudaraan Kita<br>Tetap Kekal Abadi</p>
         <p>Saat Setia Hati Memanggilmu<br>Jangan Pamrih dan menghitung Rugi<br>Karena itu Wujud Bhaktimu<br>Untuk Kejayaan Setia Hati Terate</p>
+         <!-- Pemutar Audio -->
+        <div class="mt-6 pt-6 border-t border-slate-100">
+            <audio id="audioHymne" class="w-full h-10 accent-slate-900" controls onplay="this.currentTime = 8">
+    <source src="HYMNE SETIA HATI TERATE.mp3" type="audio/mpeg">
+</audio>
+        </div>
     </div>
 </div>
             </section>
