@@ -9,7 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@0.292.0"></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
-    
+    <script src="config.js"></script>
+
+<script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
+
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
@@ -50,23 +53,31 @@
         <!-- LOADING SCREEN -->
         <transition name="fade" mode="out-in">
             <div v-if="isFetching" key="loading" class="flex flex-col items-center justify-center h-[80vh] gap-4">
-                <div class="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center animate-pulse border border-slate-100">
-                    <i data-lucide="loader-2" class="w-8 h-8 text-emerald-500 animate-spin"></i>
-                </div>
+      <div class="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center animate-pulse border border-slate-100 relative">
+    <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+</div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Menyelaraskan Data...</p>
             </div>
 
-            <!-- ERROR SCREEN -->
-            <div v-else-if="isError" key="error" class="flex flex-col items-center justify-center h-[80vh] text-center px-4">
-                <div class="w-24 h-24 bg-red-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-sm border border-red-100">
-                    <i data-lucide="shield-alert" class="w-12 h-12 text-red-500"></i>
-                </div>
-                <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">Akses Ditolak</h2>
-                <p class="text-sm text-slate-500 leading-relaxed mb-8">Data tidak terdaftar di sistem. Pastikan NIS yang dimasukkan sudah sesuai dengan catatan pelatih.</p>
-                <button @click="logout" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Beranda
-                </button>
-            </div>
+            <div v-else-if="isError" key="error" class="flex flex-col items-center justify-center h-[80vh] text-center px-4 animate-fade-in">
+    
+    <div class="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-lg overflow-hidden flex items-center justify-center bg-white">
+        <img src="rayon_japanan.webp" alt="Logo Rayon" class="w-full h-full object-cover">
+    </div>
+
+    <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">Akses Ditolak</h2>
+    <p class="text-sm text-slate-500 leading-relaxed mb-8 max-w-[280px]">
+        Data tidak terdaftar di sistem. Pastikan NIS yang dimasukkan sudah sesuai dengan catatan pelatih.
+    </p>
+
+    <button @click="logout" class="w-full max-w-xs bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+    </svg>
+    Kembali ke Beranda
+</button>
+</div>
+
 
             <!-- DASHBOARD UTAMA -->
             <div v-else key="dashboard" class="w-full animate-fade-in flex flex-col">
@@ -196,7 +207,21 @@
 
         createApp({
             setup() {
-                const API_URL = localStorage.getItem('terate_google_url') || 'https://script.google.com/macros/s/AKfycbyNCQPSbVNz7-xkEOScOWsKZyPogIGDlI7fRyHDa1jjvvvU4PjCZqB7GnzddNMbwuW_/exec';
+    // 1. Ambil URL dari LocalStorage (jika disetting admin), 
+    // jika kosong, gunakan dari config.js
+    const API_URL = localStorage.getItem('terate_google_url') || TERATE_CONFIG.API_URL;
+    
+    // 2. Ambil Gemini API Key dari LocalStorage (jika disetting admin),
+    // jika kosong, gunakan dari config.js
+    let GEMINI_API_KEY = TERATE_CONFIG.GEMINI_API_KEY;
+    const configStr = localStorage.getItem('terate_config');
+    if (configStr) {
+        try {
+            const config = JSON.parse(configStr);
+            if (config.geminiKey) GEMINI_API_KEY = config.geminiKey;
+        } catch(e) {}
+    }
+    
 
                 const isFetching = ref(true);
                 const isError = ref(false);

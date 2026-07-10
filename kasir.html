@@ -10,7 +10,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://unpkg.com/lucide@0.292.0"></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
-    
+    <script src="config.js"></script>
+
+<script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
         .mesh-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -5; background-image: radial-gradient(at 0% 0%, hsla(160, 80%, 75%, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, hsla(210, 90%, 80%, 0.3) 0px, transparent 50%); filter: blur(40px); }
@@ -294,7 +297,21 @@
 
         createApp({
             setup() {
-                const API_URL = localStorage.getItem('terate_google_url') || 'https://script.google.com/macros/s/AKfycbyNCQPSbVNz7-xkEOScOWsKZyPogIGDlI7fRyHDa1jjvvvU4PjCZqB7GnzddNMbwuW_/exec';
+    // 1. Ambil URL dari LocalStorage (jika disetting admin), 
+    // jika kosong, gunakan dari config.js
+    const API_URL = localStorage.getItem('terate_google_url') || TERATE_CONFIG.API_URL;
+    
+    // 2. Ambil Gemini API Key dari LocalStorage (jika disetting admin),
+    // jika kosong, gunakan dari config.js
+    let GEMINI_API_KEY = TERATE_CONFIG.GEMINI_API_KEY;
+    const configStr = localStorage.getItem('terate_config');
+    if (configStr) {
+        try {
+            const config = JSON.parse(configStr);
+            if (config.geminiKey) GEMINI_API_KEY = config.geminiKey;
+        } catch(e) {}
+    }
+    
                 const namaKasir = ref(localStorage.getItem('terate_nama_kasir') || 'Admin Lapangan');
 
                 const activeMenu = ref('kasir'); // State untuk tab menu utama
@@ -314,14 +331,14 @@
                 const isSaving = ref(false);
                 const isSaved = ref(false);
 
-                // DATA BANK MATERI PDF (Silakan ganti URL Google Drive Anda)
                 const listMateri = ref([
-                    { judul: 'Panduan Senam Dasar 1-90', kategori: 'Fisik & Gerak', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-                    { judul: 'Jurus Baku 1-35', kategori: 'Fisik & Gerak', url: '' },
-                    { judul: 'Teknik Senjata & Toya', kategori: 'Tingkat Lanjut', url: '' },
-                    { judul: 'Modul Ke-SH-an Dasar', kategori: 'Kerohanian', url: '' },
-                    { judul: 'Aturan & Larangan Siswa', kategori: 'Kedisiplinan', url: '' }
-                ]);
+    // Perhatikan perubahan di bagian paling belakang URL (menjadi /preview)
+    { judul: 'Panduan Senam Dasar 1-90', kategori: 'Fisik & Gerak', url: 'https://drive.google.com/file/d/1Xarzku6vRFC6XdH-wHgbvkx1YtSuWU5d/preview' },
+    { judul: 'Jurus Baku 1-35', kategori: 'Fisik & Gerak', url: 'https://drive.google.com/file/d/1Nt2Vb_LKCFyDiF71sSH1KFUrlFrJYEgP/preview'},
+    { judul: 'Teknik Senjata & Toya', kategori: 'Tingkat Lanjut', url: 'https://drive.google.com/file/d/1Bi_PladygnG3D7eNGU72s1UVAgZmhU96/preview' },
+    { judul: 'Modul Ke-SH-an Dasar', kategori: 'Kerohanian', url: 'https://drive.google.com/file/d/1Ntzzm1jPIl0zw40uyS2Kkqof22AyqFd7/preview' },
+]);
+
                 const activePdf = ref(listMateri.value[0]);
 
                 const formatRp = (n) => new Intl.NumberFormat('id-ID').format(n);
