@@ -13,109 +13,138 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #020617; 
-            color: #f8fafc;
+            background-color: #f8fafc; /* Latar Terang Modern */
+            color: #0f172a;
             -webkit-tap-highlight-color: transparent; 
             overflow-x: hidden;
         }
+        
+        /* Efek Latar Belakang ala Startup Decacorn (Gradients & Blurs) */
         .mesh-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
             background-image: 
-                radial-gradient(at 0% 0%, hsla(160, 100%, 25%, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, hsla(253, 16%, 7%, 0.9) 0px, transparent 50%);
+                radial-gradient(at 80% 0%, hsla(160, 80%, 75%, 0.4) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(210, 90%, 80%, 0.4) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, hsla(280, 80%, 85%, 0.4) 0px, transparent 50%);
+            filter: blur(60px);
+            opacity: 0.8;
         }
+        
         .glass-card { 
-            background: rgba(15, 23, 42, 0.4); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); 
         }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         [v-cloak] { display: none !important; }
         
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(15px); }
-        .modal-enter-active, .modal-leave-active { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-enter-from, .modal-leave-to { opacity: 0; transform: scale(0.9) translateY(20px); }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease, transform 0.5s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
+        .modal-enter-active, .modal-leave-active { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-enter-from, .modal-leave-to { opacity: 0; transform: scale(0.95) translateY(10px); }
         
-        /* Animasi Mengambang */
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        @keyframes blob { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .animate-blob { animation: blob 8s infinite alternate; }
     </style>
 </head>
 <body class="selection:bg-emerald-500 selection:text-white">
-    <div class="mesh-bg"></div>
+    <div class="mesh-bg animate-blob"></div>
 
-    <div id="app" v-cloak class="w-full max-w-6xl mx-auto flex flex-col min-h-screen px-4 sm:px-6 py-6 sm:py-8 relative z-10">
+    <div id="app" v-cloak class="w-full max-w-6xl mx-auto flex flex-col min-h-screen px-4 sm:px-6 py-4 sm:py-6 relative z-10">
         
-        <!-- HEADER -->
-        <header class="flex justify-between items-center mb-8 lg:mb-16 animate-fade-in bg-slate-900/50 backdrop-blur-md border border-slate-800 p-3 sm:p-4 rounded-3xl">
+        <!-- HEADER (Floating Pill Design) -->
+        <header class="flex justify-between items-center mb-12 lg:mb-20 animate-fade-in glass-nav p-3 sm:p-4 rounded-[2rem] mt-2">
             <div class="flex items-center gap-3 pl-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-700 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
-                    <i data-lucide="shield" class="w-5 h-5 text-white"></i>
+                <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 shrink-0 transform -rotate-6">
+                    <i data-lucide="shield-check" class="w-6 h-6 text-white transform rotate-6"></i>
                 </div>
-                <h1 class="text-lg sm:text-xl font-black tracking-tighter text-white">TeratePay.</h1>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight text-slate-800 leading-none">TeratePay<span class="text-emerald-500">.</span></h1>
+                    <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Rayon Japanan</p>
+                </div>
             </div>
-            <button @click="scrollToDaftar" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 rounded-xl text-xs font-black text-slate-900 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95">
-                Daftar Siswa
+            <button @click="scrollToDaftar" class="px-6 py-3.5 bg-slate-900 hover:bg-slate-800 rounded-xl text-sm font-bold text-white transition-all shadow-xl active:scale-95 hidden sm:block">
+                Pendaftaran Siswa
+            </button>
+            <button @click="scrollToDaftar" class="p-3 bg-slate-900 rounded-xl text-white sm:hidden">
+                <i data-lucide="user-plus" class="w-5 h-5"></i>
             </button>
         </header>
 
         <!-- HERO SECTION -->
         <section class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 mb-24">
             <!-- Teks Hero -->
-            <div class="w-full lg:w-1/2 space-y-6 text-center lg:text-left animate-fade-in mt-4 lg:mt-0">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-2">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Rayon Japanan • Pusat Madiun</p>
+            <div class="w-full lg:w-1/2 space-y-6 text-center lg:text-left animate-fade-in">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-full mb-2 shadow-sm">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Sistem Digital Ranting Kemlagi</p>
                 </div>
-                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[1.1]">
-                    Mendidik Manusia <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Berbudi Luhur.</span>
+                <h2 class="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-800 tracking-tighter leading-[1.05]">
+                    Ekosistem <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">Pencak Silat</span> Modern.
                 </h2>
-                <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium">
-                    Sistem transparansi keuangan & informasi digital untuk siswa Persaudaraan Setia Hati Terate. Pantau progres tabungan dan jadwal latihan secara real-time.
+                <p class="text-slate-600 text-base sm:text-lg leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium">
+                    Pantau progres tabungan Suro, jadwal latihan, dan informasi ranting secara real-time. Transparan, terintegrasi, dan mudah diakses.
                 </p>
-                <div class="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                    <button @click="bukaModalLogin('siswa')" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-slate-900 font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 active:scale-95">
-                        <i data-lucide="user" class="w-5 h-5"></i> Cek Tabungan
+                <div class="pt-6 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                    <button @click="bukaModalLogin('siswa')" class="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl transition-all shadow-[0_15px_30px_-10px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2 active:scale-95 text-lg">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Masuk Portal Siswa
                     </button>
-                    <button @click="bukaModalLogin('pelatih')" class="w-full sm:w-auto px-8 py-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95">
-                        <i data-lucide="layout-grid" class="w-5 h-5 text-slate-400"></i> Login Pelatih
+                    <button @click="bukaModalLogin('pelatih')" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm text-lg">
+                        <i data-lucide="scan-line" class="w-5 h-5 text-slate-400"></i> Panel Pelatih
                     </button>
                 </div>
             </div>
 
-            <!-- Ilustrasi / Kartu Estetik -->
-            <div class="w-full lg:w-5/12 relative animate-float hidden md:block">
-                <div class="absolute -top-10 -right-10 w-48 h-48 bg-emerald-500/20 blur-3xl rounded-full"></div>
-                <div class="glass-card p-6 rounded-[2.5rem] relative z-10 border-t border-l border-white/10 overflow-hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            <!-- Ilustrasi Dinamis Suro / Widget -->
+            <div class="w-full lg:w-5/12 relative animate-float">
+                <div class="absolute -top-10 -right-10 w-64 h-64 bg-teal-400/20 blur-3xl rounded-full"></div>
+                <div class="glass-card p-8 rounded-[2.5rem] relative z-10 border-t border-l border-white/80 overflow-hidden">
+                    
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <span class="text-[10px] font-black text-slate-400 tracking-widest uppercase block mb-1">Live Countdown</span>
+                            <h3 class="text-xl font-black text-slate-800">Bulan Suro 2027</h3>
                         </div>
-                        <span class="text-[10px] font-black text-slate-500 tracking-widest uppercase">Live Target</span>
+                        <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100 shadow-sm">
+                            <i data-lucide="flame" class="w-6 h-6 text-indigo-500"></i>
+                        </div>
                     </div>
-                    <div class="space-y-4">
-                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700/50">
-                            <div class="flex justify-between text-xs font-bold mb-2">
-                                <span class="text-slate-300">Pengesahan Warga</span>
-                                <span class="text-emerald-400">75%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full rounded-full w-[75%]"></div>
-                            </div>
+                    
+                    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-3xl text-white shadow-lg relative overflow-hidden mb-6">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                        <p class="text-sm text-indigo-100 font-medium mb-1">Waktu Tersisa</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-5xl font-black tracking-tighter">{{ sisaHariSuro }}</span>
+                            <span class="text-sm font-bold text-indigo-200">Hari Lagi</span>
                         </div>
-                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700/50 flex justify-between items-center">
+                    </div>
+
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+                                <i data-lucide="bell-ring" class="w-5 h-5"></i>
+                            </div>
                             <div>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Tes Sabuk Hijau</p>
-                                <p class="text-sm font-black text-white">24 Hari Lagi</p>
-                            </div>
-                            <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center border border-green-500/30">
-                                <i data-lucide="medal" class="w-5 h-5 text-green-400"></i>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Update Terkini</p>
+                                <p class="text-sm font-black text-slate-800">{{ liveUpdateTitle }}</p>
                             </div>
                         </div>
                     </div>
@@ -123,122 +152,122 @@
             </div>
         </section>
 
-        <!-- PAPAN PENGUMUMAN (AGENDA) -->
-        <section class="mb-24">
-            <div class="flex items-center gap-3 mb-6 lg:mb-8">
-                <i data-lucide="calendar-days" class="w-6 h-6 text-emerald-400"></i>
-                <h3 class="text-xl font-black text-white tracking-tight">Papan Informasi & Jadwal</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-                <!-- Jadwal 1 -->
-                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-emerald-500 hover:bg-slate-800/40 transition-colors group cursor-default">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-400 group-hover:scale-110 transition-transform"><i data-lucide="users" class="w-5 h-5"></i></div>
-                        <span class="text-[9px] font-black bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded uppercase tracking-wider">Rutin</span>
-                    </div>
-                    <h4 class="text-base font-black text-white mb-2">Latihan Reguler</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed font-medium mb-3">Setiap Malam Kamis & Malam Minggu. Berpakaian sakral lengkap.</p>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 19:30 WIB - Selesai</div>
+        <!-- AGENDA DINAMIS (Terintegrasi Otomatis via API/Storage) -->
+        <section class="mb-24 relative z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8 lg:mb-10">
+                <div>
+                    <h3 class="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight mb-2">Papan Informasi Live</h3>
+                    <p class="text-sm text-slate-500 font-medium">Jadwal dan pengumuman disinkronkan otomatis dari pusat.</p>
                 </div>
-                <!-- Jadwal 2 -->
-                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-blue-500 hover:bg-slate-800/40 transition-colors group cursor-default">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-blue-500/10 rounded-lg text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="award" class="w-5 h-5"></i></div>
-                        <span class="text-[9px] font-black bg-blue-500/20 text-blue-300 px-2 py-1 rounded uppercase tracking-wider">Penting</span>
-                    </div>
-                    <h4 class="text-base font-black text-white mb-2">Tes Sabuk Hijau</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed font-medium mb-3">Evaluasi materi senam, jurus, dan fisik. Lunas administrasi wajib.</p>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Lapangan Rayon Japanan</div>
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Sinkronisasi Aktif</span>
                 </div>
-                <!-- Jadwal 3 -->
-                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-amber-500 hover:bg-slate-800/40 transition-colors group cursor-default">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-amber-500/10 rounded-lg text-amber-400 group-hover:scale-110 transition-transform"><i data-lucide="flame" class="w-5 h-5"></i></div>
-                        <span class="text-[9px] font-black bg-amber-500/20 text-amber-300 px-2 py-1 rounded uppercase tracking-wider">Agenda</span>
-                    </div>
-                    <h4 class="text-base font-black text-white mb-2">Latihan Gabungan</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed font-medium mb-3">Latihan bersama Ranting Kemlagi. Membangun persaudaraan antar rayon.</p>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Minggu Pertama Awal Bulan</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ZONA PENDAFTARAN (HANYA REGULER & PRIVAT) -->
-        <section id="zonaDaftar" class="mb-24 pt-8">
-            <div class="text-center mb-10">
-                <h3 class="text-2xl lg:text-3xl font-black text-white tracking-tight mb-3">Pendaftaran Calon Siswa Baru</h3>
-                <p class="text-sm text-slate-400 max-w-lg mx-auto">Silakan pilih jalur pendaftaran yang sesuai. Kapasitas penerimaan siswa dibatasi untuk menjaga kualitas latihan.</p>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <!-- Tombol 1: Reguler -->
-                <div class="bg-slate-900 border border-slate-700 p-6 rounded-[2rem] flex flex-col hover:border-emerald-500/50 transition-colors group">
-                    <div class="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-400 mb-5 group-hover:bg-emerald-500 group-hover:text-slate-900 transition-colors">
-                        <i data-lucide="users" class="w-5 h-5"></i>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+                <!-- Jadwal di-render dinamis dari Vue -->
+                <div v-for="(item, index) in jadwalList" :key="index" 
+                     class="glass-card p-6 rounded-[2rem] border-l-4 hover:-translate-y-1 transition-all duration-300 group cursor-default"
+                     :class="item.colorBorder">
+                    
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="p-3 rounded-2xl transition-transform group-hover:scale-110 shadow-sm" :class="item.colorIconBg">
+                            <i :data-lucide="item.icon" class="w-6 h-6" :class="item.colorIconText"></i>
+                        </div>
+                        <span class="text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm" :class="item.colorBadge">
+                            {{ item.kategori }}
+                        </span>
                     </div>
-                    <h4 class="text-xl font-black text-white mb-2">Jalur Reguler</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-8 flex-grow">Pendaftaran umum untuk pemula. Terbuka untuk semua usia dengan syarat sehat jasmani & rohani.</p>
-                    <a href="form-pendaftaran.html" class="w-full text-center py-3.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-emerald-500 hover:text-slate-900 transition-all active:scale-95 text-sm">
-                        Daftar Reguler
-                    </a>
+                    
+                    <h4 class="text-lg font-black text-slate-800 mb-2 leading-tight">{{ item.judul }}</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed font-medium mb-4">{{ item.deskripsi }}</p>
+                    
+                    <div class="mt-auto pt-4 border-t border-slate-100/50 flex items-center gap-2 text-[11px] font-bold text-slate-600">
+                        <i :data-lucide="item.timeIcon" class="w-4 h-4"></i> {{ item.waktu }}
+                    </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Tombol 2: Privat -->
-                <div class="bg-gradient-to-b from-blue-900/40 to-slate-900 border border-blue-500/30 p-6 rounded-[2rem] flex flex-col relative overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.1)] group hover:border-blue-500/50 transition-colors">
-                    <div class="absolute top-4 right-4 bg-amber-500 text-slate-900 text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm">Khusus Dewasa</div>
-                    <div class="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 mb-5 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                        <i data-lucide="briefcase" class="w-5 h-5"></i>
+        <!-- ZONA PENDAFTARAN -->
+        <section id="zonaDaftar" class="mb-24 pt-8">
+            <div class="glass-card rounded-[3rem] p-8 lg:p-12 text-center relative overflow-hidden border border-white">
+                <div class="absolute inset-0 bg-gradient-to-br from-white/40 to-slate-50/10 pointer-events-none"></div>
+                
+                <h3 class="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight mb-4 relative z-10">Mulai Perjalananmu</h3>
+                <p class="text-base text-slate-500 max-w-xl mx-auto mb-10 relative z-10">Pilih jalur pendaftaran yang paling sesuai dengan rutinitasmu. Bergabunglah dan wujudkan persaudaraan yang sejati.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto relative z-10">
+                    <!-- Reguler -->
+                    <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all group">
+                        <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="users" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-2xl font-black text-slate-800 mb-3">Jalur Reguler</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed mb-8 flex-grow">Pendaftaran umum untuk pelajar dan pemuda. Terbuka untuk semua usia dengan syarat sehat jasmani & rohani.</p>
+                        <a href="form-pendaftaran.html" class="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-emerald-500 transition-all active:scale-95 shadow-md">
+                            Daftar Reguler
+                        </a>
                     </div>
-                    <h4 class="text-xl font-black text-white mb-2">Jalur Privat</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-8 flex-grow">Latihan intensif dengan waktu fleksibel. Khusus untuk calon siswa berusia 25 tahun ke atas, pekerja, atau sudah menikah.</p>
-                    <a href="form-pendaftaran-privat.html" class="w-full text-center py-3.5 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-500 transition-all active:scale-95 text-sm shadow-md">
-                        Daftar Privat
-                    </a>
+
+                    <!-- Privat -->
+                    <div class="bg-gradient-to-b from-slate-900 to-slate-800 p-8 rounded-[2rem] shadow-xl border border-slate-700 flex flex-col relative overflow-hidden group hover:border-blue-500/50 transition-all">
+                        <div class="absolute top-6 right-6 bg-amber-400 text-slate-900 text-[9px] font-black uppercase px-3 py-1 rounded-full shadow-sm">Dewasa & Pekerja</div>
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-blue-400 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="briefcase" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-2xl font-black text-white mb-3">Jalur Privat</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-8 flex-grow">Latihan intensif dengan waktu fleksibel menyesuaikan jadwal kerja. Khusus 25 tahun ke atas atau sudah menikah.</p>
+                        <a href="form-pendaftaran-privat.html" class="w-full py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all active:scale-95 shadow-[0_10px_20px_-10px_rgba(37,99,235,0.5)]">
+                            Daftar Privat
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- FOOTER -->
-        <footer class="mt-auto border-t border-slate-800 pt-8 pb-4 text-center">
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Persaudaraan Setia Hati Terate</p>
-            <p class="text-[9px] text-slate-600">Selama matahari masih bersinar, selama bumi masih dihuni manusia, selama itu pula PSHT akan tetap jaya abadi selama-lamanya.</p>
+        <footer class="mt-auto pt-8 pb-6 text-center">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Persaudaraan Setia Hati Terate</p>
+            <p class="text-[10px] text-slate-500 font-medium">Sistem Digitalisasi Ranting Kemlagi &copy; 2026</p>
             <div class="mt-6">
-                 <button @click="bukaModalLogin('maintenance')" class="mx-auto text-[10px] font-bold text-slate-600 hover:text-amber-500 transition-colors flex items-center justify-center gap-1.5 active:scale-95">
-                    <i data-lucide="settings" class="w-3 h-3"></i> System Maintenance
+                 <button @click="bukaModalLogin('maintenance')" class="mx-auto text-[10px] font-bold text-slate-400 hover:text-slate-800 transition-colors flex items-center justify-center gap-1.5 active:scale-95">
+                    <i data-lucide="command" class="w-3 h-3"></i> System Admin
                 </button>
             </div>
         </footer>
 
         <!-- ========================================== -->
-        <!-- MODAL LOGIN (SISWA, PELATIH, MAINTENANCE) -->
+        <!-- MODAL LOGIN (Modern Style) -->
         <!-- ========================================== -->
         <transition name="fade">
-            <div v-if="modalLogin.show" @click.self="tutupModalLogin" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div v-if="modalLogin.show" @click.self="tutupModalLogin" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
                 
                 <transition name="modal">
-                    <div v-if="modalLogin.show" class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+                    <div v-if="modalLogin.show" class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] relative overflow-hidden border border-slate-100">
                         
-                        <button @click="tutupModalLogin" class="absolute top-5 right-5 p-2 bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors">
-                            <i data-lucide="x" class="w-4 h-4"></i>
+                        <button @click="tutupModalLogin" class="absolute top-6 right-6 p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5"></i>
                         </button>
 
-                        <div class="mb-8">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 border"
-                                 :class="modalLogin.type === 'siswa' ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : (modalLogin.type === 'pelatih' ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' : 'bg-amber-500/20 border-amber-500/30 text-amber-400')">
-                                <i :data-lucide="modalLogin.type === 'siswa' ? 'user' : (modalLogin.type === 'pelatih' ? 'layout-grid' : 'settings')" class="w-6 h-6"></i>
+                        <div class="mb-8 mt-2">
+                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 border"
+                                 :class="modalLogin.type === 'siswa' ? 'bg-emerald-50 border-emerald-100 text-emerald-500' : (modalLogin.type === 'pelatih' ? 'bg-blue-50 border-blue-100 text-blue-500' : 'bg-slate-900 border-slate-800 text-white')">
+                                <i :data-lucide="modalLogin.type === 'siswa' ? 'user' : (modalLogin.type === 'pelatih' ? 'scan-face' : 'terminal')" class="w-7 h-7"></i>
                             </div>
-                            <h3 class="text-xl font-black text-white">{{ modalTitle }}</h3>
-                            <p class="text-xs text-slate-400 mt-1">{{ modalDesc }}</p>
+                            <h3 class="text-2xl font-black text-slate-800 tracking-tight">{{ modalTitle }}</h3>
+                            <p class="text-sm text-slate-500 mt-1.5 font-medium">{{ modalDesc }}</p>
                         </div>
 
-                                                <form @submit.prevent="eksekusiLogin" class="space-y-5 relative z-10">
+                        <form @submit.prevent="eksekusiLogin" class="space-y-5 relative z-10">
                             <div v-if="modalLogin.type !== 'siswa'">
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">ID Pengguna</label>
-                                <input type="text" v-model="modalLogin.usernameValue" placeholder="Contoh: adit" class="w-full px-5 py-4 bg-slate-800 border border-slate-700 rounded-2xl text-sm font-bold text-white outline-none focus:border-blue-500 transition-all uppercase mb-4">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">ID Pengguna</label>
+                                <input type="text" v-model="modalLogin.usernameValue" placeholder="ID Pelatih / Admin" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-blue-500 focus:bg-white transition-all uppercase mb-4 shadow-sm">
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
                                     {{ inputLabel }}
                                 </label>
                                 
@@ -246,21 +275,19 @@
                                        type="text" inputmode="numeric" 
                                        v-model="modalLogin.inputValue" 
                                        @input="modalLogin.inputValue = modalLogin.inputValue.replace(/[^0-9]/g, '')" 
-                                       placeholder="Contoh: 5260710" 
-                                       class="w-full px-5 py-4 bg-slate-800 border border-slate-700 rounded-2xl text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all placeholder:text-slate-500">
+                                       placeholder="Nomor Induk Siswa (NIS)" 
+                                       class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-base font-bold text-slate-800 outline-none focus:border-emerald-500 focus:bg-white transition-all shadow-sm placeholder:text-slate-400 placeholder:font-medium">
                                 
                                 <input v-else 
                                        type="password" 
                                        v-model="modalLogin.inputValue" 
                                        placeholder="••••••" 
-                                       class="w-full px-5 py-4 bg-slate-800 border border-slate-700 rounded-2xl font-black text-2xl text-center text-white outline-none focus:border-blue-500 transition-all tracking-[0.3em] placeholder:text-slate-600">
-                                
-                                <p v-if="modalLogin.type === 'siswa'" class="text-[9px] font-bold text-slate-500 mt-2 px-1">Gunakan NIS (Cth: 526071012)</p>
+                                       class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-black text-2xl text-center text-slate-800 outline-none focus:border-blue-500 focus:bg-white transition-all tracking-[0.3em] shadow-sm">
                             </div>
 
                             <button type="submit" :disabled="isLoading" 
-                                    class="w-full font-black py-4 rounded-2xl active:scale-95 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                                    :class="modalLogin.type === 'siswa' ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-900 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : (modalLogin.type === 'pelatih' ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)]' : 'bg-amber-500 hover:bg-amber-400 text-slate-900')">
+                                    class="w-full font-black py-4.5 py-4 rounded-2xl active:scale-95 flex items-center justify-center gap-2 transition-all disabled:opacity-50 text-lg shadow-lg"
+                                    :class="modalLogin.type === 'siswa' ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/30' : (modalLogin.type === 'pelatih' ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/30')">
                                 <i v-if="isLoading" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
                                 <span v-else>Masuk Sekarang</span>
                             </button>
@@ -275,14 +302,16 @@
         <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[999999] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
 
     </div>
+    
     <script>
         const { createApp, ref, reactive, computed, nextTick, onMounted } = Vue;
 
         createApp({
             setup() {
                 const isLoading = ref(false);
+                const targetSuro = new Date('2027-06-06T00:00:00');
 
-                // DATABASE AKSES LOGIN (Semua Passwordnya SH1922)
+                // DATABASE AKSES LOGIN
                 const DAFTAR_PELATIH = {
                     'ADIT': 'Mas Adit',
                     'UGIK': 'Mas Ugik',
@@ -294,24 +323,36 @@
                 const modalLogin = reactive({
                     show: false,
                     type: '', 
-                    inputValue: '', // Untuk Sandi / NIS
-                    usernameValue: '' // Untuk ID Pelatih
+                    inputValue: '', 
+                    usernameValue: '' 
+                });
+
+                // LOGIKA AGENDA DINAMIS TANPA OPREK KODE
+                // Sistem akan membaca pengumuman dari localStorage yang disetting oleh admin (setting.html)
+                // atau fallback ke API call / jadwal default
+                const jadwalList = ref([]);
+                const liveUpdateTitle = ref('Menunggu sinkronisasi...');
+
+                const sisaHariSuro = computed(() => {
+                    const diff = targetSuro - new Date();
+                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    return days > 0 ? days : 0;
                 });
 
                 const modalTitle = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Akses Portal Siswa';
-                    if (modalLogin.type === 'pelatih') return 'Workspace Pelatih';
-                    return 'Mode Maintenance';
+                    if (modalLogin.type === 'siswa') return 'Portal Siswa';
+                    if (modalLogin.type === 'pelatih') return 'Akses Pelatih';
+                    return 'Konfigurasi Sistem';
                 });
 
                 const modalDesc = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Cek tabungan via NIS atau No WA.';
-                    if (modalLogin.type === 'pelatih') return 'Akses panel kasir lapangan.';
-                    return 'Akses konfigurasi sistem.';
+                    if (modalLogin.type === 'siswa') return 'Pantau tabungan & target pengesahan.';
+                    if (modalLogin.type === 'pelatih') return 'Login kasir & manajemen rayon.';
+                    return 'Akses khusus administrator pusat.';
                 });
 
                 const inputLabel = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'NIS / No. Whatsapp';
+                    if (modalLogin.type === 'siswa') return 'Masukan NIS Anda';
                     return 'Sandi Keamanan';
                 });
 
@@ -324,6 +365,67 @@
                 };
 
                 const scrollToDaftar = () => { document.getElementById('zonaDaftar').scrollIntoView({ behavior: 'smooth' }); };
+
+                const loadDynamicJadwal = () => {
+                    // 1. Coba baca pengumuman dari Admin (di set via setting.html)
+                    const configStr = localStorage.getItem('terate_config');
+                    let configAdmin = null;
+                    try { if(configStr) configAdmin = JSON.parse(configStr); } catch(e){}
+
+                    let dynamicJadwal = [];
+
+                    // Jika ada pengumuman khusus dari admin, taruh di urutan pertama
+                    if (configAdmin && configAdmin.judulPengumuman) {
+                        liveUpdateTitle.value = configAdmin.judulPengumuman;
+                        dynamicJadwal.push({
+                            kategori: configAdmin.tipePengumuman === 'penting' ? 'Darurat / Penting' : 'Info Terkini',
+                            judul: configAdmin.judulPengumuman,
+                            deskripsi: configAdmin.isiPengumuman,
+                            waktu: 'Sesuai Instruksi Pusat',
+                            icon: configAdmin.tipePengumuman === 'penting' ? 'alert-triangle' : 'megaphone',
+                            timeIcon: 'clock',
+                            colorBorder: configAdmin.tipePengumuman === 'penting' ? 'border-l-amber-500' : 'border-l-blue-500',
+                            colorIconBg: configAdmin.tipePengumuman === 'penting' ? 'bg-amber-50' : 'bg-blue-50',
+                            colorIconText: configAdmin.tipePengumuman === 'penting' ? 'text-amber-500' : 'text-blue-500',
+                            colorBadge: configAdmin.tipePengumuman === 'penting' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'
+                        });
+                    } else {
+                        liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
+                    }
+
+                    // Tambahkan jadwal default yang formatnya siap digantikan oleh API ke depannya
+                    dynamicJadwal.push({
+                        kategori: 'Rutin',
+                        judul: 'Latihan Reguler',
+                        deskripsi: 'Setiap Malam Kamis & Malam Minggu. Berpakaian sakral lengkap & sabuk masing-masing.',
+                        waktu: '19:30 WIB - Selesai',
+                        icon: 'users-2',
+                        timeIcon: 'clock',
+                        colorBorder: 'border-l-emerald-500',
+                        colorIconBg: 'bg-emerald-50',
+                        colorIconText: 'text-emerald-500',
+                        colorBadge: 'bg-emerald-100 text-emerald-600'
+                    });
+
+                    // Hanya tampilkan tes sabuk jika tidak ada pengumuman penting yang memakan slot
+                    if (dynamicJadwal.length < 3) {
+                         dynamicJadwal.push({
+                            kategori: 'Agenda',
+                            judul: 'Persiapan Fisik Suro',
+                            deskripsi: 'Pematangan materi senam dan jurus dasar untuk calon warga.',
+                            waktu: 'Lokasi: Lapangan Rayon',
+                            icon: 'dumbbell',
+                            timeIcon: 'map-pin',
+                            colorBorder: 'border-l-purple-500',
+                            colorIconBg: 'bg-purple-50',
+                            colorIconText: 'text-purple-500',
+                            colorBadge: 'bg-purple-100 text-purple-600'
+                        });
+                    }
+
+                    jadwalList.value = dynamicJadwal.slice(0, 3); // Max 3 Card
+                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                };
 
                 const bukaModalLogin = (type) => {
                     modalLogin.type = type;
@@ -339,7 +441,6 @@
                 };
 
                 const eksekusiLogin = () => {
-                    // Validasi form kosong
                     if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
                     if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
                     
@@ -348,27 +449,21 @@
                     setTimeout(() => {
                         isLoading.value = false;
                         
-                        // JALUR SISWA
                         if (modalLogin.type === 'siswa') {
                             localStorage.setItem('terate_user_nis', modalLogin.inputValue);
                             showToast("NIS Ditemukan! Membuka Portal...", true);
                             setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
                         } 
-                        // JALUR PELATIH & ADMIN
                         else {
                             const userStr = modalLogin.usernameValue.toUpperCase();
                             const passStr = modalLogin.inputValue;
                             const namaAsli = DAFTAR_PELATIH[userStr];
 
-                            // Validasi Sandi Wajib SH1922 dan usernamenya terdaftar
                             if (passStr === 'SH1922' && namaAsli) {
                                 showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
-                                
-                                // Simpan nama pelatih ke memori (Agar bisa ditarik oleh Halaman Kasir)
                                 localStorage.setItem('terate_nama_kasir', namaAsli);
 
                                 setTimeout(() => {
-                                    // Pisahkan arah: Admin ke Setting, Pelatih ke Kasir
                                     if (userStr === 'ADMIN' || modalLogin.type === 'maintenance') {
                                         window.location.href = 'setting.html';
                                     } else {
@@ -380,19 +475,20 @@
                                 modalLogin.inputValue = '';
                             }
                         }
-
                     }, 1000);
                 };
 
-                onMounted(() => { if (window.lucide) lucide.createIcons(); });
+                onMounted(() => { 
+                    loadDynamicJadwal();
+                });
 
                 return {
                     isLoading, modalLogin, modalTitle, modalDesc, inputLabel,
+                    jadwalList, sisaHariSuro, liveUpdateTitle,
                     bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollToDaftar
                 };
             }
         }).mount('#app');
     </script>
-
 </body>
 </html>

@@ -14,27 +14,47 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #ecfdf5 100%);
-            background-attachment: fixed;
+            background-color: #f8fafc;
             -webkit-tap-highlight-color: transparent; 
         }
+        
+        .rayon-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -10;
+            background-image: url('rayon_japanan.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.05; 
+        }
+        
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -5;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(160, 80%, 75%, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(210, 90%, 80%, 0.3) 0px, transparent 50%);
+            filter: blur(40px);
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
         .glass-panel {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
         }
         
-        /* Desain Kertas Struk */
         .receipt-paper { 
-            background: #ffffff; color: #000000; font-family: 'Courier New', Courier, monospace; 
+            background: #ffffff; color: #334155; font-family: 'Courier New', Courier, monospace; 
             width: 100%; max-width: 340px; margin: 0 auto; padding: 25px 20px; position: relative;
-            border-radius: 1.5rem; border: 1px solid #f1f5f9; box-shadow: 0 15px 35px -10px rgba(0,0,0,0.1);
+            border-radius: 1.5rem; border: 1px solid #f1f5f9; box-shadow: 0 15px 35px -10px rgba(0,0,0,0.08);
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
-        .dashed-line { border-top: 2px dashed #e2e8f0; margin: 12px 0; }
+        .dashed-line { border-top: 2px dashed #cbd5e1; margin: 12px 0; }
         .flex-between { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
         
         [v-cloak] { display: none !important; }
@@ -42,54 +62,64 @@
         .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(10px); }
     </style>
 </head>
-<body class="text-slate-800 lg:p-6 min-h-screen relative">
+<body class="text-slate-800 lg:p-6 min-h-screen relative flex flex-col items-center justify-start sm:justify-center">
 
-    <div id="app" v-cloak>
+    <div class="rayon-bg"></div>
+    <div class="mesh-bg"></div>
+
+    <div id="app" v-cloak class="w-full relative z-20">
         <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[999] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4">
             <transition-group name="fade" tag="div">
-                <div v-for="t in toasts" :key="t.id" :class="`${t.type === 'success' ? 'bg-emerald-600' : 'bg-red-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center min-w-[250px] transition-all pointer-events-auto mb-2`">
+                <div v-for="t in toasts" :key="t.id" :class="`${t.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white border border-white/20 px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center min-w-[250px] transition-all pointer-events-auto mb-2`">
                     {{ t.msg }}
                 </div>
             </transition-group>
         </div>
 
-        <main class="mx-auto w-full max-w-5xl glass-panel lg:rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row relative z-10 min-h-screen lg:min-h-[85vh]">
+        <main class="mx-auto w-full max-w-5xl glass-panel lg:rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row min-h-screen lg:min-h-[85vh] shadow-2xl shadow-slate-200/50">
             
-            <section class="w-full lg:w-7/12 p-5 lg:p-8 flex flex-col border-r border-white/60 pb-32">
+            <section class="w-full lg:w-7/12 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-100 pb-10 lg:pb-32 relative z-30">
                 
-                <header class="mb-6 flex justify-between items-center bg-white/60 p-4 rounded-3xl border border-white/80 shadow-sm">
-                    <div>
-                        <h1 class="font-black text-xl text-slate-800 tracking-tight">Kasir Pelatih</h1>
-                        <p class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest mt-0.5">TeratePay Management</p>
+                <!-- FIX: Perbaikan Header dan Tombol Laporan -->
+                <header class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm relative z-30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 shrink-0">
+                            <i data-lucide="calculator" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-black text-xl text-slate-800 tracking-tight leading-none">Kasir Pelatih</h1>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Rayon Japanan</p>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                        <i data-lucide="user-check" class="w-4 h-4 text-slate-400"></i>
-                        <span class="text-[10px] font-black uppercase text-slate-600">{{ namaKasir }}</span>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                        <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+                            <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <span class="text-[10px] font-black uppercase text-slate-600 truncate max-w-[100px]">{{ namaKasir }}</span>
+                        </div>
+                        <a href="report.html" class="px-3 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white rounded-lg border border-emerald-100 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors shadow-sm whitespace-nowrap">
+                            Laporan <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </a>
                     </div>
                 </header>
 
                 <form @submit.prevent="prosesSetoran" class="space-y-6 flex-grow" :style="isSaved ? 'opacity: 0.5; pointer-events: none;' : ''">
                     
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">1. Cari Siswa (Nama / NIS)</label>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm relative z-30">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">1. Cari Data Siswa</label>
                         <div class="relative mb-3">
                             <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="text" v-model="searchQuery" placeholder="Ketik nama atau NIS..." class="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:border-emerald-500 transition-all shadow-sm">
+                            <input type="text" v-model="searchQuery" placeholder="Ketik nama atau NIS..." class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-emerald-500 focus:bg-white transition-all shadow-inner">
                         </div>
-                        <a href="report.html" class="flex items-center gap-3 p-3 text-emerald-600 hover:bg-emerald-50 rounded-xl">
-    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-    <span class="font-bold text-sm">Laporan Finansial</span>
-</a>
 
                         <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto no-scrollbar p-1">
-                            <div v-if="filteredSiswa.length === 0" class="col-span-2 text-center text-slate-400 text-xs font-bold py-4 bg-white/40 border border-dashed border-slate-200 rounded-xl">Data tidak ditemukan.</div>
+                            <div v-if="filteredSiswa.length === 0" class="col-span-2 text-center text-slate-400 text-xs font-bold py-4 bg-slate-50 border border-dashed border-slate-200 rounded-xl">Siswa tidak ditemukan.</div>
                             
                             <label v-else v-for="s in filteredSiswa" :key="s.nis" class="cursor-pointer">
                                 <input type="radio" :value="s" v-model="selectedSiswa" class="peer sr-only">
-                                <div class="w-full py-3 px-3 rounded-2xl bg-white border-2 border-slate-100 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 text-slate-600 transition-all shadow-sm flex flex-col items-start">
+                                <div class="w-full py-3 px-3 rounded-2xl bg-white border-2 border-slate-100 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 text-slate-600 transition-all shadow-sm flex flex-col items-start hover:border-emerald-200">
                                     <span class="font-black text-[11px] text-slate-800 uppercase line-clamp-1 w-full">{{ s.nama }}</span>
                                     <div class="flex items-center gap-1 mt-1 w-full justify-between">
-                                        <span class="text-[9px] font-bold text-slate-400">NIS: {{ s.nis }}</span>
+                                        <span class="text-[9px] font-bold text-slate-400">{{ s.nis }}</span>
                                         <span class="text-[8px] font-bold text-white px-1.5 py-0.5 rounded uppercase" :class="getSabukColor(s.sabuk)">{{ s.sabuk }}</span>
                                     </div>
                                 </div>
@@ -97,47 +127,47 @@
                         </div>
                     </div>
 
-                    <div v-if="selectedSiswa" class="animate-fade-in">
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">2. Alokasi Dana</label>
-                        <div class="flex gap-2">
+                    <div v-if="selectedSiswa" class="animate-fade-in bg-white p-5 rounded-3xl border border-slate-100 shadow-sm relative z-30">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">2. Alokasi Tabungan</label>
+                        <div class="flex gap-3">
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" value="Pengesahan" v-model="kategoriTabungan" class="peer sr-only">
-                                <div class="px-3 py-3 rounded-xl bg-white border-2 border-slate-200 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 text-slate-600 font-bold text-[11px] text-center transition-all uppercase tracking-wider">
-                                    Pengesahan
+                                <div class="px-4 py-3.5 rounded-2xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-emerald-500 peer-checked:text-white peer-checked:border-emerald-500 text-slate-600 font-bold text-[11px] text-center transition-all uppercase tracking-wider shadow-sm flex flex-col items-center gap-1">
+                                    <i data-lucide="target" class="w-4 h-4"></i> Pengesahan
                                 </div>
                             </label>
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" value="Tes Sabuk" v-model="kategoriTabungan" class="peer sr-only">
-                                <div class="px-3 py-3 rounded-xl bg-white border-2 border-slate-200 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 text-slate-600 font-bold text-[11px] text-center transition-all uppercase tracking-wider">
-                                    Tes Sabuk
+                                <div class="px-4 py-3.5 rounded-2xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 text-slate-600 font-bold text-[11px] text-center transition-all uppercase tracking-wider shadow-sm flex flex-col items-center gap-1">
+                                    <i data-lucide="medal" class="w-4 h-4"></i> Tes Sabuk
                                 </div>
                             </label>
                         </div>
                     </div>
 
-                    <div v-if="selectedSiswa" class="animate-fade-in">
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">3. Nominal Setoran</label>
+                    <div v-if="selectedSiswa" class="animate-fade-in bg-white p-5 rounded-3xl border border-slate-100 shadow-sm relative z-30">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">3. Nominal Titipan</label>
                         
-                        <div class="flex gap-2 mb-3">
-                            <button type="button" @click="tambahNominal(10000)" class="flex-1 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all">+ 10rb</button>
-                            <button type="button" @click="tambahNominal(20000)" class="flex-1 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all">+ 20rb</button>
-                            <button type="button" @click="tambahNominal(50000)" class="flex-1 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all">+ 50rb</button>
+                        <div class="flex gap-2 mb-4">
+                            <button type="button" @click="tambahNominal(10000)" class="flex-1 py-2 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all">+ 10rb</button>
+                            <button type="button" @click="tambahNominal(20000)" class="flex-1 py-2 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all">+ 20rb</button>
+                            <button type="button" @click="tambahNominal(50000)" class="flex-1 py-2 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all">+ 50rb</button>
                         </div>
 
                         <div class="relative flex items-center">
-                            <span class="absolute left-5 text-emerald-500 font-black text-lg">Rp</span>
-                            <input type="text" v-model="nominalDisplay" @input="formatInputManual" inputmode="numeric" placeholder="0" class="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-slate-900 font-black text-2xl outline-none focus:border-emerald-500 transition-all shadow-sm">
-                            <button v-if="nominalRaw > 0" type="button" @click="resetNominal" class="absolute right-4 p-1.5 bg-slate-100 text-slate-400 hover:text-red-500 rounded-lg transition-colors">
-                                <i data-lucide="x" class="w-4 h-4"></i>
+                            <span class="absolute left-5 text-slate-400 font-black text-lg">Rp</span>
+                            <input type="text" v-model="nominalDisplay" @input="formatInputManual" inputmode="numeric" placeholder="0" class="w-full pl-14 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-2xl text-slate-800 font-black text-3xl outline-none focus:border-emerald-500 focus:bg-white transition-all shadow-inner">
+                            <button v-if="nominalRaw > 0" type="button" @click="resetNominal" class="absolute right-4 p-2 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl transition-colors shadow-sm">
+                                <i data-lucide="delete" class="w-5 h-5"></i>
                             </button>
                         </div>
                     </div>
 
                     <div v-if="selectedSiswa" class="sticky bottom-4 z-40 w-full mt-6 animate-fade-in">
-                        <button type="submit" :disabled="nominalRaw <= 0 || isSaving" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl active:scale-95 flex justify-center items-center gap-2 transition-all shadow-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="submit" :disabled="nominalRaw <= 0 || isSaving" class="w-full bg-slate-900 text-white font-black py-4.5 py-4 rounded-2xl active:scale-95 flex justify-center items-center gap-2 transition-all shadow-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm uppercase tracking-wider">
                             <i v-if="isSaving" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
                             <span v-else class="flex items-center gap-2">
-                                <i data-lucide="save" class="w-4 h-4"></i> Simpan Setoran
+                                <i data-lucide="save" class="w-5 h-5"></i> Simpan Transaksi
                             </span>
                         </button>
                     </div>
@@ -145,79 +175,84 @@
                 </form>
             </section>
 
-            <section class="w-full lg:w-5/12 bg-slate-50 p-5 lg:p-8 flex flex-col relative border-l border-white/50">
+            <!-- Sisi Kanan: Pratinjau Struk -->
+            <section class="w-full lg:w-5/12 p-5 lg:p-8 flex flex-col relative z-30 bg-slate-50/50">
                 
                 <transition name="fade" mode="out-in">
-                    <div v-if="selectedSiswa && nominalRaw > 0" class="w-full animate-fade-in flex flex-col h-full" id="previewContainer">
+                    <div v-if="selectedSiswa && nominalRaw > 0" class="w-full animate-fade-in flex flex-col h-full justify-center" id="previewContainer">
                         
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pratinjau Struk Digital</span>
-                            <span class="flex h-2 w-2 relative">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">Pratinjau Struk</span>
                         </div>
 
+                        <!-- Struk Kertas Modern -->
                         <div id="strukCard" class="receipt-paper">
-                            <div class="text-center mb-4">
-                                <h2 class="text-2xl font-black tracking-tighter leading-none mb-1 text-emerald-600 uppercase">TeratePay</h2>
-                                <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Pusat Madiun - Rayon Japanan</p>
+                            <!-- Logo Air di Belakang Struk -->
+                            <div class="absolute inset-0 opacity-[0.03] flex items-center justify-center pointer-events-none">
+                                <img src="rayon_japanan.webp" alt="Watermark" class="w-48 h-48 object-contain">
+                            </div>
+
+                            <div class="text-center mb-5 relative z-10">
+                                <h2 class="text-2xl font-black tracking-tighter leading-none mb-1 text-slate-800 uppercase">TeratePay</h2>
+                                <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Pusat Madiun - Rayon Japanan</p>
                             </div>
                             
-                            <div class="dashed-line"></div>
+                            <div class="dashed-line relative z-10"></div>
                             
-                            <div class="flex-between mb-1"><span class="text-[9px] uppercase font-bold text-slate-500">Waktu:</span><span class="text-[9px] font-bold">{{ waktuSekarang }}</span></div>
-                            <div class="flex-between mb-1"><span class="text-[9px] uppercase font-bold text-slate-500">No. TRX:</span><span class="text-[9px] font-black text-emerald-600">{{ idTransaksi }}</span></div>
-                            <div class="flex-between mb-3"><span class="text-[9px] uppercase font-bold text-slate-500">Penerima:</span><span class="text-[9px] font-bold uppercase">{{ namaKasir }}</span></div>
+                            <div class="flex-between mb-1.5 relative z-10"><span class="text-[9px] uppercase font-bold text-slate-400">Waktu:</span><span class="text-[9px] font-bold">{{ waktuSekarang }}</span></div>
+                            <div class="flex-between mb-1.5 relative z-10"><span class="text-[9px] uppercase font-bold text-slate-400">No. TRX:</span><span class="text-[9px] font-black text-emerald-600">{{ idTransaksi }}</span></div>
+                            <div class="flex-between mb-4 relative z-10"><span class="text-[9px] uppercase font-bold text-slate-400">Pelatih:</span><span class="text-[9px] font-bold uppercase">{{ namaKasir }}</span></div>
                             
-                            <div class="flex-between mb-1 mt-2">
-                                <span class="text-[10px] font-black uppercase text-slate-500">NIS Siswa:</span>
-                                <span class="text-[10px] font-black uppercase">{{ selectedSiswa.nis }}</span>
+                            <div class="flex-between mb-1.5 relative z-10">
+                                <span class="text-[10px] font-black uppercase text-slate-400">NIS Siswa:</span>
+                                <span class="text-[10px] font-black uppercase text-slate-700">{{ selectedSiswa.nis }}</span>
                             </div>
-                            <div class="flex-between mb-3">
-                                <span class="text-xs font-black uppercase text-slate-500">Nama:</span>
-                                <span class="text-xs font-black uppercase text-emerald-700 text-right max-w-[150px] leading-tight">{{ selectedSiswa.nama }}</span>
-                            </div>
-                            
-                            <div class="dashed-line"></div>
-                            
-                            <div class="flex-between mb-2">
-                                <span class="text-[10px] font-black uppercase">Setor {{ kategoriTabungan }}</span>
-                                <span class="text-sm font-black">Rp {{ formatRp(nominalRaw) }}</span>
+                            <div class="flex-between mb-4 relative z-10">
+                                <span class="text-xs font-black uppercase text-slate-400">Nama:</span>
+                                <span class="text-xs font-black uppercase text-slate-800 text-right max-w-[150px] leading-tight">{{ selectedSiswa.nama }}</span>
                             </div>
                             
-                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-100 mt-3">
-                                <div class="flex-between mb-1">
-                                    <span class="text-[8px] font-bold uppercase text-slate-500">Total Terkumpul:</span>
-                                    <span class="text-[9px] font-black">Rp {{ formatRp(totalTerkumpulBaru) }}</span>
+                            <div class="dashed-line relative z-10"></div>
+                            
+                            <div class="flex-between mb-3 relative z-10 items-end">
+                                <span class="text-[10px] font-black uppercase text-slate-500">Setor<br>{{ kategoriTabungan }}</span>
+                                <span class="text-lg font-black text-slate-800">Rp {{ formatRp(nominalRaw) }}</span>
+                            </div>
+                            
+                            <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200 mt-4 relative z-10">
+                                <div class="flex-between mb-1.5">
+                                    <span class="text-[9px] font-bold uppercase text-slate-400">Total Terkumpul:</span>
+                                    <span class="text-[10px] font-black text-slate-700">Rp {{ formatRp(totalTerkumpulBaru) }}</span>
                                 </div>
                                 <div v-if="kategoriTabungan === 'Pengesahan'" class="flex-between">
-                                    <span class="text-[8px] font-bold uppercase text-slate-500">Sisa Target:</span>
-                                    <span class="text-[9px] font-black text-amber-600">Rp {{ formatRp(sisaTargetBaru) }}</span>
+                                    <span class="text-[9px] font-bold uppercase text-slate-400">Sisa Target:</span>
+                                    <span class="text-[10px] font-black text-rose-500">Rp {{ formatRp(sisaTargetBaru) }}</span>
                                 </div>
                             </div>
                             
-                            <div class="dashed-line"></div>
-                            <div class="text-center mt-4">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">Alhamdulillah Sah!</p>
-                                <p class="text-[8px] font-bold text-slate-400 italic leading-relaxed">"Sebaik-baik manusia adalah yang bermanfaat bagi orang lain."</p>
+                            <div class="dashed-line mt-4 relative z-10"></div>
+                            <div class="text-center mt-5 relative z-10">
+                                <p class="text-[11px] font-black uppercase tracking-widest text-emerald-600 mb-1.5">Alhamdulillah Sah!</p>
+                                <p class="text-[8px] font-bold text-slate-400 italic leading-relaxed px-4">"Sebaik-baik manusia adalah yang bermanfaat bagi orang lain."</p>
                             </div>
                         </div>
                         
-                        <div v-if="isSaved" class="mt-6 w-full max-w-[340px] mx-auto animate-fade-in flex flex-col gap-3">
-                            <button @click="shareKeWhatsApp" class="w-full bg-[#25D366] text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all hover:bg-green-600 text-xs uppercase tracking-wider">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i> Bagikan ke WhatsApp
+                        <div v-if="isSaved" class="mt-8 w-full max-w-[340px] mx-auto animate-fade-in flex flex-col gap-3">
+                            <button @click="shareKeWhatsApp" class="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 active:scale-95 transition-all hover:bg-green-600 text-xs uppercase tracking-wider">
+                                <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim Struk ke WA
                             </button>
-                            <button @click="resetForm" class="w-full bg-white text-slate-600 border border-slate-200 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all text-xs uppercase tracking-wider">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Setoran Baru
+                            <button @click="resetForm" class="w-full bg-white text-slate-600 border border-slate-200 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all text-xs uppercase tracking-wider hover:bg-slate-50">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Transaksi Baru
                             </button>
                         </div>
                     </div>
                 </transition>
 
-                <div v-if="!selectedSiswa || nominalRaw <= 0" class="flex flex-col items-center justify-center h-full opacity-40 absolute inset-0">
-                    <i data-lucide="receipt" class="w-16 h-16 text-slate-400 mb-3"></i>
-                    <p class="text-xs font-bold text-slate-500 text-center uppercase tracking-widest">Pilih siswa & isi nominal<br>untuk melihat struk</p>
+                <div v-if="!selectedSiswa || nominalRaw <= 0" class="flex flex-col items-center justify-center h-full absolute inset-0 z-10">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-slate-100">
+                        <i data-lucide="receipt" class="w-8 h-8 text-slate-300"></i>
+                    </div>
+                    <p class="text-xs font-bold text-slate-400 text-center uppercase tracking-widest leading-relaxed">Isi form di samping<br>untuk pratinjau struk</p>
                 </div>
             </section>
         </main>
@@ -229,7 +264,6 @@
             setup() {
                 const API_URL = localStorage.getItem('terate_google_url') || 'https://script.google.com/macros/s/AKfycbyNCQPSbVNz7-xkEOScOWsKZyPogIGDlI7fRyHDa1jjvvvU4PjCZqB7GnzddNMbwuW_/exec';
 
-                // TARIK NAMA PELATIH YANG SEDANG LOGIN
                 const namaKasir = ref(localStorage.getItem('terate_nama_kasir') || 'Admin Lapangan');
 
                 const toasts = ref([]);
@@ -256,7 +290,6 @@
                 const muatDataSiswa = async () => {
                     if (!API_URL) return showToast("URL API tidak ditemukan!", "error");
                     isFetching.value = true;
-                    showToast("Menyinkronkan data siswa...", "info");
                     try {
                         const response = await fetch(API_URL + "?action=get_all_siswa");
                         const result = await response.json();
@@ -267,7 +300,6 @@
                                 target_pengesahan: parseInt(item.target_pengesahan) || 3500000,
                                 tabungan_sabuk: parseInt(item.tabungan_sabuk) || 0
                             }));
-                            showToast("Data siswa berhasil dimuat!", "success");
                         } else { showToast("Gagal memuat data", "error"); }
                     } catch (error) { showToast("Koneksi gagal", "error"); } finally { isFetching.value = false; }
                 };
@@ -298,9 +330,9 @@
 
                 const getSabukColor = (sabuk) => {
                     const s = sabuk.toLowerCase();
-                    if (s === 'polos') return 'bg-black';
+                    if (s === 'polos') return 'bg-slate-900';
                     if (s === 'jambon') return 'bg-pink-500';
-                    if (s === 'hijau') return 'bg-green-600';
+                    if (s === 'hijau') return 'bg-emerald-600';
                     if (s === 'putih') return 'bg-slate-300 text-slate-800';
                     return 'bg-slate-500';
                 };
@@ -316,7 +348,7 @@
                         nama: selectedSiswa.value.nama,
                         kategori: kategoriTabungan.value,
                         nominal: nominalRaw.value,
-                        kasir: namaKasir.value // <-- API AKAN MENERIMA NAMA MAS ADIT/UGIK DLL
+                        kasir: namaKasir.value 
                     };
 
                     try {
@@ -330,25 +362,32 @@
                         else selectedSiswa.value.tabungan_sabuk += nominalRaw.value;
 
                         isSaved.value = true;
-                        showToast("Setoran berhasil di-Push ke Database!", "success");
+                        showToast("Transaksi Berhasil!", "success");
                     } catch (error) { showToast("Gagal menyimpan.", "error"); } finally { isSaving.value = false; }
                 };
 
                 const shareKeWhatsApp = async () => {
-                    showToast("Mengekspor struk digital...", "success");
+                    showToast("Menyiapkan struk...", "success");
                     const el = document.getElementById('strukCard');
                     const canvas = await html2canvas(el, { scale: 2.5, backgroundColor: "#ffffff" });
                     
                     canvas.toBlob((blob) => {
-                        const fileName = `Setoran_${selectedSiswa.value.nama.replace(/\s/g,'')}_${idTransaksi.value}.png`;
+                        const fileName = `Struk_${selectedSiswa.value.nama.replace(/\s/g,'')}_${idTransaksi.value}.png`;
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a'); a.href = url; a.download = fileName;
                         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
                         
                         const noWa = selectedSiswa.value.wa.replace(/^0/, '62');
-                        let teksWA = `Salam Persaudaraan 🙏\n\nAlhamdulillah dek *${selectedSiswa.value.nama}* malam ini telah menabung *Rp ${formatRp(nominalRaw.value)}* untuk ${kategoriTabungan.value}.\n\nTotal dana terkumpul: *Rp ${formatRp(totalTerkumpulBaru.value)}*.\n`;
-                        if (kategoriTabungan.value === 'Pengesahan') teksWA += `Sisa target: Rp ${formatRp(sisaTargetBaru.value)}.\n`;
-                        teksWA += `\nTetap semangat! (Penerima: ${namaKasir.value})`;
+                        let teksWA = `Salam Persaudaraan 🙏
+
+Alhamdulillah dek *${selectedSiswa.value.nama}*, setoran untuk ${kategoriTabungan.value} sebesar *Rp ${formatRp(nominalRaw.value)}* telah kami terima.
+
+Total dana terkumpul: *Rp ${formatRp(totalTerkumpulBaru.value)}*.
+`;
+                        if (kategoriTabungan.value === 'Pengesahan') teksWA += `Sisa target: Rp ${formatRp(sisaTargetBaru.value)}.
+`;
+                        teksWA += `
+Tetap semangat berlatih! (Penerima: ${namaKasir.value})`;
 
                         setTimeout(() => {
                             const isAndroid = /android/i.test(navigator.userAgent.toLowerCase());
@@ -368,8 +407,7 @@
                 onMounted(() => { muatDataSiswa(); if (window.lucide) lucide.createIcons(); });
 
                 return {
-                    namaKasir, // Export namaKasir agar terbaca di HTML
-                    toasts, searchQuery, filteredSiswa, selectedSiswa, kategoriTabungan,
+                    namaKasir, toasts, searchQuery, filteredSiswa, selectedSiswa, kategoriTabungan,
                     nominalDisplay, nominalRaw, isFetching, isSaving, isSaved,
                     idTransaksi, waktuSekarang, totalTerkumpulBaru, sisaTargetBaru,
                     formatRp, formatInputManual, tambahNominal, resetNominal, getSabukColor,
@@ -378,6 +416,5 @@
             }
         }).mount('#app');
     </script>
-
 </body>
 </html>

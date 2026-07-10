@@ -13,26 +13,30 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #0f172a; 
-            color: #f8fafc;
+            background-color: #f8fafc; 
+            color: #0f172a;
             -webkit-tap-highlight-color: transparent; 
         }
         .mesh-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
             background-image: 
-                radial-gradient(at 0% 0%, hsla(220, 100%, 36%, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, hsla(253, 16%, 7%, 0.8) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, hsla(220, 100%, 75%, 0.4) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(253, 50%, 80%, 0.4) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, hsla(200, 80%, 85%, 0.4) 0px, transparent 50%);
+            filter: blur(50px);
         }
         .glass-card { 
-            background: rgba(30, 41, 59, 0.7); 
-            backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3); 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); 
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         [v-cloak] { display: none !important; }
         
-        canvas { touch-action: none; background-color: #f8fafc; border-radius: 1rem; width: 100%; height: 180px; border: 2px dashed #cbd5e1; cursor: crosshair; }
+        canvas { touch-action: none; background-color: #ffffff; border-radius: 1rem; width: 100%; height: 180px; border: 2px dashed #cbd5e1; cursor: crosshair; }
+        
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(10px); }
     </style>
@@ -42,99 +46,97 @@
 
     <div id="app" v-cloak class="w-full max-w-md mx-auto min-h-screen relative flex flex-col px-5 py-8 pb-20">
         
-        <!-- HEADER PRIVAT (TEMA BIRU ELEGAN) -->
-        <header class="text-center mb-8 animate-fade-in">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20">
-                <i data-lucide="briefcase" class="w-8 h-8 text-white"></i>
+        <header class="text-center mb-8 animate-fade-in pt-4">
+            <div class="flex justify-center mb-4">
+                <img src="rayon_japanan.webp" alt="Logo Rayon Japanan" class="w-20 h-20 object-contain drop-shadow-md rounded-2xl bg-white/60 p-2 border border-white">
             </div>
-            <h1 class="text-2xl font-black text-white tracking-tight">Formulir Kelas Privat</h1>
-            <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-1">Khusus Dewasa (Usia 25+)</p>
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">Formulir Kelas Privat</h1>
+            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Khusus Dewasa (Usia 25+)</p>
         </header>
 
-        <!-- PROGRESS BAR -->
-        <div class="flex items-center justify-between mb-8 relative">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-800 -z-10 rounded-full"></div>
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-blue-500 -z-10 rounded-full transition-all duration-500" :style="`width: ${(step / 3) * 100}%`"></div>
+        <!-- Progress Bar -->
+        <div class="flex items-center justify-between mb-8 relative px-2">
+            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-1 bg-slate-200 -z-10 rounded-full"></div>
+            <div class="absolute left-2 top-1/2 -translate-y-1/2 h-1 bg-blue-500 -z-10 rounded-full transition-all duration-500" :style="`width: calc(${(step - 1) / 2} * 100%)`"></div>
             
-            <div v-for="i in 3" :key="i" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all duration-300"
-                 :class="step >= i ? 'bg-blue-500 border-blue-500 text-slate-900 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-slate-800 border-slate-700 text-slate-500'">
+            <div v-for="i in 3" :key="i" class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all duration-300"
+                 :class="step >= i ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 border-2 border-white' : 'bg-white border-2 border-slate-200 text-slate-400'">
                 {{ i }}
             </div>
         </div>
 
-        <div class="glass-card rounded-[2rem] p-6 relative overflow-hidden flex-grow flex flex-col border-t-4 border-t-blue-500">
+        <div class="glass-card rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden flex-grow flex flex-col border-t-4 border-t-blue-600">
             <transition name="fade" mode="out-in">
                 
-                <!-- STEP 1: IDENTITAS DEWASA -->
+                <!-- STEP 1 -->
                 <div v-if="step === 1" key="step1" class="space-y-5">
                     <div>
-                        <h2 class="text-lg font-black text-white">Identitas Pendaftar</h2>
-                        <p class="text-xs text-slate-400 mt-1 mb-4">Lengkapi biodata diri Anda untuk pendaftaran kelas privat.</p>
+                        <h2 class="text-xl font-black text-slate-800">Identitas Pendaftar</h2>
+                        <p class="text-xs text-slate-500 mt-1 mb-4 font-medium">Lengkapi biodata diri Anda untuk pendaftaran kelas privat eksekutif.</p>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Nama Lengkap</label>
-                        <input type="text" v-model="form.nama_siswa" placeholder="Sesuai KTP" class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-500 transition-all uppercase">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Nama Lengkap</label>
+                        <input type="text" v-model="form.nama_siswa" placeholder="Sesuai KTP" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-blue-500 focus:bg-white transition-all uppercase shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">No. Whatsapp</label>
-                        <input type="tel" v-model="form.wa_siswa" placeholder="08..." class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-500 transition-all">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">No. WhatsApp Aktif</label>
+                        <input type="tel" v-model="form.wa_siswa" placeholder="08..." class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-blue-500 focus:bg-white transition-all shadow-sm">
                     </div>
                     
-                    <!-- Wali dihilangkan, diganti Pekerjaan/Status -->
-                    <div class="border-t border-slate-700/50 pt-5 mt-2">
-                        <label class="block text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1.5 ml-1">Pekerjaan Saat Ini</label>
-                        <input type="text" v-model="form.pekerjaan" placeholder="Contoh: Karyawan Swasta / Wiraswasta" class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-500 transition-all uppercase">
+                    <div class="border-t border-slate-100 pt-5 mt-2">
+                        <label class="block text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1.5 ml-1">Pekerjaan Saat Ini</label>
+                        <input type="text" v-model="form.pekerjaan" placeholder="Contoh: Karyawan Swasta / Wiraswasta" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-blue-500 focus:bg-white transition-all uppercase shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1.5 ml-1">Kontak Darurat (Istri / Saudara)</label>
-                        <input type="tel" v-model="form.wa_ortu" placeholder="08..." class="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-sm font-bold text-white outline-none focus:border-blue-500 transition-all">
+                        <label class="block text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1.5 ml-1">Kontak Darurat (Istri / Saudara)</label>
+                        <input type="tel" v-model="form.wa_ortu" placeholder="08..." class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:border-blue-500 focus:bg-white transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- STEP 2: PAKTA INTEGRITAS DEWASA -->
+                <!-- STEP 2 -->
                 <div v-if="step === 2" key="step2" class="space-y-4">
                     <div>
-                        <h2 class="text-lg font-black text-white">Pakta Integritas (Privat)</h2>
-                        <p class="text-[10px] text-slate-400 mt-1 mb-4 uppercase tracking-wider font-bold">Persetujuan kelas eksekutif/dewasa.</p>
+                        <h2 class="text-xl font-black text-slate-800">Pakta Integritas</h2>
+                        <p class="text-[10px] text-slate-500 mt-1 mb-4 uppercase tracking-wider font-bold">Persetujuan kelas eksekutif / dewasa.</p>
                     </div>
 
-                    <label class="flex items-start gap-3 p-3 bg-slate-800/30 border border-slate-700 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
-                        <input type="checkbox" v-model="pakta.semangat" class="mt-1 w-4 h-4 accent-blue-500">
-                        <span class="text-xs font-bold text-slate-200 leading-relaxed">Saya mendaftar atas kemauan sendiri tanpa paksaan dari pihak mana pun.</span>
+                    <label class="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-white hover:border-blue-300 transition-all shadow-sm">
+                        <input type="checkbox" v-model="pakta.semangat" class="mt-1 w-5 h-5 accent-blue-600 rounded">
+                        <span class="text-xs font-bold text-slate-700 leading-relaxed">Saya mendaftar atas kemauan sendiri tanpa paksaan dari pihak mana pun.</span>
                     </label>
 
-                    <label class="flex items-start gap-3 p-3 bg-slate-800/30 border border-slate-700 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
-                        <input type="checkbox" v-model="pakta.sehat" class="mt-1 w-4 h-4 accent-blue-500">
-                        <span class="text-xs font-bold text-slate-200 leading-relaxed">Saya bersedia mengatur dan berkomitmen pada jadwal latihan di sela-sela kesibukan pekerjaan/keluarga.</span>
+                    <label class="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-white hover:border-blue-300 transition-all shadow-sm">
+                        <input type="checkbox" v-model="pakta.sehat" class="mt-1 w-5 h-5 accent-blue-600 rounded">
+                        <span class="text-xs font-bold text-slate-700 leading-relaxed">Saya bersedia mengatur dan berkomitmen pada jadwal latihan di sela-sela kesibukan.</span>
                     </label>
 
-                    <label class="flex items-start gap-3 p-3 bg-slate-800/30 border border-slate-700 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
-                        <input type="checkbox" v-model="pakta.patuh" class="mt-1 w-4 h-4 accent-blue-500">
-                        <span class="text-xs font-bold text-slate-200 leading-relaxed">Saya bersedia melepaskan atribut jabatan/status sosial saat berada di tempat latihan untuk melebur dalam persaudaraan.</span>
+                    <label class="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-white hover:border-blue-300 transition-all shadow-sm">
+                        <input type="checkbox" v-model="pakta.patuh" class="mt-1 w-5 h-5 accent-blue-600 rounded">
+                        <span class="text-xs font-bold text-slate-700 leading-relaxed">Saya bersedia <span class="text-blue-600">melepaskan atribut jabatan/status sosial</span> saat berada di tempat latihan untuk melebur.</span>
                     </label>
 
-                    <label class="flex items-start gap-3 p-4 bg-blue-900/20 border border-blue-700/50 rounded-xl cursor-pointer hover:bg-blue-900/40 transition-all relative overflow-hidden">
-                        <div class="absolute -right-4 -bottom-4 opacity-10"><i data-lucide="shield-check" class="w-20 h-20 text-blue-400"></i></div>
-                        <input type="checkbox" v-model="pakta.tujuan" class="mt-1 w-5 h-5 accent-blue-500 relative z-10 shrink-0">
-                        <span class="text-xs font-black text-blue-100 leading-relaxed relative z-10">Saya memahami bahwa tujuan utama latihan ini adalah untuk mendidik manusia berbudi luhur, tahu benar dan tahu salah.</span>
+                    <label class="flex items-start gap-3 p-5 bg-blue-50 border border-blue-200 rounded-2xl cursor-pointer hover:bg-blue-100 transition-all relative overflow-hidden">
+                        <input type="checkbox" v-model="pakta.tujuan" class="mt-1 w-5 h-5 accent-blue-700 relative z-10 shrink-0 rounded">
+                        <span class="text-xs font-black text-blue-900 leading-relaxed relative z-10">Saya memahami bahwa tujuan utama latihan ini adalah untuk mendidik manusia berbudi luhur, tahu benar dan tahu salah.</span>
+                        <div class="absolute -right-4 -bottom-4 opacity-10"><i data-lucide="shield-check" class="w-24 h-24 text-blue-600"></i></div>
                     </label>
                 </div>
 
-                <!-- STEP 3: TANDA TANGAN & SUBMIT -->
+                <!-- STEP 3 -->
                 <div v-if="step === 3" key="step3" class="space-y-5 flex-grow flex flex-col">
                     <div>
-                        <h2 class="text-lg font-black text-white">Tanda Tangan Digital</h2>
-                        <p class="text-xs text-slate-400 mt-1 mb-2">Goreskan tanda tangan persetujuan Anda.</p>
+                        <h2 class="text-xl font-black text-slate-800">Tanda Tangan Digital</h2>
+                        <p class="text-xs text-slate-500 mt-1 mb-2 font-medium">Goreskan tanda tangan persetujuan Anda di area bawah ini.</p>
                     </div>
 
                     <div class="relative w-full flex-grow flex flex-col">
                         <canvas id="sigCanvas"></canvas>
-                        <button @click="clearSignature" class="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-md text-[9px] font-black uppercase tracking-wider active:scale-95 shadow-sm">Hapus / Ulangi</button>
+                        <button @click="clearSignature" class="absolute top-3 right-3 p-2 bg-slate-100 hover:bg-red-50 text-red-500 rounded-lg text-[9px] font-black uppercase tracking-wider active:scale-95 transition-all shadow-sm">Hapus / Ulangi</button>
                     </div>
 
-                    <div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-center mt-auto">
-                        <p class="text-[10px] font-bold text-amber-400 leading-relaxed">
+                    <div class="p-4 bg-slate-100 border border-slate-200 rounded-2xl text-center mt-auto">
+                        <p class="text-[11px] font-bold text-slate-600 leading-relaxed italic">
                             "Sepiro gedening sengsoro yen tinompo amung dadi cubo."
                         </p>
                     </div>
@@ -143,17 +145,17 @@
             </transition>
 
             <!-- NAVIGATION BUTTONS -->
-            <div class="flex gap-3 mt-8 pt-4 border-t border-slate-700/50">
-                <button v-if="step > 1" @click="step--" class="px-5 py-3.5 bg-slate-800 text-slate-300 font-bold rounded-xl active:scale-95 transition-all text-sm hover:bg-slate-700 border border-slate-700">
+            <div class="flex gap-3 mt-8 pt-6 border-t border-slate-100">
+                <button v-if="step > 1" @click="step--" class="px-6 py-4 bg-white text-slate-600 font-bold rounded-2xl active:scale-95 transition-all text-sm hover:bg-slate-50 border border-slate-200 shadow-sm">
                     Kembali
                 </button>
                 
-                <button v-if="step < 3" @click="nextStep" class="flex-grow bg-blue-600 text-white font-black py-3.5 rounded-xl active:scale-95 transition-all shadow-[0_0_15px_rgba(37,130,246,0.3)] text-sm hover:bg-blue-500">
-                    Lanjut
+                <button v-if="step < 3" @click="nextStep" class="flex-grow bg-blue-600 text-white font-black py-4 rounded-2xl active:scale-95 transition-all shadow-lg shadow-blue-500/30 text-sm hover:bg-blue-500">
+                    Lanjutkan
                 </button>
                 
-                <button v-if="step === 3" @click="submitForm" :disabled="isSubmitting" class="flex-grow bg-blue-600 text-white font-black py-3.5 rounded-xl active:scale-95 transition-all shadow-[0_0_20px_rgba(37,130,246,0.4)] text-sm hover:bg-blue-500 flex justify-center items-center gap-2 disabled:opacity-50">
-                    <i v-if="isSubmitting" data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                <button v-if="step === 3" @click="submitForm" :disabled="isSubmitting" class="flex-grow bg-slate-900 text-white font-black py-4 rounded-2xl active:scale-95 transition-all shadow-xl shadow-slate-900/20 text-sm hover:bg-slate-800 flex justify-center items-center gap-2 disabled:opacity-50">
+                    <i v-if="isSubmitting" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
                     <span v-else>Selesaikan Pendaftaran</span>
                 </button>
             </div>
@@ -168,9 +170,6 @@
 
         createApp({
             setup() {
-                // ==========================================
-                // API GOOGLE SCRIPT TERATEPAY
-                // ==========================================
                 const API_URL = localStorage.getItem('terate_google_url') || 'https://script.google.com/macros/s/AKfycbyNCQPSbVNz7-xkEOScOWsKZyPogIGDlI7fRyHDa1jjvvvU4PjCZqB7GnzddNMbwuW_/exec';
 
                 const step = ref(1);
@@ -190,7 +189,7 @@
 
                 const showToast = (msg, isSuccess = true) => {
                     const toast = document.createElement('div');
-                    toast.className = `${isSuccess ? 'bg-blue-500' : 'bg-red-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
+                    toast.className = `${isSuccess ? 'bg-blue-600' : 'bg-red-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
                     toast.innerText = msg;
                     document.getElementById('toastContainer').appendChild(toast);
                     setTimeout(() => toast.remove(), 3500);
@@ -199,12 +198,12 @@
                 const nextStep = () => {
                     if (step.value === 1) {
                         if (!form.nama_siswa || !form.wa_siswa || !form.pekerjaan || !form.wa_ortu) {
-                            return showToast("Harap isi semua data identitas!", false);
+                            return showToast("Mohon lengkapi semua data identitas.", false);
                         }
                     }
                     if (step.value === 2) {
                         if (!pakta.semangat || !pakta.sehat || !pakta.patuh || !pakta.tujuan) {
-                            return showToast("Anda harus menyetujui semua poin Pakta Integritas!", false);
+                            return showToast("Anda harus menyetujui seluruh Pakta Integritas.", false);
                         }
                     }
                     
@@ -219,9 +218,14 @@
                     canvas = document.getElementById('sigCanvas');
                     if(!canvas) return;
                     ctx = canvas.getContext('2d');
+                    
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
-                    ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#0f172a';
+                    
+                    ctx.lineWidth = 3; 
+                    ctx.lineCap = 'round'; 
+                    ctx.strokeStyle = '#0f172a';
+                    
                     const getPos = (e) => {
                         const rect = canvas.getBoundingClientRect();
                         const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
@@ -238,21 +242,20 @@
 
                 const clearSignature = () => { if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); };
 
-                // --- GENERATE NIS KHUSUS PRIVAT (AWALAN 6) ---
                 const submitForm = async () => {
                     const blank = document.createElement('canvas');
                     blank.width = canvas.width; blank.height = canvas.height;
-                    if (canvas.toDataURL() === blank.toDataURL()) return showToast("Tanda tangan wajib diisi!", false);
+                    if (canvas.toDataURL() === blank.toDataURL()) return showToast("Tanda tangan wajib diisi.", false);
 
                     isSubmitting.value = true;
                     signatureData = canvas.toDataURL("image/png");
 
-                    // MEMBUAT NIS BARU: 6 + YYMMDD + 2 Angka Acak
+                    // MEMBUAT NIS BARU: KHUSUS PRIVAT (AWALAN 6)
                     const d = new Date();
                     const yy = String(d.getFullYear()).slice(-2); 
                     const mm = String(d.getMonth() + 1).padStart(2, '0'); 
                     const dd = String(d.getDate()).padStart(2, '0'); 
-                    const rnd = String(Math.floor(Math.random() * 90) + 10); // Angka acak 10-99
+                    const rnd = String(Math.floor(Math.random() * 90) + 10);
                     
                     const generatedNIS = `6${yy}${mm}${dd}${rnd}`;
 
@@ -261,9 +264,9 @@
                         nis: generatedNIS,
                         nama_siswa: form.nama_siswa.toUpperCase(),
                         wa_siswa: form.wa_siswa,
-                        nama_ortu: form.pekerjaan.toUpperCase(), // Kolom ortu kita akali jadi Pekerjaan
-                        wa_ortu: form.wa_ortu, // Kolom wa_ortu jadi Kontak Darurat
-                        target: 4500000, // Misal target privat lebih besar
+                        nama_ortu: form.pekerjaan.toUpperCase(), 
+                        wa_ortu: form.wa_ortu, 
+                        target: 4500000, 
                         ttd_base64: signatureData 
                     };
 
@@ -274,12 +277,12 @@
                             body: JSON.stringify(payload)
                         });
                         
-                        showToast(`Pendaftaran Privat Berhasil! NIS: ${generatedNIS}`, true);
+                        showToast(`Pendaftaran Berhasil. NIS: ${generatedNIS}`, true);
                         localStorage.setItem('terate_user_nis', generatedNIS);
                         setTimeout(() => { window.location.href = 'index.html'; }, 2500);
 
                     } catch (error) {
-                        showToast("Koneksi gagal. Coba lagi.", false);
+                        showToast("Koneksi gagal. Silakan coba lagi.", false);
                     } finally {
                         isSubmitting.value = false;
                     }
@@ -287,9 +290,7 @@
 
                 onMounted(() => { if (window.lucide) lucide.createIcons(); });
 
-                return {
-                    step, form, pakta, nextStep, submitForm, isSubmitting, clearSignature
-                };
+                return { step, form, pakta, nextStep, submitForm, isSubmitting, clearSignature };
             }
         }).mount('#app');
     </script>
