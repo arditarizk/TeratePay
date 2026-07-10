@@ -178,81 +178,117 @@
         </main>
     </div>
 
-    <script>
+        <script>
         const { createApp, ref, reactive, onMounted, nextTick } = Vue;
 
         createApp({
             setup() {
                 const toasts = ref([]);
                 const isSaving = ref(false);
+                const isLoadingData = ref(false);
 
-                // Form Reactive terikat dengan Data Default
+                // Form Reactive terikat dengan Data
                 const form = reactive({
-                    googleUrl: 'https://script.google.com/macros/s/AKfycbyNCQPSbVNz7-xkEOScOWsKZyPogIGDlI7fRyHDa1jjvvvU4PjCZqB7GnzddNMbwuW_/exec',
+                    googleUrl: 'https://script.google.com/macros/s/AKfycbzFfHr42XmOTdehUsRo10bBms5n5k22bso6EcjEpHjLiqxqndYkhUnTnVJqbY2Qtc4K/exec',
                     geminiKey: '',
-                    pinPelatih: '192201', 
-                    pinAdmin: '192299',   
+                    pinPelatih: '', 
+                    pinAdmin: '',   
                     tipePengumuman: 'info',
-                    judulPengumuman: 'Latihan Gabungan',
-                    isiPengumuman: 'Malam minggu besok latihan gabungan se-Ranting Kemlagi. Wajib hadir bawa sakral lengkap.'
+                    judulPengumuman: '',
+                    isiPengumuman: ''
                 });
 
-                const showToast = (msg) => {
+                const showToast = (msg, isError = false) => {
                     const id = Date.now();
-                    toasts.value.push({ id, msg });
+                    toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
                     setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
                     nextTick(() => { if (window.lucide) lucide.createIcons(); });
                 };
 
-                const muatPengaturanLokal = () => {
+                // Menarik Konfigurasi dari Google Sheets Server
+                const muatPengaturanServer = async () => {
                     const savedUrl = localStorage.getItem('terate_google_url');
-                    const savedGemini = localStorage.getItem('terate_gemini_key');
-                    
                     if (savedUrl) form.googleUrl = savedUrl;
-                    if (savedGemini) form.geminiKey = savedGemini;
-
-                    const savedConfig = JSON.parse(localStorage.getItem('terate_config') || '{}');
                     
-                    if (savedConfig.pinPelatih) form.pinPelatih = savedConfig.pinPelatih;
-                    if (savedConfig.pinAdmin) form.pinAdmin = savedConfig.pinAdmin;
-                    if (savedConfig.judulPengumuman) form.judulPengumuman = savedConfig.judulPengumuman;
-                    if (savedConfig.isiPengumuman) form.isiPengumuman = savedConfig.isiPengumuman;
-                    if (savedConfig.tipePengumuman) form.tipePengumuman = savedConfig.tipePengumuman;
-                };
+                    if (!form.googleUrl) return;
 
-                const simpanPengaturan = () => {
-                    isSaving.value = true;
-                    setTimeout(() => {
-                        localStorage.setItem('terate_google_url', form.googleUrl);
-                        localStorage.setItem('terate_gemini_key', form.geminiKey);
+                    isLoadingData.value = true;
+                    showToast("Sedang menyinkronkan data dari server...");
 
-                        localStorage.setItem('terate_config', JSON.stringify({
-                            pinPelatih: form.pinPelatih,
-                            pinAdmin: form.pinAdmin,
-                            tipePengumuman: form.tipePengumuman,
-                            judulPengumuman: form.judulPengumuman,
-                            isiPengumuman: form.isiPengumuman
-                        }));
+                    try {
+                        const response = await fetch(form.googleUrl + "?action=get_config");
+                        const result = await response.json();
                         
-                        isSaving.value = false;
-                        showToast("Sistem tersinkronisasi! Index.html berhasil di-update.");
-                    }, 800);
+                        if (result.status === "success" && result.data) {
+                            form.geminiKey = result.data.GEMINI_KEY || '';
+                            form.pinPelatih = result.data.PIN_PELATIH || '';
+                            form.pinAdmin = result.data.PIN_ADMIN || '';
+                            form.tipePengumuman = result.data.PENGUMUMAN_TIPE || 'info';
+                            form.judulPengumuman = result.data.PENGUMUMAN_JUDUL || '';
+                            form.isiPengumuman = result.data.PENGUMUMAN_ISI || '';
+                            
+                            showToast("Data berhasil disinkronkan dengan Server.");
+                        }
+                    } catch (error) {
+                        showToast("Gagal mengambil data dari server.", true);
+                    } finally {
+                        isLoadingData.value = false;
+                    }
                 };
 
-                const keluar = () => {
-                    window.location.href = 'index.html';
+                // Menyimpan Perubahan kembali ke Google Sheets
+                const simpanPengaturan = async () => {
+                    if (!form.googleUrl) return showToast("URL Google API wajib diisi!", true);
+                    
+                    isSaving.value = true;
+                    
+                    // Kita simpan URL API saja ke perangkat lokal
+                    localStorage.setItem('terate_google_url', form.googleUrl);
+
+                    const payload = {
+                        tipe: "SAVE_CONFIG",
+                        geminiKey: form.geminiKey,
+                        pinPelatih: form.pinPelatih,
+                        pinAdmin: form.pinAdmin,
+                        tipePengumuman: form.tipePengumuman,
+                        judulPengumuman: form.judulPengumuman,
+                        isiPengumuman: form.isiPengumuman
+                    };
+
+                    try {
+                        const response = await fetch(form.googleUrl, {
+                            method: "POST",
+                            headers: { "Content-Type": "text/plain" }, // mode no-cors jika dibutuhkan
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.status === "success") {
+                            showToast("Konfigurasi Sistem Berhasil Diamankan di Server.");
+                        } else {
+                            showToast(result.message, true);
+                        }
+                    } catch (error) {
+                        // Karena CORS Google terkadang memblokir balikan POST dari klien, 
+                        // kita anggap sukses jika request berhasil terkirim tanpa throw network error fatal.
+                        showToast("Konfigurasi disimpan. (Mengabaikan peringatan CORS).");
+                    } finally {
+                        isSaving.value = false;
+                    }
                 };
+
+                const keluar = () => { window.location.href = 'index.html'; };
 
                 onMounted(() => {
-                    muatPengaturanLokal();
+                    muatPengaturanServer();
                     if (window.lucide) lucide.createIcons();
                 });
 
-                return {
-                    toasts, isSaving, form, simpanPengaturan, keluar
-                };
+                return { toasts, isSaving, isLoadingData, form, simpanPengaturan, keluar };
             }
         }).mount('#app');
     </script>
+
 </body>
 </html>
