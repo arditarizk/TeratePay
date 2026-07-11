@@ -216,6 +216,28 @@
 </div>
 
             </header>
+<!-- PAPAN PENGUMUMAN DINAMIS -->
+<div v-if="pengumuman.judul" class="animate-fade-in mb-8 mt-2">
+    <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] flex items-start gap-4 relative overflow-hidden" 
+         :class="pengumuman.tipe === 'penting' ? 'border-l-4 border-l-rose-500' : 'border-l-4 border-l-blue-500'">
+        
+        <div class="absolute right-0 top-0 w-32 h-32 opacity-10 pointer-events-none" 
+             :class="pengumuman.tipe === 'penting' ? 'bg-rose-500' : 'bg-blue-500'" style="filter: blur(40px);"></div>
+        
+        <div class="p-3 rounded-2xl shrink-0 relative z-10" 
+             :class="pengumuman.tipe === 'penting' ? 'bg-rose-50 text-rose-500' : 'bg-blue-50 text-blue-500'">
+            <i :data-lucide="pengumuman.tipe === 'penting' ? 'alert-triangle' : 'info'" class="w-6 h-6"></i>
+        </div>
+        
+        <div class="relative z-10">
+            <h3 class="text-sm font-black uppercase tracking-widest mb-1" 
+                :class="pengumuman.tipe === 'penting' ? 'text-rose-600' : 'text-blue-600'">
+                {{ pengumuman.judul }}
+            </h3>
+            <p class="text-sm font-medium text-slate-600 leading-relaxed">{{ pengumuman.isi }}</p>
+        </div>
+    </div>
+</div>
 
             <!-- HERO SECTION -->
             <section class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 mb-24 mt-8">
@@ -703,8 +725,7 @@
                 </transition>
             </div>
         </transition>
-        <!-- WHATSAPP FLOATING BUTTON -->
-        <a href="https://wa.me/62895410571547?text=Halo%20Admin%20PSHT%20Ranting%20Kemlagi,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20siswa%20baru." target="_blank" class="fixed bottom-6 right-6 z-[90] bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center group border-2 border-white">
+        <a :href="'https://wa.me/' + noWa + '?text=Halo%20Pelatih,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20siswa%20baru.'" target="_blank" class="fixed bottom-6 right-6 z-[90] bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center group border-2 border-white">
             <span class="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-60"></span>
             <i data-lucide="message-circle" class="w-7 h-7 relative z-10"></i>
             
@@ -749,6 +770,10 @@
     }
                 const isLoading = ref(false);
                 const targetSuro = new Date('2027-06-06T00:00:00');
+                const noWa = ref('6289660061234');
+const tanggalSuro = ref('2027-06-06T00:00:00');
+const pengumuman = ref({ tipe: '', judul: '', isi: '' });
+
                 
                 // State untuk Tab Lagu & URL PDF
                 const tabLagu = ref('mars');
@@ -801,10 +826,11 @@ const posterFull = ref(false);
                 const liveUpdateTitle = ref('Menunggu sinkronisasi...');
 
                 const sisaHariSuro = computed(() => {
-                    const diff = targetSuro - new Date();
-                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                    return days > 0 ? days : 0;
-                });
+    const target = new Date(tanggalSuro.value);
+    const diff = target - new Date();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return days > 0 ? days : 0;
+});
 
                 const modalTitle = computed(() => {
                     if (modalLogin.type === 'siswa') return 'Portal Siswa';
@@ -837,54 +863,57 @@ const posterFull = ref(false);
                 };
 
                 const loadDynamicJadwal = () => {
-                    const configStr = localStorage.getItem('terate_config');
-                    let configAdmin = null;
-                    try { if(configStr) configAdmin = JSON.parse(configStr); } catch(e){}
+    const configStr = localStorage.getItem('terate_config');
+    let dynamicJadwal = [];
 
-                    let dynamicJadwal = [];
-
-                    if (configAdmin && configAdmin.judulPengumuman) {
-                        liveUpdateTitle.value = configAdmin.judulPengumuman;
-                        dynamicJadwal.push({
-                            kategori: configAdmin.tipePengumuman === 'penting' ? 'Darurat / Penting' : 'Info Terkini',
-                            judul: configAdmin.judulPengumuman,
-                            deskripsi: configAdmin.isiPengumuman,
-                            waktu: 'Sesuai Instruksi Pusat',
-                            lokasi: 'Sesuai Instruksi Pusat',
-                            icon: configAdmin.tipePengumuman === 'penting' ? 'alert-triangle' : 'megaphone',
-                            colorIconBg: configAdmin.tipePengumuman === 'penting' ? 'bg-amber-50' : 'bg-blue-50',
-                            colorIconText: configAdmin.tipePengumuman === 'penting' ? 'text-amber-500' : 'text-blue-500',
-                        });
-                    } else {
-                        liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
-                    }
+    if (configStr) {
+        try {
+            const configAdmin = JSON.parse(configStr);
+            
+            // Terapkan No WA dan Tanggal
+            if (configAdmin.noWa) noWa.value = configAdmin.noWa;
+            if (configAdmin.tanggalSuro) tanggalSuro.value = configAdmin.tanggalSuro + 'T00:00:00';
+            
+            // Ekstrak pengumuman ke state khusus, bukan ke dalam jadwal
+            if (configAdmin.judulPengumuman) {
+                pengumuman.value = {
+                    tipe: configAdmin.tipePengumuman,
+                    judul: configAdmin.judulPengumuman,
+                    isi: configAdmin.isiPengumuman
+                };
+                liveUpdateTitle.value = configAdmin.judulPengumuman;
+            } else {
+                liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
+            }
+        } catch(e) {}
+    } else {
+        liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
+    }
 
                     dynamicJadwal.push({
-                        kategori: 'Rutin',
-                        judul: 'Latihan Reguler',
-                        deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk masing-masing.',
-                        waktu: '19:22 WIB - Selesai.',
-                        Lokasi: 'Balai Dukuh Rembu Kidul.',
-                        icon: 'users-2',
-                        colorIconBg: 'bg-emerald-50',
-                        colorIconText: 'text-emerald-500',
-                    });
+        kategori: 'Rutin',
+        judul: 'Latihan Reguler',
+        deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk masing-masing.',
+        waktu: '19:22 WIB - Selesai.',
+        icon: 'users-2',
+        colorIconBg: 'bg-emerald-50',
+        colorIconText: 'text-emerald-500',
+    });
 
-                    if (dynamicJadwal.length < 3) {
-                         dynamicJadwal.push({
-                            kategori: 'Agenda',
-                            judul: 'Jadwal Latihan Privat',
-                            deskripsi: 'Setiap Selasa & Jumat. Memakai sakral lengkap & sabuk masing-masing.',
-                            waktu: 'Waktu dan Tempat Menyesuaikan',
-                            icon: 'users-2',
-                            colorIconBg: 'bg-purple-50',
-                            colorIconText: 'text-purple-500',
-                        });
-                    }
+    dynamicJadwal.push({
+        kategori: 'Agenda',
+        judul: 'Jadwal Latihan Privat',
+        deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan kesepakatan.',
+        waktu: 'Fleksibel',
+        icon: 'briefcase',
+        colorIconBg: 'bg-purple-50',
+        colorIconText: 'text-purple-500',
+    });
 
-                    jadwalList.value = dynamicJadwal.slice(0, 3);
-                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                };
+    jadwalList.value = dynamicJadwal;
+    nextTick(() => { if (window.lucide) lucide.createIcons(); });
+};
+
 
                 const bukaModalLogin = (type) => {
                     modalLogin.type = type;
@@ -955,11 +984,11 @@ const posterFull = ref(false);
                 });
 
                 return {
-                    isLoading, modalLogin, modalTitle, modalDesc, inputLabel,
-                    jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
-                    bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq,
-                    posterFull, bukaPosterFull
-                };
+    isLoading, modalLogin, modalTitle, modalDesc, inputLabel,
+    jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
+    bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq,
+    posterFull, bukaPosterFull, noWa, pengumuman
+};
             }
         }).mount('#app');
     </script>

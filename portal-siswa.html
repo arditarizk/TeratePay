@@ -11,8 +11,6 @@
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
     <script src="config.js"></script>
 
-<script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
-
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
@@ -50,62 +48,60 @@
 
     <div id="app" v-cloak class="w-full max-w-md mx-auto min-h-screen relative flex flex-col pt-6 px-5">
         
-        <!-- LOADING SCREEN -->
         <transition name="fade" mode="out-in">
             <div v-if="isFetching" key="loading" class="flex flex-col items-center justify-center h-[80vh] gap-4">
-      <div class="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center animate-pulse border border-slate-100 relative">
-    <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-</div>
+                <div class="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center animate-pulse border border-slate-100 relative">
+                    <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Menyelaraskan Data...</p>
             </div>
 
             <div v-else-if="isError" key="error" class="flex flex-col items-center justify-center h-[80vh] text-center px-4 animate-fade-in">
-    
-    <div class="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-lg overflow-hidden flex items-center justify-center bg-white">
-        <img src="rayon_japanan.webp" alt="Logo Rayon" class="w-full h-full object-cover">
-    </div>
+                <div class="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-lg overflow-hidden flex items-center justify-center bg-white">
+                    <img src="rayon_japanan.webp" alt="Logo Rayon" class="w-full h-full object-cover">
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">Akses Ditolak</h2>
+                <p class="text-sm text-slate-500 leading-relaxed mb-8 max-w-[280px]">
+                    Data tidak terdaftar di sistem. Pastikan NIS yang dimasukkan sudah sesuai dengan catatan pelatih.
+                </p>
+                <button @click="logout" class="w-full max-w-xs bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Kembali ke Beranda
+                </button>
+            </div>
 
-    <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">Akses Ditolak</h2>
-    <p class="text-sm text-slate-500 leading-relaxed mb-8 max-w-[280px]">
-        Data tidak terdaftar di sistem. Pastikan NIS yang dimasukkan sudah sesuai dengan catatan pelatih.
-    </p>
-
-    <button @click="logout" class="w-full max-w-xs bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-    </svg>
-    Kembali ke Beranda
-</button>
-</div>
-
-
-            <!-- DASHBOARD UTAMA -->
             <div v-else key="dashboard" class="w-full animate-fade-in flex flex-col">
                 
-                <header class="flex justify-between items-start mb-8">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-full bg-white border-4 border-white flex items-center justify-center shrink-0 overflow-hidden relative shadow-sm">
-                            <i data-lucide="user" class="w-6 h-6 text-slate-300 relative z-10 mb-2"></i>
-                            <div class="absolute bottom-0 w-full h-1/2" :class="getWarnaSabuk(siswa.sabuk)"></div>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">{{ sapaanWaktu }},</p>
-                            <h2 class="text-lg font-black text-slate-800 leading-tight truncate max-w-[200px]">{{ siswa.nama }}</h2>
-                            <div class="flex items-center gap-1.5 mt-1">
-                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 text-[9px] font-black uppercase tracking-wider rounded-md">
-                                    {{ siswa.rayon }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <button @click="logout" class="p-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-400 hover:text-red-500 transition-colors shadow-sm">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                <header class="relative flex items-center gap-4 mb-8">
+                    <button @click="logout" class="absolute top-0 right-0 flex flex-col items-center justify-center text-rose-500 hover:text-rose-600 transition-colors active:scale-95">
+                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span class="text-[8px] font-black uppercase tracking-widest">Logout</span>
                     </button>
+
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center shrink-0 overflow-hidden relative shadow-lg border-2 border-white bg-indigo-100">
+                        <img :src="`https://api.dicebear.com/9.x/adventurer/svg?seed=${siswa.nama}&backgroundColor=b6e3f4,c0aede,d1d4f9`" 
+                             alt="Avatar Siswa" class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="pr-16">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">{{ sapaanWaktu }},</p>
+                        <h2 class="text-lg font-black text-slate-800 leading-tight truncate">Dek {{ siswa.nama.split(' ')[0] }}</h2>
+                        <span class="px-2 py-0.5 bg-white/50 text-slate-600 border border-slate-200 text-[9px] font-black uppercase tracking-wider rounded-md mt-1 inline-block">
+                            Siswa {{ siswa.sabuk }}
+                        </span>
+                    </div>
                 </header>
 
-                <div v-if="pengumuman.judul" class="bg-white rounded-2xl p-4 mb-6 flex items-start gap-3 border border-slate-100 shadow-sm">
+                <div v-if="pengumuman.judul" class="bg-white rounded-2xl p-4 mb-3 flex items-start gap-3 border border-slate-100 shadow-sm">
                     <div class="p-2 rounded-lg shrink-0 mt-0.5" :class="pengumuman.tipe === 'penting' ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-600'">
-                        <i :data-lucide="pengumuman.tipe === 'penting' ? 'alert-triangle' : 'info'" class="w-4 h-4"></i>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path v-if="pengumuman.tipe === 'penting'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
                     </div>
                     <div>
                         <h3 class="text-[11px] font-black uppercase tracking-widest mb-1" :class="pengumuman.tipe === 'penting' ? 'text-amber-600' : 'text-slate-700'">
@@ -115,11 +111,35 @@
                     </div>
                 </div>
 
-                <!-- PROGRESS TABUNGAN -->
+                <div v-if="agendaSiswa" class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-4 mb-6 flex items-center justify-between shadow-md border border-slate-700 text-white gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 flex flex-col items-center justify-center shrink-0 border border-white/20">
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-300 -mb-1">{{ dapatkanBulanPendek(agendaSiswa.tanggal) }}</span>
+                            <span class="text-sm font-black text-white">{{ dapatkanTanggal(agendaSiswa.tanggal) }}</span>
+                        </div>
+                        <div class="truncate">
+                            <h3 class="text-[11px] sm:text-xs font-black uppercase tracking-widest mb-0.5 truncate">{{ agendaSiswa.judul }}</h3>
+                            <p class="text-[10px] font-medium text-slate-300 flex items-center gap-1 truncate">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                {{ agendaSiswa.lokasi }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="px-2.5 py-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-black uppercase tracking-wider rounded-lg whitespace-nowrap">
+                            {{ hitungSisaHari(agendaSiswa.tanggal) }} Hr Lagi
+                        </span>
+                    </div>
+                </div>
+
+
                 <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
-                    <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i> Finansial & Target
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Finansial & Target
                 </h3>
-                <div class="glass-card rounded-[2rem] p-6 mb-8 relative overflow-hidden border-t-4 border-t-emerald-500">
+                <div class="glass-card rounded-[2rem] p-6 mb-6 relative overflow-hidden border-t-4 border-t-emerald-500">
                     <div class="flex justify-between items-end mb-6">
                         <div>
                             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Terkumpul</p>
@@ -143,17 +163,73 @@
                         </p>
                     </div>
 
-                    <div class="pt-4 border-t border-slate-100 flex items-start gap-3">
-                        <div class="p-2 bg-emerald-50 rounded-lg shrink-0 border border-emerald-100">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+    <button @click="dapatkanEvaluasiAI" :disabled="isAnalyzingAI" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition-all active:scale-95 disabled:opacity-50 text-[10px] uppercase tracking-widest">
+        <svg v-if="isAnalyzingAI" class="w-4 h-4 animate-spin text-emerald-400" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <svg v-else class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        {{ isAnalyzingAI ? 'Menyusun Evaluasi...' : 'Minta Nasihat Pelatih (AI)' }}
+    </button>
+
+    <div v-if="pesanPelatihAI" class="p-4 bg-emerald-50 rounded-xl border border-emerald-100 relative overflow-hidden animate-fade-in">
+        <div class="absolute top-0 right-0 w-12 h-12 bg-emerald-100/50 rounded-bl-full flex items-start justify-end p-2 pointer-events-none">
+            <svg class="w-4 h-4 text-emerald-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        </div>
+        <p class="text-[11px] font-medium text-slate-700 leading-relaxed relative z-10 italic">
+            "{{ pesanPelatihAI }}"
+        </p>
+    </div>
+</div>
+
+
+                <div v-if="riwayatTabungan.length > 0" class="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm mb-8">
+                    <div class="flex justify-between items-center mb-4 px-1">
+                        <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Riwayat Setoran</h4>
+                        <span class="text-[9px] font-bold text-slate-400">{{ riwayatTabungan.length }} Transaksi Terakhir</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div v-for="(item, idx) in riwayatTabungan" :key="idx" class="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0 last:pb-0 px-1">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                </div>
+                                <div class="truncate">
+                                    <p class="text-xs font-bold text-slate-800 truncate">{{ formatTanggalOtomatis(item.tanggal) }}</p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">Oleh: {{ item.pelatih }}</p>
+                                </div>
+                            </div>
+                            <p class="text-sm font-black text-slate-700 shrink-0 ml-2">+Rp {{ formatRp(item.nominal) }}</p>
                         </div>
-                        <p class="text-[11px] font-medium text-slate-600 leading-relaxed">{{ insightAI }}</p>
                     </div>
                 </div>
 
-                <!-- AKADEMIK & FISIK -->
+                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1 mt-2">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Evaluasi & Catatan
+                </h3>
+                <div v-if="materiTerakhir" class="bg-blue-50 border border-blue-100 rounded-[1.5rem] p-5 mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100/50 rounded-bl-full flex items-start justify-end p-4 pointer-events-none">
+                        <svg class="w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.177-7.86l-2.765-2.767L7 12.431l3.119 3.121a1 1 0 001.414 0l5.952-5.95-1.062-1.062-5.6 5.6z"></path></svg>
+                    </div>
+                    <div class="relative z-10">
+                        <h4 class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1.5">Materi Terakhir (Diulas)</h4>
+                        <p class="text-xs font-bold text-slate-800 mb-2">{{ materiTerakhir.judul }}</p>
+                        <div class="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-white">
+                            <p class="text-[11px] font-medium text-slate-600 leading-relaxed italic">"{{ materiTerakhir.catatan }}"</p>
+                        </div>
+                    </div>
+                </div>
+
                 <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
-                    <i data-lucide="dumbbell" class="w-4 h-4 text-blue-500"></i> Progres Materi
+                    <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h12M6 12l4-4m-4 4l4 4m6-4l4-4m-4 4l4 4m-4-4l-4-4m4 4l-4 4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16M12 4h3a1 1 0 011 1v14a1 1 0 01-1 1h-3M12 4H9a1 1 0 00-1 1v14a1 1 0 001 1h3"></path>
+                    </svg>
+                    Progres Materi
                 </h3>
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
@@ -168,14 +244,18 @@
                     </div>
                 </div>
 
-                <!-- PEDOMAN & KE-SH-AN -->
                 <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
-                    <i data-lucide="book-open" class="w-4 h-4 text-indigo-500"></i> Pedoman & Larangan
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Pedoman & Larangan
                 </h3>
                 <div class="space-y-4 mb-8">
                     <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-50 rounded-bl-full flex items-start justify-end p-3">
-                            <i data-lucide="shield" class="w-4 h-4 text-indigo-300"></i>
+                            <svg class="w-4 h-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
                         </div>
                         <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 relative z-10">Nilai Ke-SH-an</h4>
                         <p class="text-[11px] font-medium text-slate-600 leading-relaxed relative z-10">{{ materiSiswa.keshan }}</p>
@@ -183,17 +263,27 @@
 
                     <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-16 h-16 bg-rose-50 rounded-bl-full flex items-start justify-end p-3">
-                            <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-300"></i>
+                            <svg class="w-4 h-4 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
                         </div>
                         <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 relative z-10">Larangan Tegas</h4>
                         <p class="text-[11px] font-medium text-slate-600 leading-relaxed relative z-10">{{ materiSiswa.larangan }}</p>
                     </div>
                 </div>
 
-                <!-- Footer -->
-                <div class="mt-auto pt-4 pb-8 text-center space-y-2 opacity-60">
-                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Panca Dasar PSHT</p>
-                    <p class="text-[9px] font-bold text-slate-400 tracking-widest">Persaudaraan • Olahraga • Beladiri • Kesenian • Kerohanian</p>
+                <div class="mt-auto pt-8 pb-10 text-center space-y-4 opacity-60">
+                    <div class="flex justify-center items-center gap-2 text-slate-400">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Panca Dasar PSHT</p>
+                        <p class="text-[9px] font-bold text-slate-400 tracking-[0.15em] uppercase">
+                            Persaudaraan • Olahraga • Beladiri • Kesenian • Kerohanian
+                        </p>
+                    </div>
                 </div>
 
             </div>
@@ -207,24 +297,15 @@
 
         createApp({
             setup() {
-    // 1. Ambil URL dari LocalStorage (jika disetting admin), 
-    // jika kosong, gunakan dari config.js
-    const API_URL = localStorage.getItem('terate_google_url') || TERATE_CONFIG.API_URL;
-    
-    // 2. Ambil Gemini API Key dari LocalStorage (jika disetting admin),
-    // jika kosong, gunakan dari config.js
-    let GEMINI_API_KEY = TERATE_CONFIG.GEMINI_API_KEY;
-    const configStr = localStorage.getItem('terate_config');
-    if (configStr) {
-        try {
-            const config = JSON.parse(configStr);
-            if (config.geminiKey) GEMINI_API_KEY = config.geminiKey;
-        } catch(e) {}
-    }
-    
-
+                const API_URL = localStorage.getItem('terate_google_url') || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
+                
                 const isFetching = ref(true);
                 const isError = ref(false);
+
+                // --- STATE BARU ---
+                const riwayatTabungan = ref([]);
+                const materiTerakhir = ref(null);
+                const agendaSiswa = ref(null);
 
                 const sapaanWaktu = computed(() => {
                     const jam = new Date().getHours();
@@ -277,8 +358,20 @@
                     return silabusMateri['polos'];
                 });
 
-                const targetDate = new Date('2027-06-06T00:00:00');
                 const formatRp = (n) => new Intl.NumberFormat('id-ID').format(n);
+
+                // --- FORMATTER TANGGAL OTOMATIS ---
+                const formatTanggalOtomatis = (tglString) => {
+                    if (!tglString) return '';
+                    const dateObj = new Date(tglString);
+                    return dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+                };
+                const dapatkanTanggal = (tglString) => new Date(tglString).getDate();
+                const dapatkanBulanPendek = (tglString) => new Date(tglString).toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
+                const hitungSisaHari = (tglString) => {
+                    const diff = new Date(tglString) - new Date();
+                    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+                };
 
                 const muatDataSiswa = async () => {
                     const nisAktif = localStorage.getItem('terate_user_nis');
@@ -297,12 +390,35 @@
                             siswa.value = {
                                 ...siswa.value, 
                                 nama: result.data.nama,
+                                gender: tentukanGender(result.data.nama),
                                 nis: result.data.nis,
                                 sabuk: result.data.sabuk || 'Polos',
                                 tabungan_pengesahan: parseInt(result.data.tabungan_pengesahan) || 0,
                                 target_pengesahan: parseInt(result.data.target_pengesahan) || 3500000,
                                 tabungan_sabuk: parseInt(result.data.tabungan_sabuk) || 0
                             };
+
+                            // Menarik Array Riwayat Tabungan dari Google Apps Script
+                            if (result.data.riwayat_tabungan && Array.isArray(result.data.riwayat_tabungan)) {
+                                riwayatTabungan.value = result.data.riwayat_tabungan;
+                            } else {
+                                riwayatTabungan.value = [];
+                            }
+
+                            // Menarik Object Materi Terakhir dari Google Apps Script
+                            if (result.data.materi_terakhir) {
+                                materiTerakhir.value = result.data.materi_terakhir;
+                            } else {
+                                materiTerakhir.value = null; 
+                            }
+
+                            // Menarik Object Agenda dari Google Apps Script
+                            if (result.data.agenda_terdekat) {
+                                agendaSiswa.value = result.data.agenda_terdekat;
+                            } else {
+                                agendaSiswa.value = null;
+                            }
+
                             isError.value = false;
                         } else {
                             isError.value = true;
@@ -311,7 +427,6 @@
                         isError.value = true;
                     } finally {
                         isFetching.value = false;
-                        nextTick(() => { if (window.lucide) lucide.createIcons(); });
                     }
                 };
 
@@ -321,29 +436,94 @@
                     return p > 100 ? 100 : Math.floor(p);
                 });
 
-                const insightAI = computed(() => {
-                    if (isFetching.value) return "Menganalisa data...";
+                // State untuk AI
+const isAnalyzingAI = ref(false);
+const pesanPelatihAI = ref('');
 
-                    const sisaHutang = siswa.value.target_pengesahan - siswa.value.tabungan_pengesahan;
-                    
-                    if (sisaHutang <= 0) return "Administrasimu sudah lunas! Tetap jaga semangat latihan dan perdalam hafalan materi.";
-                    
-                    if (persentase.value < 30) {
-                        return "Perjalanan masih panjang. Sisihkan sebagian uang jajanmu secara konsisten agar tidak memberatkan di akhir.";
-                    } else if (persentase.value < 75) {
-                        return "Progres yang bagus! Tetap disiplin menyetor tabungan tiap kali jadwal latihan berlangsung.";
-                    } else {
-                        return `Sedikit lagi menuju target. Fokus pada penyelesaian sisa administrasi sebesar Rp ${formatRp(sisaHutang)}.`;
-                    }
-                });
+const dapatkanEvaluasiAI = async () => {
+    const cacheKey = `ai_eval_${siswa.value.nis}`;
+    const cacheTimeKey = `ai_time_${siswa.value.nis}`;
+    const skrg = new Date().getTime();
+    
+    // Masa berlaku cache 3 Hari
+    const masaBerlaku = 3 * 24 * 60 * 60 * 1000;
+    
+    const waktuSimpan = localStorage.getItem(cacheTimeKey);
+    if (localStorage.getItem(cacheKey) && waktuSimpan && (skrg - parseInt(waktuSimpan)) < masaBerlaku) {
+        pesanPelatihAI.value = localStorage.getItem(cacheKey);
+        return; 
+    }
 
-                const getWarnaSabuk = (sabuk) => {
-                    const s = (sabuk || '').toLowerCase();
-                    if (s.includes('polos')) return 'bg-slate-900';
-                    if (s.includes('jambon')) return 'bg-pink-500';
-                    if (s.includes('hijau')) return 'bg-emerald-600';
-                    if (s.includes('putih')) return 'bg-slate-200 border-t border-slate-300';
-                    return 'bg-slate-700';
+    isAnalyzingAI.value = true;
+    
+    const catatanMateri = materiTerakhir.value ? materiTerakhir.value.catatan : 'Belum ada evaluasi spesifik.';
+    const sisaHutang = siswa.value.target_pengesahan - siswa.value.tabungan_pengesahan;
+    const statusTabungan = sisaHutang <= 0 ? 'Lunas' : `Kurang Rp ${formatRp(sisaHutang)} (${persentase.value}%)`;
+
+    const promptText = `Bertindaklah sebagai Pelatih SH Terate yang tegas, lugas, dan memotivasi. 
+    Berikan pesan singkat untuk siswa ini:
+    - Nama: ${siswa.value.nama}
+    - Sabuk: ${siswa.value.sabuk}
+    - Administrasi Pengesahan: ${statusTabungan}
+    - Catatan Latihan Terakhir: ${catatanMateri}
+    
+    Instruksi: Berikan evaluasi dalam SATU paragraf singkat (maksimal 2-3 kalimat). Evaluasi harus menyinggung progres fisik (catatan latihan) dan kedisiplinan menabung. Gunakan bahasa yang memotivasi khas persaudaraan PSHT, tegur dengan halus jika tabungan masih kurang atau ada gerakan yang salah, dan apresiasi jika sudah lunas/bagus. Jangan gunakan pemformatan tebal/miring atau kata sapaan berlebihan. Langsung pada intinya.`;
+
+    try {
+        // 1. Validasi Keberadaan Kunci API Secara Ketat
+        let apiKey = '';
+        if (typeof TERATE_CONFIG !== 'undefined' && TERATE_CONFIG.GEMINI_API_KEY) {
+            apiKey = TERATE_CONFIG.GEMINI_API_KEY;
+        }
+        const configLokal = localStorage.getItem('terate_config');
+        if (configLokal) {
+            const parsedConfig = JSON.parse(configLokal);
+            if (parsedConfig.geminiKey) apiKey = parsedConfig.geminiKey;
+        }
+
+        if (!apiKey) {
+            throw new Error("Kunci API Gemini tidak ditemukan.");
+        }
+
+        // 2. Memaksa penggunaan endpoint v1 dengan model gemini-1.5-flash yang dijamin valid
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+        });
+        
+        // 3. Tangkap error jika Google menolak permintaan (misal: Key salah / Quota habis)
+        if (!response.ok) {
+            throw new Error(`Koneksi ke AI Ditolak (Status: ${response.status})`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.candidates && result.candidates[0].content.parts[0].text) {
+            let teksAI = result.candidates[0].content.parts[0].text.trim();
+            
+            localStorage.setItem(cacheKey, teksAI); 
+            localStorage.setItem(cacheTimeKey, skrg.toString());
+            
+            pesanPelatihAI.value = teksAI;
+        } else {
+            throw new Error("Format balasan AI tidak sesuai standar.");
+        }
+    } catch (error) {
+        console.error("Gagal Memuat AI:", error); // Catat di konsol untuk debugging admin
+        // Jika gagal, tampilkan pesan darurat ini ke siswa, bukan mendiamkan layar
+        pesanPelatihAI.value = "Tetap semangat latihan dan jaga kedisiplinan. Pelatih sedang fokus di lapangan, instruksi detail akan disampaikan pada pertemuan berikutnya.";
+    } finally {
+        isAnalyzingAI.value = false;
+    }
+};
+
+
+                const tentukanGender = (nama) => {
+                    if (!nama) return 'laki';
+                    const namaDepan = nama.split(' ')[0].toLowerCase();
+                    const namaPerempuan = ['siti', 'putri', 'dewi', 'ayu', 'anisa', 'fatimah', 'indri', 'diana'];
+                    return namaPerempuan.some(n => namaDepan.includes(n)) ? 'perempuan' : 'laki';
                 };
 
                 const logout = () => {
@@ -357,7 +537,10 @@
 
                 return {
                     sapaanWaktu, siswa, pengumuman, isFetching, isError, materiSiswa,
-                    formatRp, persentase, insightAI, getWarnaSabuk, logout
+                    formatRp, persentase, logout,
+                    riwayatTabungan, materiTerakhir, agendaSiswa,
+                    formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI
                 };
             }
         }).mount('#app');
