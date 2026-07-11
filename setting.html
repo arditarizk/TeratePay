@@ -199,18 +199,19 @@ createApp({
         const toasts = ref([]);
         const isSaving = ref(false);
 
-        const form = reactive({
-    googleUrl: API_URL,
-    geminiKey: GEMINI_API_KEY,
-    pdfUrl: '',
-    pinPelatih: TERATE_CONFIG.DEFAULT_PIN_PELATIH, 
-    pinAdmin: TERATE_CONFIG.DEFAULT_PIN_ADMIN,   
-    tipePengumuman: TERATE_CONFIG.DEFAULT_PENGUMUMAN_TIPE,
-    judulPengumuman: TERATE_CONFIG.DEFAULT_PENGUMUMAN_JUDUL,
-    isiPengumuman: TERATE_CONFIG.DEFAULT_PENGUMUMAN_ISI, // <--- TAMBAHKAN KOMA DI SINI
-    noWa: '6289660061234',
-    tanggalSuro: '2027-06-06'
-});
+                const form = reactive({
+            googleUrl: API_URL,
+            geminiKey: GEMINI_API_KEY,
+            pdfUrl: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PDF_URL || '') : '',
+            pinPelatih: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PIN_PELATIH || '192201') : '192201',
+            pinAdmin: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PIN_ADMIN || '192299') : '192299',
+            tipePengumuman: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PENGUMUMAN_TIPE || 'info') : 'info',
+            judulPengumuman: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PENGUMUMAN_JUDUL || '') : '',
+            isiPengumuman: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PENGUMUMAN_ISI || '') : '',
+            noWa: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_NO_WA || '6289660061234') : '6289660061234',
+            tanggalSuro: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_TANGGAL_SURO || '2027-06-06') : '2027-06-06'
+        });
+
 
 
         const showToast = (msg, isError = false) => {
