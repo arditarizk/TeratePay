@@ -929,43 +929,61 @@ const posterFull = ref(false);
                 };
 
                 const eksekusiLogin = () => {
-                    if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
-                    if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
-                    
-                    isLoading.value = true;
+    if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
+    if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
+    
+    isLoading.value = true;
 
-                    setTimeout(() => {
-                        isLoading.value = false;
-                        
-                        if (modalLogin.type === 'siswa') {
-                            localStorage.setItem('terate_user_nis', modalLogin.inputValue);
-                            showToast("NIS Ditemukan! Membuka Portal...", true);
-                            setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
-                        } 
-                        else {
-                            const userStr = modalLogin.usernameValue.toUpperCase();
-                            const passStr = modalLogin.inputValue;
-                            const namaAsli = DAFTAR_PELATIH[userStr];
+    setTimeout(() => {
+        isLoading.value = false;
+        
+        if (modalLogin.type === 'siswa') {
+            localStorage.setItem('terate_user_nis', modalLogin.inputValue);
+            showToast("NIS Ditemukan! Membuka Portal...", true);
+            setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
+        } 
+        else {
+            const userStr = modalLogin.usernameValue.toUpperCase();
+            const passStr = modalLogin.inputValue;
+            const namaAsli = DAFTAR_PELATIH[userStr];
 
-                            // Validasi Sandi (Sandi statis untuk UI mock, sebaiknya divalidasi ke server)
-                            if (passStr === '192201' && namaAsli) {
-                                showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
-                                localStorage.setItem('terate_nama_kasir', namaAsli);
+            // 1. Ambil PIN dari LocalStorage atau default config.js
+            const configStr = localStorage.getItem('terate_config');
+            let pinPelatihAktual = typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.DEFAULT_PIN_PELATIH : '192201';
+            let pinAdminAktual = typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.DEFAULT_PIN_ADMIN : '192299';
+            
+            if (configStr) {
+                try {
+                    const config = JSON.parse(configStr);
+                    if (config.pinPelatih) pinPelatihAktual = config.pinPelatih;
+                    if (config.pinAdmin) pinAdminAktual = config.pinAdmin;
+                } catch(e) {}
+            }
 
-                                setTimeout(() => {
-                                    if (userStr === 'ADMIN' || modalLogin.type === 'maintenance') {
-                                        window.location.href = 'setting.html';
-                                    } else {
-                                        window.location.href = 'kasir.html'; 
-                                    }
-                                }, 800);
-                            } else {
-                                showToast("ID Pengguna atau Sandi Salah!", false);
-                                modalLogin.inputValue = '';
-                            }
-                        }
-                    }, 1000);
-                };
+            // 2. Tentukan PIN yang benar berdasarkan siapa yang login
+            const isLoginAdmin = (userStr === 'ADMIN' || modalLogin.type === 'maintenance');
+            const pinYangBenar = isLoginAdmin ? pinAdminAktual : pinPelatihAktual;
+
+            // 3. Validasi Sandi Dinamis
+            if (passStr === pinYangBenar && namaAsli) {
+                showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
+                localStorage.setItem('terate_nama_kasir', namaAsli);
+
+                setTimeout(() => {
+                    if (isLoginAdmin) {
+                        window.location.href = 'setting.html';
+                    } else {
+                        window.location.href = 'kasir.html'; 
+                    }
+                }, 800);
+            } else {
+                showToast("ID Pengguna atau Sandi Salah!", false);
+                modalLogin.inputValue = '';
+            }
+        }
+    }, 1000);
+};
+
                 const bukaPosterFull = () => {
     posterFull.value = true;
     nextTick(() => { if (window.lucide) lucide.createIcons(); });

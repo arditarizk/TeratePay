@@ -366,8 +366,18 @@
                     const dateObj = new Date(tglString);
                     return dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
                 };
-                const dapatkanTanggal = (tglString) => new Date(tglString).getDate();
-                const dapatkanBulanPendek = (tglString) => new Date(tglString).toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
+                const dapatkanTanggal = (tglString) => {
+    if (!tglString) return '-';
+    const tgl = new Date(tglString);
+    return isNaN(tgl.getTime()) ? '-' : tgl.getDate();
+};
+
+const dapatkanBulanPendek = (tglString) => {
+    if (!tglString) return '-';
+    const tgl = new Date(tglString);
+    return isNaN(tgl.getTime()) ? 'ERR' : tgl.toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
+};
+
                 const hitungSisaHari = (tglString) => {
     if (!tglString) return 0;
     // Bersihkan string dari karakter yang mungkin menyebabkan error
