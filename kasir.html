@@ -411,15 +411,19 @@ const kirimNotifAbsen = async (siswa, status) => {
 
     let teksWA = '';
     
-    if (status === 'Hadir') {
+        if (status === 'Hadir') {
         teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nNyuwun sewu Bapak/Ibu, ngaturaken bilih lare panjenengan *${siswa.nama}* (Sabuk ${siswa.sabuk}) dinten niki mpun dugi wonten panggenan latihan kanthi wilujeng.\n\nKadosipun latihan dalu niki radi wengi, mugi-mugi diparingi kelancaran lan manfaat. Maturnuwun sanget kagem kepercayaane.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
-    } else if (status === 'Telat') {
-        teksWA = `Salam Persaudaraan 🙏\n\nBapak/Ibu wali dari *${siswa.nama}*, kami menginformasikan bahwa ananda hadir latihan hari ini namun *Terlambat*.\n\nMohon kerjasamanya agar pertemuan berikutnya bisa berangkat lebih awal. Terima kasih.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
-    } else if (status === 'Izin') {
-        teksWA = `Salam Persaudaraan 🙏\n\nBapak/Ibu wali dari *${siswa.nama}*, kami telah mencatat bahwa ananda hari ini *Izin* tidak mengikuti latihan.\n\nTerima kasih atas konfirmasinya.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
-    } else if (status === 'Alpha') {
-        teksWA = `Salam Persaudaraan 🙏\n\nBapak/Ibu wali dari *${siswa.nama}*, kami menginformasikan bahwa ananda hari ini *Alpha* (tidak hadir tanpa keterangan) di tempat latihan.\n\nMohon kerja samanya untuk mengingatkan putra/putrinya agar disiplin mengikuti jadwal. Terima kasih.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
+    } 
+    else if (status === 'Telat') {
+        teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nNyuwun sewu Bapak/Ibu wali dari *${siswa.nama}*. Kami menginformasikan bahwa ananda hari ini sudah hadir di tempat latihan, namun sedikit *terlambat* dari jadwal biasanya.\n\nBilih angsal nyuwun pirsa, menapa wau wonten kendala nalika bidhal? Kami menanyakan hal ini sekadar untuk memastikan keselamatan dan evaluasi kedisiplinan ananda bersama-sama.\n\nMaturnuwun sanget atas perhatiannya.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
+    } 
+    else if (status === 'Izin') {
+        teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nBapak/Ibu wali dari *${siswa.nama}*, sampun kulo catet bilih ananda dinten niki *Izin* tidak dapat mengikuti jadwal latihan.\n\nMugi-mugi urusan/halangan ananda dilancarkan. Kami tunggu kehadiran ananda kembali di jadwal latihan berikutnya. Terima kasih atas konfirmasinya.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
+    } 
+    else if (status === 'Alpha') {
+        teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nNyuwun sewu Bapak/Ibu wali dari *${siswa.nama}*. Kami dari jajaran pelatih ingin menanyakan kabar ananda, dikarenakan pada jadwal latihan hari ini ananda belum terlihat hadir (*Tanpa Keterangan*).\n\nApakah ananda sedang kurang enak badan atau ada halangan mendadak di rumah? Mohon berkenan memberikan kabar agar kami tidak khawatir dan bisa menyesuaikan rekap kehadiran ananda.\n\nMaturnuwun sanget.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`;
     }
+
 
     const isAndroid = /android/i.test(navigator.userAgent.toLowerCase());
     let linkWA = `https://api.whatsapp.com/send?phone=${noWa}&text=${encodeURIComponent(teksWA)}`;

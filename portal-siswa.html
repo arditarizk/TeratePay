@@ -413,11 +413,17 @@
                             }
 
                             // Menarik Object Agenda dari Google Apps Script
-                            if (result.data.agenda_terdekat) {
-                                agendaSiswa.value = result.data.agenda_terdekat;
-                            } else {
-                                agendaSiswa.value = null;
-                            }
+if (result.data.agenda_terdekat && result.data.agenda_terdekat.tanggal) {
+    agendaSiswa.value = result.data.agenda_terdekat;
+} else {
+    // Jika dari database kosong, panggil fallback dari config.js
+    agendaSiswa.value = {
+        judul: "Pengesahan Warga Baru",
+        lokasi: "Padepokan Kota Mojokerto",
+        tanggal: typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.DEFAULT_TANGGAL_SURO : '2027-06-06'
+    };
+}
+
 
                             isError.value = false;
                         } else {
