@@ -369,9 +369,16 @@
                 const dapatkanTanggal = (tglString) => new Date(tglString).getDate();
                 const dapatkanBulanPendek = (tglString) => new Date(tglString).toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
                 const hitungSisaHari = (tglString) => {
-                    const diff = new Date(tglString) - new Date();
-                    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-                };
+    if (!tglString) return 0;
+    // Bersihkan string dari karakter yang mungkin menyebabkan error
+    const tgl = new Date(tglString);
+    if (isNaN(tgl.getTime())) return 0; // Kembalikan 0 jika tanggal tidak valid (menghilangkan NaN)
+    
+    const diff = tgl - new Date();
+    const hari = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return hari > 0 ? hari : 0;
+};
+
 
                 const muatDataSiswa = async () => {
                     const nisAktif = localStorage.getItem('terate_user_nis');

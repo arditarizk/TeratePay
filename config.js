@@ -1,5 +1,5 @@
 const TERATE_CONFIG = {
-    API_URL: 'https://script.google.com/macros/s/AKfycbwWsB0MkJgitVw6_XMG4M1ZL_JLXG5oQw7V55r_4nWGT2lDi9rTp0JoD6kKVFf_PSul/exec',
+    API_URL: 'https://script.google.com/macros/s/AKfycbzYtCZ1iALMbdxluw2FQMiCVNg1lv-NBiMpCUFb6tWt-nyA9GvnEXKSrPQMPD-IgSlR/exec',
     APP_NAME: 'Zenith Cell Financial Intelligence',
     APP_VERSION: '2.0.0', // <-- Ubah dari }; menjadi koma saja
 
