@@ -10,8 +10,7 @@
     <script src="https://unpkg.com/lucide@0.292.0"></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
     <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         body { 
@@ -20,6 +19,7 @@
             color: #0f172a;
             -webkit-tap-highlight-color: transparent; 
         }
+        /* Penyesuaian tema background light Gen Z */
         .mesh-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
             background-image: 
@@ -45,10 +45,10 @@
         .animate-shimmer { animation: shimmer 2.5s infinite linear; }
     </style>
 </head>
-<body class="selection:bg-emerald-500 selection:text-white pb-24">
+<body class="selection:bg-emerald-500 selection:text-white md:pb-0 pb-24">
     <div class="mesh-bg"></div>
 
-    <div id="app" v-cloak class="w-full max-w-md mx-auto min-h-screen relative flex flex-col pt-6 px-5">
+    <div id="app" v-cloak class="w-full max-w-6xl mx-auto min-h-screen relative flex flex-col pt-6 px-4 md:px-8">
         
         <transition name="fade" mode="out-in">
             <div v-if="isFetching" key="loading" class="flex flex-col items-center justify-center h-[80vh] gap-4">
@@ -58,15 +58,15 @@
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Menyelaraskan Data...</p>
             </div>
 
-            <div v-else-if="isError" key="error" class="flex flex-col items-center justify-center h-[80vh] text-center px-4 animate-fade-in">
+            <div v-else-if="isError" key="error" class="flex flex-col items-center justify-center h-[80vh] text-center px-4 animate-fade-in max-w-md mx-auto">
                 <div class="w-24 h-24 mb-6 rounded-full border-4 border-white shadow-lg overflow-hidden flex items-center justify-center bg-white">
-                    <img src="rayon_japanan.webp" alt="Logo Rayon" class="w-full h-full object-cover">
+                    <img src="rayon_japanan.webp" alt="Logo Rayon" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150/10b981/ffffff?text=PSHT'">
                 </div>
                 <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">Akses Ditolak</h2>
                 <p class="text-sm text-slate-500 leading-relaxed mb-8 max-w-[280px]">
                     Data tidak terdaftar di sistem. Pastikan NIS yang dimasukkan sudah sesuai dengan catatan pelatih.
                 </p>
-                <button @click="logout" class="w-full max-w-xs bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
+                <button @click="logout" class="w-full max-w-xs mx-auto bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
@@ -76,230 +76,254 @@
 
             <div v-else key="dashboard" class="w-full animate-fade-in flex flex-col">
                 
-                <header class="relative flex items-center gap-4 mb-8">
-                    <button @click="logout" class="absolute top-0 right-0 flex flex-col items-center justify-center text-rose-500 hover:text-rose-600 transition-colors active:scale-95">
-                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <header class="relative flex items-center justify-between gap-4 mb-8 bg-white/40 p-4 rounded-3xl backdrop-blur-md border border-white shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shrink-0 overflow-hidden relative shadow-lg border-2 border-white bg-indigo-100">
+                            <img :src="`https://api.dicebear.com/9.x/adventurer/svg?seed=${siswa.nama}&backgroundColor=b6e3f4,c0aede,d1d4f9`" 
+                                 alt="Avatar Siswa" class="w-full h-full object-cover">
+                        </div>
+    
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">{{ sapaanWaktu }},</p>
+                            <h2 class="text-lg sm:text-2xl font-black text-slate-800 leading-tight truncate">Dek {{ siswa.nama.split(' ')[0] }}</h2>
+                            <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200 text-[9px] font-black uppercase tracking-wider rounded-md mt-1 inline-block">
+                                Siswa {{ siswa.sabuk }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <button @click="logout" class="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 sm:px-4 sm:py-2 sm:bg-rose-50 sm:rounded-xl text-rose-500 hover:text-rose-600 transition-colors active:scale-95">
+                        <svg class="w-5 h-5 mb-0.5 sm:mb-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
-                        <span class="text-[8px] font-black uppercase tracking-widest">Logout</span>
+                        <span class="text-[8px] sm:text-xs font-black uppercase tracking-widest">Logout</span>
                     </button>
-
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center shrink-0 overflow-hidden relative shadow-lg border-2 border-white bg-indigo-100">
-                        <img :src="`https://api.dicebear.com/9.x/adventurer/svg?seed=${siswa.nama}&backgroundColor=b6e3f4,c0aede,d1d4f9`" 
-                             alt="Avatar Siswa" class="w-full h-full object-cover">
-                    </div>
-
-                    <div class="pr-16">
-                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">{{ sapaanWaktu }},</p>
-                        <h2 class="text-lg font-black text-slate-800 leading-tight truncate">Dek {{ siswa.nama.split(' ')[0] }}</h2>
-                        <span class="px-2 py-0.5 bg-white/50 text-slate-600 border border-slate-200 text-[9px] font-black uppercase tracking-wider rounded-md mt-1 inline-block">
-                            Siswa {{ siswa.sabuk }}
-                        </span>
-                    </div>
                 </header>
 
-                <div v-if="pengumuman.judul" class="bg-white rounded-2xl p-4 mb-3 flex items-start gap-3 border border-slate-100 shadow-sm">
-                    <div class="p-2 rounded-lg shrink-0 mt-0.5" :class="pengumuman.tipe === 'penting' ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-600'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path v-if="pengumuman.tipe === 'penting'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-black uppercase tracking-widest mb-1" :class="pengumuman.tipe === 'penting' ? 'text-amber-600' : 'text-slate-700'">
-                            {{ pengumuman.judul }}
-                        </h3>
-                        <p class="text-xs font-medium text-slate-500 leading-snug">{{ pengumuman.isi }}</p>
-                    </div>
-                </div>
-
-                <div v-if="agendaSiswa" class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-4 mb-6 flex items-center justify-between shadow-md border border-slate-700 text-white gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-12 h-12 rounded-xl bg-white/10 flex flex-col items-center justify-center shrink-0 border border-white/20">
-                            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-300 -mb-1">{{ dapatkanBulanPendek(agendaSiswa.tanggal) }}</span>
-                            <span class="text-sm font-black text-white">{{ dapatkanTanggal(agendaSiswa.tanggal) }}</span>
-                        </div>
-                        <div class="truncate">
-                            <h3 class="text-[11px] sm:text-xs font-black uppercase tracking-widest mb-0.5 truncate">{{ agendaSiswa.judul }}</h3>
-                            <p class="text-[10px] font-medium text-slate-300 flex items-center gap-1 truncate">
-                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                {{ agendaSiswa.lokasi }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="text-right shrink-0">
-                        <span class="px-2.5 py-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-black uppercase tracking-wider rounded-lg whitespace-nowrap">
-                            {{ hitungSisaHari(agendaSiswa.tanggal) }} Hr Lagi
-                        </span>
-                    </div>
-                </div>
-
-
-                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
-                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                    </svg>
-                    Finansial & Target
-                </h3>
-                <div class="glass-card rounded-[2rem] p-6 mb-6 relative overflow-hidden border-t-4 border-t-emerald-500">
-                    <div class="flex justify-between items-end mb-6">
-                        <!-- Ubah bagian ini -->
-<p class="text-2xl font-black text-slate-800 tracking-tight">
-    {{ saldoTerformat }}
-</p>
-<div class="text-right">
-    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target</p>
-    <p class="text-sm font-black text-slate-600">{{ targetTerformat }}</p>
-</div>
-                    </div>
-                    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1 mt-6">
-    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    Syarat Kehadiran
-</h3>
-<div class="glass-card rounded-[2rem] p-6 mb-6 relative overflow-hidden border-t-4 border-t-blue-500">
-    <div class="flex justify-between items-end mb-4">
-        <p class="text-2xl font-black text-slate-800 tracking-tight">{{ progresAbsensi.hadir }} <span class="text-sm text-slate-400">/ {{ progresAbsensi.target }}</span></p>
-        <div class="text-right">
-            <span :class="progresAbsensi.status_aman ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'" class="px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">
-                {{ progresAbsensi.status_aman ? 'Aman (≥70%)' : 'Rentan Ujian' }}
-            </span>
-        </div>
-    </div>
-    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-3">
-        <div :class="progresAbsensi.status_aman ? 'bg-emerald-500' : 'bg-amber-500'" class="h-full rounded-full transition-all duration-1000" :style="`width: ${progresAbsensi.persen}%`"></div>
-    </div>
-    <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Kehadiran Sabuk {{ siswa.sabuk }}</p>
-</div>
-
-                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-3 shadow-inner relative">
-                        <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out progress-glow relative overflow-hidden" :style="`width: ${persentase}%`">
-                            <div class="absolute inset-0 bg-white/20 w-full animate-shimmer"></div>
-                        </div>
-                    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
                     
-                    <div class="flex justify-between items-center mb-5">
-                        <p class="text-[10px] font-black uppercase tracking-wider text-emerald-600">
-                            {{ persentase >= 100 ? 'LUNAS' : `${persentase}% TERCAPAI` }}
-                        </p>
-                    </div>
+                    <div class="flex flex-col gap-4">
+                        
+                        <div v-if="pengumuman.judul" class="bg-white rounded-2xl p-4 flex items-start gap-3 border border-slate-100 shadow-sm transition-transform hover:-translate-y-1">
+                            <div class="p-2 rounded-lg shrink-0 mt-0.5" :class="pengumuman.tipe === 'penting' ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-600'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path v-if="pengumuman.tipe === 'penting'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-[11px] font-black uppercase tracking-widest mb-1" :class="pengumuman.tipe === 'penting' ? 'text-amber-600' : 'text-slate-700'">
+                                    {{ pengumuman.judul }}
+                               </h3>
+                                <p class="text-xs font-medium text-slate-500 leading-snug">{{ pengumuman.isi }}</p>
+                            </div>
+                        </div>
 
-                    <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
-    <button @click="dapatkanEvaluasiAI" :disabled="isAnalyzingAI" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition-all active:scale-95 disabled:opacity-50 text-[10px] uppercase tracking-widest">
-        <svg v-if="isAnalyzingAI" class="w-4 h-4 animate-spin text-emerald-400" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-        </svg>
-        <svg v-else class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-        </svg>
-        {{ isAnalyzingAI ? 'Menyusun Evaluasi...' : 'Minta Nasihat Pelatih (AI)' }}
-    </button>
-
-    <div v-if="pesanPelatihAI" class="p-4 bg-emerald-50 rounded-xl border border-emerald-100 relative overflow-hidden animate-fade-in">
-        <div class="absolute top-0 right-0 w-12 h-12 bg-emerald-100/50 rounded-bl-full flex items-start justify-end p-2 pointer-events-none">
-            <svg class="w-4 h-4 text-emerald-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-        </div>
-        <p class="text-[11px] font-medium text-slate-700 leading-relaxed relative z-10 italic">
-            "{{ pesanPelatihAI }}"
-        </p>
-    </div>
-</div>
-
-
-                <div v-if="riwayatTabungan.length > 0" class="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm mb-8">
-                    <div class="flex justify-between items-center mb-4 px-1">
-                        <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Riwayat Setoran</h4>
-                        <span class="text-[9px] font-bold text-slate-400">{{ riwayatTabungan.length }} Transaksi Terakhir</span>
-                    </div>
-                    <div class="space-y-4">
-                        <div v-for="(item, idx) in riwayatTabungan" :key="idx" class="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0 last:pb-0 px-1">
+                        <div v-if="agendaSiswa" class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-md border border-slate-700 text-white gap-3 transition-transform hover:-translate-y-1">
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-                                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                <div class="w-12 h-12 rounded-xl bg-white/10 flex flex-col items-center justify-center shrink-0 border border-white/20">
+                                    <span class="text-[9px] font-bold uppercase tracking-wider text-slate-300 -mb-1">{{ dapatkanBulanPendek(agendaSiswa.tanggal) }}</span>
+                                    <span class="text-sm font-black text-white">{{ dapatkanTanggal(agendaSiswa.tanggal) }}</span>
                                 </div>
                                 <div class="truncate">
-                                    <p class="text-xs font-bold text-slate-800 truncate">{{ formatTanggalOtomatis(item.tanggal) }}</p>
-                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">Oleh: {{ item.pelatih }}</p>
+                                    <h3 class="text-[11px] sm:text-xs font-black uppercase tracking-widest mb-0.5 truncate">{{ agendaSiswa.judul }}</h3>
+                                    <p class="text-[10px] font-medium text-slate-300 flex items-center gap-1 truncate">
+                                        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        {{ agendaSiswa.lokasi }}
+                                    </p>
                                 </div>
                             </div>
-                            <p class="text-sm font-black text-slate-700 shrink-0 ml-2">+Rp {{ formatRp(item.nominal) }}</p>
+                            <div class="text-right shrink-0">
+                                <span class="px-2.5 py-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-black uppercase tracking-wider rounded-lg whitespace-nowrap">
+                                    {{ hitungSisaHari(agendaSiswa.tanggal) }} Hr Lagi
+                                </span>
+                            </div>
                         </div>
+
+                        <div class="mt-2">
+                            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
+                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                </svg>
+                                Finansial & Target
+                            </h3>
+                            <div class="glass-card rounded-[2rem] p-6 relative overflow-hidden border-t-4 border-t-emerald-500 hover:shadow-lg transition-shadow">
+                                <div class="flex justify-between items-end mb-6">
+                                    <p class="text-3xl font-black text-slate-800 tracking-tight">
+                                        {{ saldoTerformat }}
+                                    </p>
+                                    <div class="text-right">
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target</p>
+                                        <p class="text-sm font-black text-slate-600">{{ targetTerformat }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-3 shadow-inner relative">
+                                    <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out progress-glow relative overflow-hidden" :style="`width: ${persentase}%`">
+                                        <div class="absolute inset-0 bg-white/20 w-full animate-shimmer"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between items-center mb-5">
+                                    <p class="text-[10px] font-black uppercase tracking-wider text-emerald-600">
+                                        {{ persentase >= 100 ? 'LUNAS' : `${persentase}% TERCAPAI` }}
+                                    </p>
+                                </div>
+
+                                <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                                    <button @click="dapatkanEvaluasiAI" :disabled="isAnalyzingAI" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl flex justify-center items-center gap-2 transition-all active:scale-95 disabled:opacity-50 text-xs uppercase tracking-widest shadow-md">
+                                        <svg v-if="isAnalyzingAI" class="w-4 h-4 animate-spin text-emerald-400" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                        </svg>
+                                        <svg v-else class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                        {{ isAnalyzingAI ? 'Menyusun Evaluasi...' : 'Minta Nasihat Pelatih (AI)' }}
+                                    </button>
+
+                                    <div v-if="pesanPelatihAI" class="p-4 bg-emerald-50 rounded-xl border border-emerald-100 relative overflow-hidden animate-fade-in">
+                                        <div class="absolute top-0 right-0 w-12 h-12 bg-emerald-100/50 rounded-bl-full flex items-start justify-end p-2 pointer-events-none">
+                                            <svg class="w-4 h-4 text-emerald-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                                        </div>
+                                        <p class="text-xs font-medium text-slate-700 leading-relaxed relative z-10 italic">
+                                            "{{ pesanPelatihAI }}"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-2">
+                            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
+                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Syarat Kehadiran
+                            </h3>
+                            <div class="glass-card rounded-[2rem] p-6 relative overflow-hidden border-t-4 border-t-blue-500 hover:shadow-lg transition-shadow">
+                                <div class="flex justify-between items-end mb-4">
+                                    <p class="text-3xl font-black text-slate-800 tracking-tight">{{ progresAbsensi.hadir }} <span class="text-lg text-slate-400 font-bold">/ {{ progresAbsensi.target }}</span></p>
+                                    <div class="text-right">
+                                        <span :class="progresAbsensi.status_aman ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'" class="px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                                            {{ progresAbsensi.status_aman ? 'Aman (≥70%)' : 'Rentan Ujian' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-3">
+                                    <div :class="progresAbsensi.status_aman ? 'bg-emerald-500' : 'bg-amber-500'" class="h-full rounded-full transition-all duration-1000" :style="`width: ${progresAbsensi.persen}%`"></div>
+                                </div>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Kehadiran Sabuk {{ siswa.sabuk }}</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="flex flex-col gap-4">
+                        
+                        <div>
+                            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1 mt-2 lg:mt-0">
+                                <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h12M6 12l4-4m-4 4l4 4m6-4l4-4m-4 4l4 4m-4-4l-4-4m4 4l-4 4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16M12 4h3a1 1 0 011 1v14a1 1 0 01-1 1h-3M12 4H9a1 1 0 00-1 1v14a1 1 0 001 1h3"></path>
+                                </svg>
+                                Progres Materi Latihan
+                            </h3>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm flex flex-col justify-between hover:-translate-y-1 transition-transform">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Senam Dasar</p>
+                                    <p class="text-2xl font-black text-slate-800">{{ materiSiswa.senam }}</p>
+                                    <p class="text-[9px] font-bold text-blue-500 mt-2 bg-blue-50 px-2.5 py-1 rounded-md inline-block w-max">Target Sabuk {{ siswa.sabuk }}</p>
+                                </div>
+                                <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm flex flex-col justify-between hover:-translate-y-1 transition-transform">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Jurus</p>
+                                    <p class="text-2xl font-black text-slate-800">{{ materiSiswa.jurus }}</p>
+                                    <p class="text-[9px] font-bold text-blue-500 mt-2 bg-blue-50 px-2.5 py-1 rounded-md inline-block w-max">Fokus Hafalan</p>
+                                </div>
+                            </div>
+
+                            <div v-if="materiTerakhir" class="bg-blue-50 border border-blue-100 rounded-[1.5rem] p-5 relative overflow-hidden shadow-sm">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100/50 rounded-bl-full flex items-start justify-end p-4 pointer-events-none">
+                                    <svg class="w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.177-7.86l-2.765-2.767L7 12.431l3.119 3.121a1 1 0 001.414 0l5.952-5.95-1.062-1.062-5.6 5.6z"></path></svg>
+                                </div>
+                                <div class="relative z-10">
+                                    <h4 class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1.5">Evaluasi Materi Terakhir</h4>
+                                    <p class="text-sm font-bold text-slate-800 mb-2">{{ materiTerakhir.judul }}</p>
+                                    <div class="bg-white/80 backdrop-blur-sm p-3.5 rounded-xl border border-white">
+                                        <p class="text-xs font-medium text-slate-600 leading-relaxed italic">"{{ materiTerakhir.catatan }}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-2">
+                            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                Ke-SH-an
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden h-full">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-50 rounded-bl-full flex items-start justify-end p-3">
+                                        <svg class="w-4 h-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 relative z-10">Nilai Budi Luhur</h4>
+                                    <p class="text-[11px] font-medium text-slate-600 leading-relaxed relative z-10">{{ materiSiswa.keshan }}</p>
+                                </div>
+
+                                <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden h-full">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-rose-50 rounded-bl-full flex items-start justify-end p-3">
+                                        <svg class="w-4 h-4 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                        </svg>
+                                    </div>
+                                    <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 relative z-10">Larangan Tegas</h4>
+                                    <p class="text-[11px] font-medium text-slate-600 leading-relaxed relative z-10">{{ materiSiswa.larangan }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="riwayatTabungan.length > 0" class="mt-2">
+                            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Riwayat Setoran
+                            </h3>
+                            <div class="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm">
+                                <div class="flex justify-between items-center mb-4 px-1 border-b border-slate-100 pb-2">
+                                    <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Transaksi Terbaru</h4>
+                                    <span class="text-[9px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">{{ riwayatTabungan.length }} Catatan</span>
+                                </div>
+                                <div class="space-y-4 max-h-[300px] overflow-y-auto pr-1">
+                                    <div v-for="(item, idx) in riwayatTabungan" :key="idx" class="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0 last:pb-0 px-1">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                            </div>
+                                            <div class="truncate">
+                                                <p class="text-xs font-bold text-slate-800 truncate">{{ formatTanggalOtomatis(item.tanggal) }}</p>
+                                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">Oleh: {{ item.pelatih }}</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm font-black text-emerald-600 shrink-0 ml-2">+Rp {{ formatRp(item.nominal) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1 mt-2">
-                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Evaluasi & Catatan
-                </h3>
-                <div v-if="materiTerakhir" class="bg-blue-50 border border-blue-100 rounded-[1.5rem] p-5 mb-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100/50 rounded-bl-full flex items-start justify-end p-4 pointer-events-none">
-                        <svg class="w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.177-7.86l-2.765-2.767L7 12.431l3.119 3.121a1 1 0 001.414 0l5.952-5.95-1.062-1.062-5.6 5.6z"></path></svg>
-                    </div>
-                    <div class="relative z-10">
-                        <h4 class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1.5">Materi Terakhir (Diulas)</h4>
-                        <p class="text-xs font-bold text-slate-800 mb-2">{{ materiTerakhir.judul }}</p>
-                        <div class="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-white">
-                            <p class="text-[11px] font-medium text-slate-600 leading-relaxed italic">"{{ materiTerakhir.catatan }}"</p>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
-                    <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h12M6 12l4-4m-4 4l4 4m6-4l4-4m-4 4l4 4m-4-4l-4-4m4 4l-4 4"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16M12 4h3a1 1 0 011 1v14a1 1 0 01-1 1h-3M12 4H9a1 1 0 00-1 1v14a1 1 0 001 1h3"></path>
-                    </svg>
-                    Progres Materi
-                </h3>
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Senam Dasar</p>
-                        <p class="text-xl font-black text-slate-800">{{ materiSiswa.senam }}</p>
-                        <p class="text-[9px] font-bold text-blue-500 mt-2 bg-blue-50 px-2 py-1 rounded inline-block w-max">Target Sabuk {{ siswa.sabuk }}</p>
-                    </div>
-                    <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Jurus</p>
-                        <p class="text-xl font-black text-slate-800">{{ materiSiswa.jurus }}</p>
-                        <p class="text-[9px] font-bold text-blue-500 mt-2 bg-blue-50 px-2 py-1 rounded inline-block w-max">Fokus Hafalan</p>
-                    </div>
-                </div>
-
-                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
-                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    Pedoman & Larangan
-                </h3>
-                <div class="space-y-4 mb-8">
-                    <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-50 rounded-bl-full flex items-start justify-end p-3">
-                            <svg class="w-4 h-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 relative z-10">Nilai Ke-SH-an</h4>
-                        <p class="text-[11px] font-medium text-slate-600 leading-relaxed relative z-10">{{ materiSiswa.keshan }}</p>
-                    </div>
-
-                    <div class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-rose-50 rounded-bl-full flex items-start justify-end p-3">
-                            <svg class="w-4 h-4 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 relative z-10">Larangan Tegas</h4>
-                        <p class="text-[11px] font-medium text-slate-600 leading-relaxed relative z-10">{{ materiSiswa.larangan }}</p>
-                    </div>
-                </div>
-
-                <div class="mt-auto pt-8 pb-10 text-center space-y-4 opacity-60">
+                <div class="mt-12 pt-8 pb-10 text-center space-y-4 opacity-60 border-t border-slate-200">
                     <div class="flex justify-center items-center gap-2 text-slate-400">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Panca Dasar PSHT</p>
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1.5">Panca Dasar PSHT</p>
                         <p class="text-[9px] font-bold text-slate-400 tracking-[0.15em] uppercase">
                             Persaudaraan • Olahraga • Beladiri • Kesenian • Kerohanian
                         </p>
@@ -313,27 +337,27 @@
     </div>
 
     <script>
-        const { createApp, ref, computed, onMounted, nextTick } = Vue;
+        const { createApp, ref, computed, onMounted } = Vue;
         createApp({
             setup() {
-    // Pastikan window.supabase tersedia
-    if (!window.supabase) {
-        console.error("Library Supabase belum dimuat!");
-        return;
-    }
+                if (!window.supabase) {
+                    console.error("Library Supabase belum dimuat!");
+                    return;
+                }
 
-    const supabase = window.supabase.createClient(
-        TERATE_CONFIG.SUPABASE_URL, 
-        TERATE_CONFIG.SUPABASE_ANON_KEY
-    );
+                const supabase = window.supabase.createClient(
+                    TERATE_CONFIG.SUPABASE_URL, 
+                    TERATE_CONFIG.SUPABASE_ANON_KEY
+                );
                 
                 const isFetching = ref(true);
                 const isError = ref(false);
-const userNis = localStorage.getItem('terate_user_nis');
-                // --- STATE BARU ---
+                const userNis = localStorage.getItem('terate_user_nis');
                 const riwayatTabungan = ref([]);
                 const materiTerakhir = ref(null);
                 const agendaSiswa = ref(null);
+                const isAnalyzingAI = ref(false);
+                const pesanPelatihAI = ref('');
 
                 const sapaanWaktu = computed(() => {
                     const jam = new Date().getHours();
@@ -352,10 +376,10 @@ const userNis = localStorage.getItem('terate_user_nis');
 
                 const siswa = ref({
                     nama: '', nis: '', sabuk: '', rayon: 'Rayon Japanan',
-                    tabungan_pengesahan: 0, target_pengesahan: 3500000, tabungan_sabuk: 0
+                    target: 0, terkumpul: 0, total_hadir: 0
                 });
 
-                                const silabusMateri = {
+                const silabusMateri = {
                     'polos': { 
                         senam: '1 - 30', jurus: '1 - 4', total_pertemuan: 32,
                         keshan: 'Fase pembentukan niat dan pengenalan persaudaraan dasar. Siswa mulai diajarkan tentang budi pekerti luhur, tata krama, rasa hormat, dan kedisiplinan baik di tempat latihan maupun di lingkungan masyarakat.', 
@@ -364,7 +388,7 @@ const userNis = localStorage.getItem('terate_user_nis');
                     'jambon': { 
                         senam: '1 - 45', jurus: '1 - 8', total_pertemuan: 48,
                         keshan: 'Fase menghilangkan sifat ragu-ragu dan membangun keyakinan diri. Siswa mulai mendalami makna persaudaraan yang lebih erat antar sesama, serta keberanian dalam membela kebenaran.', 
-                        larangan: 'Dilarang berkelahi atau berselisih dengan sesama siswa maupun pihak luar, dilarang pamer kemampuan (sombong), dan tidak boleh absen latihan tanpa alasan yang jelas.' 
+                        larangan: 'Dilarang berkelahi atau berselisih dengan sesama siswa maupun pihak luar, dilarang pamer kemampuan (sombong), and tidak boleh absen latihan tanpa alasan yang jelas.' 
                     },
                     'hijau': { 
                         senam: '1 - 60', jurus: '1 - 15', total_pertemuan: 48,
@@ -378,7 +402,6 @@ const userNis = localStorage.getItem('terate_user_nis');
                     }
                 };
 
-
                 const materiSiswa = computed(() => {
                     const sabuk = (siswa.value.sabuk || 'polos').toLowerCase();
                     if (sabuk.includes('jambon') || sabuk.includes('merah muda')) return silabusMateri['jambon'];
@@ -388,177 +411,137 @@ const userNis = localStorage.getItem('terate_user_nis');
                 });
 
                 const formatRp = (angka) => {
-    // Jika angka bukan angka atau null/undefined, kembalikan 0
-    const nilai = Number(angka);
-    if (isNaN(nilai) || nilai === null || typeof angka === 'undefined') {
-        return "Rp 0";
-    }
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0
-    }).format(nilai);
-};
-// Tambahkan di setup()
-const saldoTerformat = computed(() => {
-    return formatRp(siswa.value.terkumpul || 0);
-});
+                    const nilai = Number(angka);
+                    if (isNaN(nilai) || nilai === null || typeof angka === 'undefined') return "Rp 0";
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+                    }).format(nilai);
+                };
 
-const targetTerformat = computed(() => {
-    return formatRp(siswa.value.target || 0);
-});
+                const saldoTerformat = computed(() => formatRp(siswa.value.terkumpul || 0));
+                const targetTerformat = computed(() => formatRp(siswa.value.target || 0));
 
-
-                // --- FORMATTER TANGGAL OTOMATIS ---
                 const formatTanggalOtomatis = (tglString) => {
                     if (!tglString) return '';
                     const dateObj = new Date(tglString);
                     return dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
                 };
-                const dapatkanTanggal = (tglString) => {
-    if (!tglString) return '-';
-    const tgl = new Date(tglString);
-    return isNaN(tgl.getTime()) ? '-' : tgl.getDate();
-};
 
-const dapatkanBulanPendek = (tglString) => {
-    if (!tglString) return '-';
-    const tgl = new Date(tglString);
-    return isNaN(tgl.getTime()) ? 'ERR' : tgl.toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
-};
+                const dapatkanTanggal = (tglString) => {
+                    if (!tglString) return '-';
+                    const tgl = new Date(tglString);
+                    return isNaN(tgl.getTime()) ? '-' : tgl.getDate();
+                };
+
+                const dapatkanBulanPendek = (tglString) => {
+                    if (!tglString) return '-';
+                    const tgl = new Date(tglString);
+                    return isNaN(tgl.getTime()) ? 'ERR' : tgl.toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
+                };
 
                 const hitungSisaHari = (tglString) => {
-    if (!tglString) return 0;
-    // Bersihkan string dari karakter yang mungkin menyebabkan error
-    const tgl = new Date(tglString);
-    if (isNaN(tgl.getTime())) return 0; // Kembalikan 0 jika tanggal tidak valid (menghilangkan NaN)
-    
-    const diff = tgl - new Date();
-    const hari = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return hari > 0 ? hari : 0;
-};
-
+                    if (!tglString) return 0;
+                    const tgl = new Date(tglString);
+                    if (isNaN(tgl.getTime())) return 0;
+                    const diff = tgl - new Date();
+                    const hari = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    return hari > 0 ? hari : 0;
+                };
 
                 const muatDataSiswa = async () => {
-    if (!userNis) return;
+                    if (!userNis) {
+                        isError.value = true;
+                        isFetching.value = false;
+                        return;
+                    }
+                    isFetching.value = true;
+                    try {
+                        const { data: profileData, error: profileError } = await supabase
+                            .from('data_siswa')
+                            .select('*')
+                            .eq('nis', userNis)
+                            .single();
 
-    isFetching.value = true;
-    try {
-        const { data: profileData, error: profileError } = await supabase
-            .from('data_siswa')
-            .select('*')
-            .eq('nis', userNis)
-            .single();
+                        if (profileError || !profileData) {
+                            isError.value = true;
+                            return;
+                        }
+                        
+                        siswa.value = {
+                            nis: profileData.nis,
+                            nama: profileData.nama,
+                            sabuk: profileData.sabuk,
+                            target: profileData.target_pengesahan || 0, 
+                            terkumpul: profileData.tabungan_pengesahan || 0,
+                            total_hadir: profileData.total_hadir || 0
+                        };
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
+                        isError.value = true;
+                    } finally {
+                        isFetching.value = false;
+                    }
+                };
 
-        if (profileError) throw profileError;
-        
-        // LOG INI PENTING: Cek di Inspect Element > Console apakah nilainya angka
-        console.log("Data dari Supabase:", profileData);
-
-        // Di dalam muatDataSiswa, ganti blok pengisian siswa.value menjadi:
-siswa.value = {
-    nis: profileData.nis,
-    nama: profileData.nama,
-    sabuk: profileData.sabuk,
-    target: profileData.target_pengesahan, 
-    terkumpul: profileData.tabungan_pengesahan,
-    total_hadir: profileData.total_hadir || 0 // Pastikan kolom ini ditarik dari Supabase
-};
-console.log("State siswa setelah di-fetch:", siswa.value); // Cek di console
-
-
-    } catch (error) {
-        console.error("Error fetching:", error);
-    } finally {
-        isFetching.value = false;
-    }
-};
-
-// Tambahkan computed property untuk progres absensi
-const progresAbsensi = computed(() => {
-    const targetHadir = materiSiswa.value.total_pertemuan;
-    const hadir = siswa.value.total_hadir || 0;
-    const persen = (hadir / targetHadir) * 100;
-    
-    return {
-        hadir,
-        target: targetHadir,
-        persen: persen > 100 ? 100 : Math.round(persen),
-        status_aman: persen >= 70 // Minimal 70% dari target
-    };
-});
+                const progresAbsensi = computed(() => {
+                    const targetHadir = materiSiswa.value.total_pertemuan;
+                    const hadir = siswa.value.total_hadir || 0;
+                    const persen = (hadir / targetHadir) * 100;
+                    return {
+                        hadir,
+                        target: targetHadir,
+                        persen: persen > 100 ? 100 : Math.round(persen),
+                        status_aman: persen >= 70
+                    };
+                });
 
                 const persentase = computed(() => {
-    const ter = siswa.value.terkumpul || 0;
-    const tar = siswa.value.target || 0;
-    
-    // Mencegah pembagian dengan nol
-    if (tar === 0) return 0;
-    
-    const hasil = (ter / tar) * 100;
-    return hasil.toFixed(1); // Mengunci 1 angka di belakang koma
-});
+                    const ter = siswa.value.terkumpul || 0;
+                    const tar = siswa.value.target || 0;
+                    if (tar === 0) return 0;
+                    const hasil = (ter / tar) * 100;
+                    return hasil > 100 ? 100 : hasil.toFixed(1);
+                });
 
+                const dapatkanEvaluasiAI = async () => {
+                    const targetUrl = window.TERATE_CONFIG?.API_URL || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
+                    
+                    if (!targetUrl) {
+                        console.error("API_URL tidak ditemukan di TERATE_CONFIG!");
+                        pesanPelatihAI.value = "Konfigurasi sistem (API_URL) belum diatur di config.js.";
+                        return;
+                    }
 
-                // State untuk AI
-const isAnalyzingAI = ref(false);
-const pesanPelatihAI = ref('');
+                    isAnalyzingAI.value = true;
+                    try {
+                        const response = await fetch(targetUrl, {
+                            method: "POST",
+                            headers: { "Content-Type": "text/plain" },
+                            body: JSON.stringify({
+                                tipe: "ASK_AI",
+                                prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama || 'Siswa'}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Berikan nasihat pendek yang tegas khas warga PSHT agar dia semakin giat berlatih dan semangat menabung untuk pengesahan.`
+                            })
+                        });
 
-const dapatkanEvaluasiAI = async () => {
-    isAnalyzingAI.value = true;
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({
-                tipe: "ASK_AI",
-                prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Berikan nasihat pendek agar dia semangat menabung untuk pengesahan.`
-            })
-        });
+                        if (!response.ok) {
+                            throw { code: response.status, message: `HTTP Error Status ${response.status}` };
+                        }
 
-        const result = await response.json();
+                        const result = await response.json();
 
-        if (result.status === "success") {
-            pesanPelatihAI.value = result.data;
-        } else {
-            // Lempar error agar ditangkap blok catch untuk diagnosis
-            throw { 
-                code: result.code || 500, 
-                message: result.message || "Gagal memproses AI" 
-            };
-        }
-    } catch (error) {
-        // KAMUS DIAGNOSIS ERROR
-        const errorDictionary = {
-            400: "Data/Prompt tidak valid (400)",
-            401: "API Key tidak valid/kedaluwarsa (401)",
-            403: "Akses ditolak oleh Google (403)",
-            429: "Limit kuota habis (429)",
-            500: "Server Google error (500)",
-            503: "Layanan Gemini sedang sibuk (503)"
-        };
-
-        const diagnosis = errorDictionary[error.code] || "Kesalahan tidak teridentifikasi";
-        
-        // Log detail ke F12 untuk developer
-        console.group(`❌ [DEBUG AI - PORTAL SISWA] Error ${error.code || ''}`);
-        console.error("Diagnosis   :", diagnosis);
-        console.error("Pesan Asli  :", error.message);
-        console.groupEnd();
-
-        // Tampilkan pesan ramah ke siswa
-        pesanPelatihAI.value = "Maaf, sistem nasihat pelatih sedang gangguan. Silakan hubungi admin.";
-    } finally {
-        isAnalyzingAI.value = false;
-    }
-};
-
-
-                const tentukanGender = (nama) => {
-                    if (!nama) return 'laki';
-                    const namaDepan = nama.split(' ')[0].toLowerCase();
-                    const namaPerempuan = ['siti', 'putri', 'dewi', 'ayu', 'anisa', 'fatimah', 'indri', 'diana'];
-                    return namaPerempuan.some(n => namaDepan.includes(n)) ? 'perempuan' : 'laki';
+                        if (result.status === "success") {
+                            pesanPelatihAI.value = result.data;
+                        } else {
+                            throw { 
+                                code: result.code || 500, 
+                                message: result.message || "Gagal memproses AI" 
+                            };
+                        }
+                    } catch (error) {
+                        pesanPelatihAI.value = "Maaf, sistem nasihat pelatih sedang gangguan. Silakan hubungi admin.";
+                    } finally {
+                        isAnalyzingAI.value = false;
+                    }
                 };
 
                 const logout = () => {
@@ -570,12 +553,12 @@ const dapatkanEvaluasiAI = async () => {
                     muatDataSiswa();
                 });
 
-                                return {
+                return {
                     sapaanWaktu, siswa, pengumuman, isFetching, isError, materiSiswa,
                     formatRp, persentase, logout, saldoTerformat, targetTerformat,
                     riwayatTabungan, materiTerakhir, agendaSiswa,
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
-                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi // <-- Tambahkan di sini
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi
                 };
             }
         }).mount('#app');

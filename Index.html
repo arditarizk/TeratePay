@@ -602,25 +602,151 @@
                     </div>
                 </section>
 
-                <!-- PDF VIEWER (SURAT EDARAN) -->
-                <section id="edaran" class="scroll-mt-24 flex flex-col h-full">
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="file-text" class="w-5 h-5"></i></div>
-                            <h3 class="text-2xl font-black text-slate-800">Surat Edaran</h3>
-                        </div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Resmi Ranting</span>
-                    </div>
-                    <div class="glass-card rounded-[2rem] p-2 flex-grow min-h-[300px] border border-slate-200 relative overflow-hidden group">
-                        <div v-if="!pdfUrl" class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-slate-50 rounded-[1.5rem]">
-                            <i data-lucide="file-search" class="w-12 h-12 text-slate-300 mb-3"></i>
-                            <p class="text-sm font-bold text-slate-500">Belum ada surat edaran terbaru.</p>
-                            <p class="text-xs text-slate-400 mt-1">Admin akan mengunggah PDF edaran di sini.</p>
-                        </div>
-                        <iframe v-else :src="pdfUrl" class="w-full h-full min-h-[350px] rounded-[1.5rem] border-0" title="PDF Edaran"></iframe>
-                    </div>
-                </section>
+                <!-- Main Container: Membagi layar menjadi 2 kolom di perangkat besar (Desktop/Tablet) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-auto lg:h-[800px]" id="app">
+
+    <!-- ==========================================
+         SISI KIRI: PDF VIEWER
+         ========================================== -->
+    <section class="flex flex-col h-[500px] lg:h-full w-full rounded-[2rem] overflow-hidden border border-slate-200/60 shadow-xl shadow-slate-200/20 bg-white">
+        <!-- Header PDF -->
+        <div class="bg-slate-800 text-white p-4 flex justify-between items-center z-10 shadow-md">
+            <h3 class="font-bold flex items-center gap-2">
+                <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> Dokumen Resmi
+            </h3>
+            <a :href="edaranTerbaru.pdf_url" target="_blank" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4"></i> Unduh
+            </a>
+        </div>
+        
+        <div class="relative w-full h-[600px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center">
+    
+    <iframe 
+        v-if="pdfUrl" 
+        :src="convertDriveLink(pdfUrl)" 
+        class="w-full h-full border-none"
+        allow="autoplay">
+    </iframe>
+
+    <div v-else class="flex flex-col items-center text-slate-400">
+        <i data-lucide="file-x-2" class="w-16 h-16 mb-4 opacity-50"></i>
+        <p class="font-medium">Belum ada surat edaran</p>
+    </div>
+</div>
+
+    </section>
+
+    <!-- ==========================================
+         SISI KANAN: RINGKASAN (QUICK HIGHLIGHT)
+         ========================================== -->
+    <section id="ringkasan-edaran" class="scroll-mt-24 flex flex-col h-full">
+        <!-- Header Section -->
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-amber-100 text-amber-600 rounded-xl shadow-sm">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800">Ringkasan Cepat</h3>
             </div>
+        </div>
+
+        <!-- Glass Card Content -->
+        <div class="glass-card rounded-[2rem] p-6 flex-grow border border-slate-200/60 shadow-xl shadow-slate-200/20 flex flex-col relative overflow-hidden bg-white/50 backdrop-blur-xl">
+            <!-- Elemen Dekoratif -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Badge Status -->
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <span class="px-3 py-1 text-xs font-extrabold bg-red-100 text-red-600 rounded-full flex items-center gap-1.5 border border-red-200">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
+                    </span>
+                    INFO PENTING
+                </span>
+                <span class="text-xs font-medium text-slate-400 flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3.5 h-3.5"></i> Terkini
+                </span>
+            </div>
+
+            <!-- Loading Skeleton Teks (Jika data sedang di-fetch) -->
+            <div v-if="isLoading" class="animate-pulse space-y-4">
+                <div class="h-6 bg-slate-200 rounded w-3/4 mb-5"></div>
+                <div class="h-24 bg-slate-200 rounded-2xl w-full mb-5"></div>
+            </div>
+
+            <!-- Data Aktual -->
+            <template v-else>
+                <!-- Judul Highlight Dinamis -->
+                <h4 class="text-xl sm:text-2xl font-bold text-slate-800 mb-5 leading-tight relative z-10">
+                    {{ edaranTerbaru.judul }}
+                </h4>
+
+                <!-- Metadata Cepat Dinamis -->
+                <div class="bg-white/70 rounded-2xl p-4 mb-5 border border-slate-100 space-y-3 relative z-10">
+                    <div class="flex items-start gap-3">
+                        <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
+                            <i data-lucide="calendar-clock" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Pelaksanaan</p>
+                            <p class="text-sm font-semibold text-slate-700">{{ formatTanggal(edaranTerbaru.tanggal_kegiatan) }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Lokasi Tes</p>
+                            <p class="text-sm font-semibold text-slate-700">{{ edaranTerbaru.lokasi }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
+                            <i data-lucide="wallet" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Administrasi</p>
+                            <p class="text-sm font-semibold text-slate-700">
+                                {{ formatRupiah(edaranTerbaru.biaya) }} 
+                                <span v-if="edaranTerbaru.biaya > 0" class="text-xs font-normal text-emerald-600 bg-emerald-100/50 px-1.5 py-0.5 rounded ml-1">Bisa pakai saldo</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inti Surat (Bullet Points Dinamis dengan v-for) -->
+                <div class="mb-6 flex-grow relative z-10">
+                    <p class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <i data-lucide="list-checks" class="w-4 h-4 text-slate-400"></i> Catatan Tambahan:
+                    </p>
+                    <ul class="space-y-2.5">
+                        <li v-for="(poin, index) in edaranTerbaru.catatan" :key="index" class="flex items-start gap-2.5 text-sm text-slate-600 font-medium">
+                            <i data-lucide="check-circle-2" class="w-4.5 h-4.5 text-emerald-500 mt-0.5 shrink-0"></i>
+                            <span>{{ poin }}</span>
+                        </li>
+                        <li v-if="edaranTerbaru.catatan.length === 0" class="text-sm text-slate-400 italic">
+                            Tidak ada catatan tambahan.
+                        </li>
+                    </ul>
+                </div>
+            </template>
+
+            <!-- Call to Action (Share via WhatsApp) -->
+            <div class="mt-auto pt-4 border-t border-slate-200 flex items-center justify-between gap-3 relative z-10">
+                <p class="text-xs text-slate-500 font-medium hidden sm:flex items-center gap-1.5">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Cek PDF untuk detail resmi
+                </p>
+                <!-- Tombol Share memanggil fungsi shareWA() -->
+                <button @click="shareWA" :disabled="isLoading" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50">
+                    <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Info
+                </button>
+            </div>
+        </div>
+    </section>
+</div>
+
 
             <!-- LIRIK LAGU (MARS & HYMNE) -->
             <section id="lagu" class="mb-24 scroll-mt-24">
@@ -754,7 +880,7 @@
         <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[999999] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
     </div>
     
-    <script>
+        <script>
         const { createApp, ref, reactive, computed, nextTick, onMounted } = Vue;
 
         createApp({
@@ -770,6 +896,17 @@
                 const pdfUrl = ref('');
                 const posterFull = ref(false);
                 const statusSalin = ref(false);
+
+                // --- STATE BARU UNTUK SURAT EDARAN DINAMIS ---
+                const isLoadingEdaran = ref(true);
+                const edaranTerbaru = ref({
+                    judul: 'Memuat data...',
+                    pdf_url: '',
+                    tanggal_kegiatan: '',
+                    lokasi: '',
+                    biaya: 0,
+                    catatan: []
+                });
 
                 const DAFTAR_PELATIH = {
                     'ADIT': 'Mas Adit', 'UGIK': 'Mas Ugik', 'HARIS': 'Mas Haris', 'IQBAL': 'Mas Iqbal', 'ADMIN': 'Admin Pusat'
@@ -828,15 +965,44 @@
                     if(el) el.scrollIntoView({ behavior: 'smooth' }); 
                 };
 
+                // --- UTILITY FORMATTER BARU ---
+                const formatTanggal = (dateString) => {
+                    if (!dateString) return '-';
+                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('id-ID', options);
+                };
+
+                const formatRupiah = (angka) => {
+                    if (angka === undefined || angka === null) return 'Rp 0';
+                    return new Intl.NumberFormat('id-ID', { 
+                        style: 'currency', 
+                        currency: 'IDR', 
+                        minimumFractionDigits: 0 
+                    }).format(angka);
+                };
+
+                const shareWA = () => {
+                    const judul = edaranTerbaru.value.judul || 'Informasi Surat Edaran';
+                    const tanggal = formatTanggal(edaranTerbaru.value.tanggal_kegiatan);
+                    const lokasi = edaranTerbaru.value.lokasi || '-';
+                    const url = window.location.href;
+                    
+                    const text = `*INFO PENTING RAYON*\n\n*${judul}*\n\n📅 Pelaksanaan: ${tanggal}\n📍 Lokasi: ${lokasi}\n\nCek edaran selengkapnya di sini:\n${url}`;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                };
+
+                // --- FUNGSI LOAD DATA ---
                 const loadDynamicJadwal = async () => {
                     try {
                         const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
                         if (data && !error) {
                             if (data.no_wa) noWa.value = data.no_wa;
                             if (data.tanggal_suro) tanggalSuro.value = data.tanggal_suro + 'T00:00:00';
-                            if (data.pdf_url) pdfUrl.value = data.pdf_url;
                             if (data.pin_pelatih) pinPelatihDB.value = data.pin_pelatih;
                             if (data.pin_admin) pinAdminDB.value = data.pin_admin;
+                            
+                            // Fallback PDF URL jika tabel surat_edaran belum terisi
+                            if (data.pdf_url) pdfUrl.value = data.pdf_url; 
                             
                             if (data.judul_pengumuman) {
                                 pengumuman.value = { tipe: data.tipe_pengumuman, judul: data.judul_pengumuman, isi: data.isi_pengumuman };
@@ -855,6 +1021,37 @@
                         { kategori: 'Agenda', judul: 'Jadwal Latihan Privat', deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan kesepakatan.', waktu: 'Fleksibel', icon: 'briefcase', colorIconBg: 'bg-purple-50', colorIconText: 'text-purple-500' }
                     ];
                     nextTick(() => { if (window.lucide) lucide.createIcons(); })
+                };
+
+                const loadSuratEdaran = async () => {
+                    isLoadingEdaran.value = true;
+                    try {
+                        const { data, error } = await supabase
+                            .from('surat_edaran')
+                            .select('*')
+                            .eq('is_active', true)
+                            .order('created_at', { ascending: false })
+                            .limit(1)
+                            .single();
+
+                        if (!error && data) {
+                            edaranTerbaru.value = {
+                                judul: data.judul,
+                                pdf_url: data.pdf_url,
+                                tanggal_kegiatan: data.tanggal_kegiatan,
+                                lokasi: data.lokasi,
+                                biaya: data.biaya,
+                                catatan: data.catatan || []
+                            };
+                            // Menimpa pdfUrl dari tabel pengaturan dengan pdf_url dari tabel surat_edaran
+                            pdfUrl.value = data.pdf_url; 
+                        }
+                    } catch (e) {
+                        console.warn("Gagal/Belum ada data surat_edaran:", e.message);
+                    } finally {
+                        isLoadingEdaran.value = false;
+                        nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                    }
                 };
 
                 const bukaModalLogin = (type) => {
@@ -904,15 +1101,28 @@
                         setTimeout(() => { statusSalin.value = false; }, 2000);
                     }).catch(err => console.error('Gagal menyalin: ', err));
                 };
+                // Fungsi untuk membersihkan dan mengonversi link Google Drive
+const convertDriveLink = (url) => {
+    if (!url) return '';
+    // Mengubah /view, /edit, atau /usp=drivesdk menjadi /preview
+    return url.replace(/\/view.*|\/edit.*|\/usp=.*/, '/preview');
+};
 
-                onMounted(() => { loadDynamicJadwal(); });
+
+                onMounted(() => { 
+                    loadDynamicJadwal();
+                    loadSuratEdaran(); // Menjalankan fetch data surat edaran saat web dibuka
+                });
 
                 return {
                     isLoading, modalLogin, modalTitle, modalDesc, inputLabel, jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
-                    bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq, posterFull, bukaPosterFull, noWa, pengumuman, statusSalin, copyRekening
+                    bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq, posterFull, bukaPosterFull, noWa, pengumuman, statusSalin, copyRekening,
+                    // Return state dan fungsi baru untuk Edaran
+                    edaranTerbaru, isLoadingEdaran, formatTanggal, formatRupiah, shareWA, convertDriveLink
                 };
             }
         }).mount('#app');
     </script>
+
 </body>
 </html>

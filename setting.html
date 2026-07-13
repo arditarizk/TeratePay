@@ -79,7 +79,6 @@
             <div class="p-5 lg:p-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 
                 <div class="space-y-6">
-                    
                     <div>
                         <div class="flex items-center gap-2 mb-3">
                             <div class="p-1.5 bg-blue-50 text-blue-500 rounded-lg"><i data-lucide="server" class="w-4 h-4"></i></div>
@@ -111,27 +110,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-<!-- Konten Index (Beranda) -->
-<div>
-    <div class="flex items-center gap-2 mb-3 mt-6">
-        <div class="p-1.5 bg-sky-50 text-sky-500 rounded-lg"><i data-lucide="layout-template" class="w-4 h-4"></i></div>
-        <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">Konten Beranda (Index)</h2>
-    </div>
-    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm grid grid-cols-1 gap-4">
-        <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Nomor WA Pendaftaran</label>
-            <input type="text" v-model="form.noWa" placeholder="628..." class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 outline-none focus:border-sky-500 transition-all shadow-inner">
-        </div>
-        <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Tanggal Pengesahan (Countdown)</label>
-            <input type="date" v-model="form.tanggalSuro" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 outline-none focus:border-sky-500 transition-all shadow-inner">
-        </div>
-    </div>
-</div>
 
-                <div class="space-y-6">
-                    
                     <div>
                         <div class="flex items-center gap-2 mb-3">
                             <div class="p-1.5 bg-indigo-50 text-indigo-500 rounded-lg"><i data-lucide="file-text" class="w-4 h-4"></i></div>
@@ -140,6 +119,25 @@
                         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
                             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">URL Surat Edaran (Google Drive PDF)</label>
                             <input type="url" v-model="form.pdfUrl" placeholder="Pastikan berakhiran /preview" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-700 outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="p-1.5 bg-sky-50 text-sky-500 rounded-lg"><i data-lucide="layout-template" class="w-4 h-4"></i></div>
+                            <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">Konten Beranda (Index)</h2>
+                        </div>
+                        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Nomor WA Pendaftaran</label>
+                                <input type="text" v-model="form.noWa" placeholder="628..." class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 outline-none focus:border-sky-500 transition-all shadow-inner">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Tanggal Pengesahan (Countdown)</label>
+                                <input type="date" v-model="form.tanggalSuro" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 outline-none focus:border-sky-500 transition-all shadow-inner">
+                            </div>
                         </div>
                     </div>
 
@@ -193,92 +191,91 @@
     <script>
         const { createApp, ref, reactive, onMounted, nextTick } = Vue;
 
-createApp({
-    setup() {
-    const supabase = window.supabase.createClient(
-        TERATE_CONFIG.SUPABASE_URL, 
-        TERATE_CONFIG.SUPABASE_ANON_KEY
-    );
-    
-    const toasts = ref([]);
-    const isSaving = ref(false);
+        createApp({
+            setup() {
+                const supabase = window.supabase.createClient(
+                    TERATE_CONFIG.SUPABASE_URL, 
+                    TERATE_CONFIG.SUPABASE_ANON_KEY
+                );
+                
+                const toasts = ref([]);
+                const isSaving = ref(false);
 
-    const form = reactive({
-        googleUrl: '', geminiKey: '', pdfUrl: '',
-        pinPelatih: '', pinAdmin: '',
-        tipePengumuman: 'info', judulPengumuman: '', isiPengumuman: '',
-        noWa: '', tanggalSuro: ''
-    });
+                const form = reactive({
+                    googleUrl: '', geminiKey: '', pdfUrl: '',
+                    pinPelatih: '', pinAdmin: '',
+                    tipePengumuman: 'info', judulPengumuman: '', isiPengumuman: '',
+                    noWa: '', tanggalSuro: ''
+                });
 
-    const showToast = (msg, isError = false) => {
-        const id = Date.now();
-        toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
-        setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
-        nextTick(() => { if (window.lucide) lucide.createIcons(); });
-    };
+                const showToast = (msg, isError = false) => {
+                    const id = Date.now();
+                    toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
+                    setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
+                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                };
 
-    const muatPengaturanDB = async () => {
-        const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
-        if (data) {
-            form.googleUrl = data.google_url || '';
-            form.geminiKey = data.gemini_key || '';
-            form.pdfUrl = data.pdf_url || '';
-            form.pinPelatih = data.pin_pelatih || '192201';
-            form.pinAdmin = data.pin_admin || '192299';
-            form.tipePengumuman = data.tipe_pengumuman || 'info';
-            form.judulPengumuman = data.judul_pengumuman || '';
-            form.isiPengumuman = data.isi_pengumuman || '';
-            form.noWa = data.no_wa || '6289660061234';
-            form.tanggalSuro = data.tanggal_suro || '2027-06-06';
-        }
-    };
+                const muatPengaturanDB = async () => {
+                    const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
+                    if (data) {
+                        form.googleUrl = data.google_url || '';
+                        form.geminiKey = data.gemini_key || '';
+                        form.pdfUrl = data.pdf_url || '';
+                        form.pinPelatih = data.pin_pelatih || '192201';
+                        form.pinAdmin = data.pin_admin || '192299';
+                        form.tipePengumuman = data.tipe_pengumuman || 'info';
+                        form.judulPengumuman = data.judul_pengumuman || '';
+                        form.isiPengumuman = data.isi_pengumuman || '';
+                        form.noWa = data.no_wa || '6289660061234';
+                        form.tanggalSuro = data.tanggal_suro || '2027-06-06';
+                    }
+                };
 
-    const simpanPengaturan = async () => {
-        if (!form.googleUrl) return showToast("URL Database wajib diisi!", true);
-        isSaving.value = true;
-        
-        let urlBersih = form.pdfUrl;
-        if (urlBersih && (urlBersih.includes('/edit') || urlBersih.includes('/preview'))) {
-            urlBersih = urlBersih.replace(/\/edit.*|\/preview.*/, '/view');
-        }
+                const simpanPengaturan = async () => {
+                    if (!form.googleUrl) return showToast("URL Database wajib diisi!", true);
+                    isSaving.value = true;
+                    
+                    let urlBersih = convertDriveLink(form.pdfUrl);
+// Simpan 'urlBersih' ke Supabase
+                    if (urlBersih && (urlBersih.includes('/edit') || urlBersih.includes('/preview'))) {
+                        urlBersih = urlBersih.replace(/\/edit.*|\/preview.*/, '/view');
+                    }
 
-        const payload = {
-            google_url: form.googleUrl,
-            gemini_key: form.geminiKey,
-            pdf_url: urlBersih,
-            pin_pelatih: form.pinPelatih,
-            pin_admin: form.pinAdmin,
-            tipe_pengumuman: form.tipePengumuman,
-            judul_pengumuman: form.judulPengumuman,
-            isi_pengumuman: form.isiPengumuman,
-            no_wa: form.noWa,
-            tanggal_suro: form.tanggalSuro
-        };
+                    const payload = {
+                        google_url: form.googleUrl,
+                        gemini_key: form.geminiKey,
+                        pdf_url: urlBersih,
+                        pin_pelatih: form.pinPelatih,
+                        pin_admin: form.pinAdmin,
+                        tipe_pengumuman: form.tipePengumuman,
+                        judul_pengumuman: form.judulPengumuman,
+                        isi_pengumuman: form.isiPengumuman,
+                        no_wa: form.noWa,
+                        tanggal_suro: form.tanggalSuro
+                    };
 
-        try {
-            const { error } = await supabase.from('pengaturan').update(payload).eq('id', 1);
-            if (error) throw error;
-            showToast("Konfigurasi sukses disimpan ke Supabase.");
-        } catch (error) {
-            console.error(error);
-            showToast("Gagal menyimpan ke server.", true);
-        } finally {
-            isSaving.value = false;
-        }
-    };
+                    try {
+                        const { error } = await supabase.from('pengaturan').update(payload).eq('id', 1);
+                        if (error) throw error;
+                        showToast("Konfigurasi sukses disimpan ke Supabase.");
+                    } catch (error) {
+                        console.error(error);
+                        showToast("Gagal menyimpan ke server.", true);
+                    } finally {
+                        isSaving.value = false;
+                    }
+                };
 
-    const keluar = () => { window.location.href = 'index.html'; };
+                const keluar = () => { window.location.href = 'index.html'; };
 
-    onMounted(() => {
-        muatPengaturanDB();
-        if (window.lucide) lucide.createIcons();
-    });
+                onMounted(() => {
+                    muatPengaturanDB();
+                    if (window.lucide) lucide.createIcons();
+                });
 
-    return { toasts, isSaving, form, simpanPengaturan, keluar };
-}
-
-}).mount('#app');
-
+                return { toasts, isSaving, form, simpanPengaturan, keluar };
+            }
+        }).mount('#app');
     </script>
 </body>
 </html>
