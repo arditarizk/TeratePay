@@ -142,118 +142,182 @@
         <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        const { createApp, ref, reactive, onMounted } = Vue;
+        const { createApp, ref, reactive, onMounted, nextTick } = Vue;
 
         createApp({
             setup() {
-                const API_URL = localStorage.getItem('terate_google_url') || TERATE_CONFIG.API_URL;
+                // 1. INISIALISASI SUPABASE KLIEN (Gantikan fungsi API_URL Google)
+                const supabase = window.supabase.createClient(
+                    TERATE_CONFIG.SUPABASE_URL, 
+                    TERATE_CONFIG.SUPABASE_ANON_KEY
+                );
+
                 const step = ref(1);
                 const isSubmitting = ref(false);
                 
                 const form = reactive({
-                    nama_siswa: '', gender: '', umur: '', alamat: '', wa_siswa: '', pekerjaan: '', wa_ortu: ''
+                    nama_siswa: '',
+                    gender: 'Laki-laki',
+                    umur: '',
+                    alamat: '',
+                    wa_siswa: '',
+                    pekerjaan: '',
+                    wa_ortu: ''
                 });
 
-                const pakta = reactive({ semangat: false, sehat: false, patuh: false, tujuan: false });
-                let canvas, ctx; let isDrawing = false; let signatureData = null;
+                const pakta = reactive({
+                    p1: false, p2: false, p3: false, p4: false
+                });
 
+                const toasts = ref([]);
                 const showToast = (msg, isSuccess = true) => {
-                    const toast = document.createElement('div');
-                    toast.className = `${isSuccess ? 'bg-blue-600' : 'bg-red-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
-                    toast.innerText = msg;
-                    document.getElementById('toastContainer').appendChild(toast);
-                    setTimeout(() => toast.remove(), 3500);
+                    const id = Date.now();
+                    toasts.value.push({ id, msg, type: isSuccess ? 'success' : 'error' });
+                    setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
                 };
 
-                // AUTO FORMAT NO WA
                 const formatWa = (field) => {
-                    let val = form[field];
-                    val = val.replace(/[-+ \D]/g, ''); 
+                    let val = form[field].replace(/\D/g, '');
                     if (val.startsWith('0')) val = '62' + val.substring(1);
-                    else if (val.startsWith('8')) val = '62' + val;
                     form[field] = val;
                 };
 
-                const nextStep = () => {
-                    if (step.value === 1) {
-                        if (!form.nama_siswa || !form.gender || !form.umur || !form.alamat || !form.wa_siswa || !form.pekerjaan || !form.wa_ortu) {
-                            return showToast("Mohon lengkapi semua data identitas.", false);
+                const nextStep = (target) => {
+                    if (target === 2) {
+                        if (!form.nama_siswa || !form.umur || !form.alamat || !form.wa_siswa || !form.pekerjaan || !form.wa_ortu) {
+                            return showToast("Mohon lengkapi semua data diri!", false);
+                        }
+                        if (form.wa_siswa.length < 10 || form.wa_ortu.length < 10) {
+                            return showToast("Nomor WhatsApp tidak valid!", false);
                         }
                     }
-                    if (step.value === 2) {
-                        if (!pakta.semangat || !pakta.sehat || !pakta.patuh || !pakta.tujuan) {
-                            return showToast("Anda harus menyetujui seluruh Pakta Integritas.", false);
+                    if (target === 3) {
+                        if (!pakta.p1 || !pakta.p2 || !pakta.p3 || !pakta.p4) {
+                            return showToast("Anda harus menyetujui semua pakta integritas!", false);
                         }
                     }
-                    step.value++;
-                    if (step.value === 3) setTimeout(() => { initCanvas(); }, 400); 
+                    step.value = target;
+                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
                 };
 
-                const initCanvas = () => {
-                    canvas = document.getElementById('sigCanvas');
-                    if(!canvas) return;
-                    ctx = canvas.getContext('2d');
-                    canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-                    ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#0f172a';
-                    const getPos = (e) => {
-                        const rect = canvas.getBoundingClientRect();
-                        const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
-                        const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
-                        return { x: clientX - rect.left, y: clientY - rect.top };
-                    };
-                    const startDraw = (e) => { e.preventDefault(); isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); };
-                    const draw = (e) => { if (!isDrawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); };
-                    const stopDraw = () => { isDrawing = false; };
-                    canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDraw); canvas.addEventListener('mouseout', stopDraw);
-                    canvas.addEventListener('touchstart', startDraw, {passive: false}); canvas.addEventListener('touchmove', draw, {passive: false}); canvas.addEventListener('touchend', stopDraw);
+                // KANVAS TANDA TANGAN
+                let canvas, ctx;
+                let isDrawing = false;
+                let lastX = 0; let lastY = 0;
+                let signatureData = '';
+
+                onMounted(() => {
+                    canvas = document.getElementById('signaturePad');
+                    if (canvas) {
+                        ctx = canvas.getContext('2d');
+                        
+                        const draw = (e) => {
+                            if (!isDrawing) return;
+                            e.preventDefault();
+                            
+                            let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                            let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                            
+                            const rect = canvas.getBoundingClientRect();
+                            const x = clientX - rect.left;
+                            const y = clientY - rect.top;
+
+                            ctx.beginPath();
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(x, y);
+                            ctx.strokeStyle = '#0f172a';
+                            ctx.lineWidth = 3;
+                            ctx.lineCap = 'round';
+                            ctx.stroke();
+
+                            lastX = x; lastY = y;
+                        };
+
+                        const startDraw = (e) => {
+                            isDrawing = true;
+                            const rect = canvas.getBoundingClientRect();
+                            let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                            let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                            lastX = clientX - rect.left;
+                            lastY = clientY - rect.top;
+                        };
+
+                        canvas.addEventListener('mousedown', startDraw);
+                        canvas.addEventListener('mousemove', draw);
+                        canvas.addEventListener('mouseup', () => isDrawing = false);
+                        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+                        canvas.addEventListener('touchstart', startDraw, { passive: false });
+                        canvas.addEventListener('touchmove', draw, { passive: false });
+                        canvas.addEventListener('touchend', () => isDrawing = false);
+                    }
+                    if (window.lucide) lucide.createIcons();
+                });
+
+                const clearSignature = () => {
+                    if (ctx && canvas) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
                 };
 
-                const clearSignature = () => { if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); };
-
+                // 2. ROMBAK TOTAL SUBMIT FORM MENGGUNAKAN SUPABASE
                 const submitForm = async () => {
                     const blank = document.createElement('canvas');
                     blank.width = canvas.width; blank.height = canvas.height;
-                    if (canvas.toDataURL() === blank.toDataURL()) return showToast("Tanda tangan wajib diisi.", false);
-
+                    if (canvas.toDataURL() === blank.toDataURL()) return showToast("Tanda tangan wajib diisi!", false);
+                    
                     isSubmitting.value = true;
                     signatureData = canvas.toDataURL("image/png");
-
+                    
                     const d = new Date();
                     const yy = String(d.getFullYear()).slice(-2); 
                     const mm = String(d.getMonth() + 1).padStart(2, '0'); 
                     const dd = String(d.getDate()).padStart(2, '0'); 
                     const rnd = String(Math.floor(Math.random() * 90) + 10);
-                    const generatedNIS = `6${yy}${mm}${dd}${rnd}`;
-
-                    const payload = {
-                        tipe: 'REGISTER_SISWA',
-                        nis: generatedNIS,
-                        nama_siswa: form.nama_siswa.toUpperCase(),
-                        gender: form.gender,
-                        umur: form.umur,
-                        alamat: form.alamat,
-                        wa_siswa: form.wa_siswa,
-                        nama_ortu: form.pekerjaan.toUpperCase(), 
-                        wa_ortu: form.wa_ortu, 
-                        target: 4500000, 
-                        ttd_base64: signatureData 
-                    };
+                    const generatedNIS = `5${yy}${mm}${dd}${rnd}`;
 
                     try {
-                        const response = await fetch(API_URL, {
-                            method: 'POST', mode: 'no-cors',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: JSON.stringify(payload)
-                        });
-                        showToast(`Pendaftaran Berhasil. NIS: ${generatedNIS}`, true);
+                        // Kueri langsung menyuntikkan data ke tabel data_siswa di Supabase
+                        const { error } = await supabase
+                            .from('data_siswa')
+                            .insert([
+                                {
+                                    nis: generatedNIS,
+                                    nama: form.nama_siswa.toUpperCase(),
+                                    gender: form.gender,
+                                    umur: form.umur,
+                                    alamat: form.alamat,
+                                    wa_siswa: form.wa_siswa,
+                                    nama_ortu: form.pekerjaan.toUpperCase(), // Form privat pakai field pekerjaan -> masuk ke nama_ortu
+                                    wa_ortu: form.wa_ortu, 
+                                    target_pengesahan: 4500000, // Target privat: 4.5 Juta
+                                    tabungan_pengesahan: 0,
+                                    tabungan_sabuk: 0,
+                                    ttd_base64: signatureData,
+                                    jalur_pendaftaran: 'Privat'
+                                }
+                            ]);
+
+                        // Jika ada error dari Supabase, lempar ke block catch
+                        if (error) throw error;
+
+                        showToast(`Pendaftaran Privat Berhasil! NIS: ${generatedNIS}`, true);
                         localStorage.setItem('terate_user_nis', generatedNIS);
+                        
                         setTimeout(() => { window.location.href = 'index.html'; }, 2500);
-                    } catch (error) { showToast("Koneksi gagal. Silakan coba lagi.", false); } finally { isSubmitting.value = false; }
+                        
+                    } catch (error) { 
+                        console.error("Error Supabase:", error);
+                        showToast("Koneksi ke database gagal. Silakan coba lagi.", false); 
+                    } finally { 
+                        isSubmitting.value = false; 
+                    }
                 };
 
-                onMounted(() => { if (window.lucide) lucide.createIcons(); });
-                return { step, form, pakta, nextStep, submitForm, isSubmitting, clearSignature, formatWa };
+                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa };
             }
         }).mount('#app');
     </script>

@@ -193,106 +193,88 @@
 
 createApp({
     setup() {
-        const API_URL = localStorage.getItem('terate_google_url') || TERATE_CONFIG.API_URL;
-        let GEMINI_API_KEY = TERATE_CONFIG.GEMINI_API_KEY;
+    const supabase = window.supabase.createClient(
+        TERATE_CONFIG.SUPABASE_URL, 
+        TERATE_CONFIG.SUPABASE_ANON_KEY
+    );
+    
+    const toasts = ref([]);
+    const isSaving = ref(false);
+
+    const form = reactive({
+        googleUrl: '', geminiKey: '', pdfUrl: '',
+        pinPelatih: '', pinAdmin: '',
+        tipePengumuman: 'info', judulPengumuman: '', isiPengumuman: '',
+        noWa: '', tanggalSuro: ''
+    });
+
+    const showToast = (msg, isError = false) => {
+        const id = Date.now();
+        toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
+        setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
+        nextTick(() => { if (window.lucide) lucide.createIcons(); });
+    };
+
+    const muatPengaturanDB = async () => {
+        const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
+        if (data) {
+            form.googleUrl = data.google_url || '';
+            form.geminiKey = data.gemini_key || '';
+            form.pdfUrl = data.pdf_url || '';
+            form.pinPelatih = data.pin_pelatih || '192201';
+            form.pinAdmin = data.pin_admin || '192299';
+            form.tipePengumuman = data.tipe_pengumuman || 'info';
+            form.judulPengumuman = data.judul_pengumuman || '';
+            form.isiPengumuman = data.isi_pengumuman || '';
+            form.noWa = data.no_wa || '6289660061234';
+            form.tanggalSuro = data.tanggal_suro || '2027-06-06';
+        }
+    };
+
+    const simpanPengaturan = async () => {
+        if (!form.googleUrl) return showToast("URL Database wajib diisi!", true);
+        isSaving.value = true;
         
-        const toasts = ref([]);
-        const isSaving = ref(false);
+        let urlBersih = form.pdfUrl;
+        if (urlBersih && (urlBersih.includes('/edit') || urlBersih.includes('/preview'))) {
+            urlBersih = urlBersih.replace(/\/edit.*|\/preview.*/, '/view');
+        }
 
-                const form = reactive({
-            googleUrl: API_URL,
-            geminiKey: GEMINI_API_KEY,
-            pdfUrl: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PDF_URL || '') : '',
-            pinPelatih: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PIN_PELATIH || '192201') : '192201',
-            pinAdmin: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PIN_ADMIN || '192299') : '192299',
-            tipePengumuman: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PENGUMUMAN_TIPE || 'info') : 'info',
-            judulPengumuman: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PENGUMUMAN_JUDUL || '') : '',
-            isiPengumuman: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_PENGUMUMAN_ISI || '') : '',
-            noWa: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_NO_WA || '6289660061234') : '6289660061234',
-            tanggalSuro: typeof TERATE_CONFIG !== 'undefined' ? (TERATE_CONFIG.DEFAULT_TANGGAL_SURO || '2027-06-06') : '2027-06-06'
-        });
-
-
-
-        const showToast = (msg, isError = false) => {
-            const id = Date.now();
-            toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
-            setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
-            nextTick(() => { if (window.lucide) lucide.createIcons(); });
+        const payload = {
+            google_url: form.googleUrl,
+            gemini_key: form.geminiKey,
+            pdf_url: urlBersih,
+            pin_pelatih: form.pinPelatih,
+            pin_admin: form.pinAdmin,
+            tipe_pengumuman: form.tipePengumuman,
+            judul_pengumuman: form.judulPengumuman,
+            isi_pengumuman: form.isiPengumuman,
+            no_wa: form.noWa,
+            tanggal_suro: form.tanggalSuro
         };
 
-        const muatPengaturanLokal = () => {
-            const configStr = localStorage.getItem('terate_config');
-            if (configStr) {
-                try {
-                    const config = JSON.parse(configStr);
-                    form.pdfUrl = config.pdfUrl || '';
-                    form.tipePengumuman = config.tipePengumuman || form.tipePengumuman;
-                    form.judulPengumuman = config.judulPengumuman || form.judulPengumuman;
-                    form.isiPengumuman = config.isiPengumuman || form.isiPengumuman;
-                    form.geminiKey = config.geminiKey || form.geminiKey;
-                    form.pinPelatih = config.pinPelatih || form.pinPelatih;
-                    form.pinAdmin = config.pinAdmin || form.pinAdmin;
-                    form.noWa = config.noWa || form.noWa;
-form.tanggalSuro = config.tanggalSuro
-                } catch (e) {
-                    console.error("Format config lokal tidak valid");
-                }
-            }
-        };
+        try {
+            const { error } = await supabase.from('pengaturan').update(payload).eq('id', 1);
+            if (error) throw error;
+            showToast("Konfigurasi sukses disimpan ke Supabase.");
+        } catch (error) {
+            console.error(error);
+            showToast("Gagal menyimpan ke server.", true);
+        } finally {
+            isSaving.value = false;
+        }
+    };
 
-        const simpanPengaturan = async () => {
-            if (!form.googleUrl) return showToast("URL Database wajib diisi!", true);
-            isSaving.value = true;
-            
-            // Konversi link drive menjadi /view
-            if (form.pdfUrl && (form.pdfUrl.includes('/edit') || form.pdfUrl.includes('/preview'))) {
-                form.pdfUrl = form.pdfUrl.replace(/\/edit.*|\/preview.*/, '/view');
-            }
+    const keluar = () => { window.location.href = 'index.html'; };
 
-            localStorage.setItem('terate_google_url', form.googleUrl);
-            
-            const configLokal = {
-    pdfUrl: form.pdfUrl,
-    tipePengumuman: form.tipePengumuman,
-    judulPengumuman: form.judulPengumuman,
-    isiPengumuman: form.isiPengumuman,
-    geminiKey: form.geminiKey,
-    pinPelatih: form.pinPelatih,
-    pinAdmin: form.pinAdmin, // <--- TAMBAHKAN KOMA DI SINI
-    noWa: form.noWa,
-    tanggalSuro: form.tanggalSuro
-};
+    onMounted(() => {
+        muatPengaturanDB();
+        if (window.lucide) lucide.createIcons();
+    });
 
-            
-            localStorage.setItem('terate_config', JSON.stringify(configLokal));
+    return { toasts, isSaving, form, simpanPengaturan, keluar };
+}
 
-            const payload = { tipe: "SAVE_CONFIG", ...form };
-
-            try {
-                // Konfigurasi fetch ke Google Script
-                await fetch(form.googleUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain" }, 
-                    body: JSON.stringify(payload)
-                });
-                showToast("Konfigurasi sukses disimpan & diterbitkan.");
-            } catch (error) {
-                showToast("Disimpan secara lokal. Gagal integrasi ke server.", true);
-            } finally {
-                isSaving.value = false;
-            }
-        };
-
-        const keluar = () => { window.location.href = 'index.html'; };
-
-        onMounted(() => {
-            muatPengaturanLokal();
-            if (window.lucide) lucide.createIcons();
-        });
-
-        return { toasts, isSaving, form, simpanPengaturan, keluar };
-    }
 }).mount('#app');
 
     </script>

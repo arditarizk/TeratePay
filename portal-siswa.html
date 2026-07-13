@@ -10,6 +10,8 @@
     <script src="https://unpkg.com/lucide@0.292.0"></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
     <script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
     <style>
         body { 
@@ -141,15 +143,33 @@
                 </h3>
                 <div class="glass-card rounded-[2rem] p-6 mb-6 relative overflow-hidden border-t-4 border-t-emerald-500">
                     <div class="flex justify-between items-end mb-6">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Terkumpul</p>
-                            <p class="text-2xl font-black text-slate-800 tracking-tight">Rp {{ formatRp(siswa.tabungan_pengesahan) }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target</p>
-                            <p class="text-sm font-black text-slate-600">Rp {{ formatRp(siswa.target_pengesahan) }}</p>
-                        </div>
+                        <!-- Ubah bagian ini -->
+<p class="text-2xl font-black text-slate-800 tracking-tight">
+    {{ saldoTerformat }}
+</p>
+<div class="text-right">
+    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target</p>
+    <p class="text-sm font-black text-slate-600">{{ targetTerformat }}</p>
+</div>
                     </div>
+                    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1 mt-6">
+    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    Syarat Kehadiran
+</h3>
+<div class="glass-card rounded-[2rem] p-6 mb-6 relative overflow-hidden border-t-4 border-t-blue-500">
+    <div class="flex justify-between items-end mb-4">
+        <p class="text-2xl font-black text-slate-800 tracking-tight">{{ progresAbsensi.hadir }} <span class="text-sm text-slate-400">/ {{ progresAbsensi.target }}</span></p>
+        <div class="text-right">
+            <span :class="progresAbsensi.status_aman ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'" class="px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">
+                {{ progresAbsensi.status_aman ? 'Aman (≥70%)' : 'Rentan Ujian' }}
+            </span>
+        </div>
+    </div>
+    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-3">
+        <div :class="progresAbsensi.status_aman ? 'bg-emerald-500' : 'bg-amber-500'" class="h-full rounded-full transition-all duration-1000" :style="`width: ${progresAbsensi.persen}%`"></div>
+    </div>
+    <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Kehadiran Sabuk {{ siswa.sabuk }}</p>
+</div>
 
                     <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-3 shadow-inner relative">
                         <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out progress-glow relative overflow-hidden" :style="`width: ${persentase}%`">
@@ -294,14 +314,22 @@
 
     <script>
         const { createApp, ref, computed, onMounted, nextTick } = Vue;
-
         createApp({
             setup() {
-                const API_URL = localStorage.getItem('terate_google_url') || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
+    // Pastikan window.supabase tersedia
+    if (!window.supabase) {
+        console.error("Library Supabase belum dimuat!");
+        return;
+    }
+
+    const supabase = window.supabase.createClient(
+        TERATE_CONFIG.SUPABASE_URL, 
+        TERATE_CONFIG.SUPABASE_ANON_KEY
+    );
                 
                 const isFetching = ref(true);
                 const isError = ref(false);
-
+const userNis = localStorage.getItem('terate_user_nis');
                 // --- STATE BARU ---
                 const riwayatTabungan = ref([]);
                 const materiTerakhir = ref(null);
@@ -327,28 +355,29 @@
                     tabungan_pengesahan: 0, target_pengesahan: 3500000, tabungan_sabuk: 0
                 });
 
-                const silabusMateri = {
+                                const silabusMateri = {
                     'polos': { 
-                        senam: '1 - 30', jurus: '1 - 4', 
-                        keshan: 'Fase pembentukan niat dan pengenalan persaudaraan dasar. Belajar menundukkan ego dan menerima arahan pelatih dengan ikhlas.', 
-                        larangan: 'Dilarang menggunakan atribut SH Terate di luar tempat latihan atau menunjukkan arogansi sebagai pesilat.' 
+                        senam: '1 - 30', jurus: '1 - 4', total_pertemuan: 32,
+                        keshan: 'Fase pembentukan niat dan pengenalan persaudaraan dasar. Siswa mulai diajarkan tentang budi pekerti luhur, tata krama, rasa hormat, dan kedisiplinan baik di tempat latihan maupun di lingkungan masyarakat.', 
+                        larangan: 'Dilarang menggunakan atribut resmi PSHT (seperti sakral lengkap) di luar tempat latihan, dilarang bersikap arogan, dan dilarang keras melawan pelatih atau orang tua.' 
                     },
                     'jambon': { 
-                        senam: '1 - 45', jurus: '1 - 8', 
-                        keshan: 'Menghilangkan sifat ragu-ragu dan labil. Mulai menanamkan keyakinan diri dan memperkuat rasa persaudaraan antar sesama.', 
-                        larangan: 'Dilarang berkelahi sesama siswa atau warga, serta pantang menggunakan kemampuan fisik untuk menindas yang lemah.' 
+                        senam: '1 - 45', jurus: '1 - 8', total_pertemuan: 48,
+                        keshan: 'Fase menghilangkan sifat ragu-ragu dan membangun keyakinan diri. Siswa mulai mendalami makna persaudaraan yang lebih erat antar sesama, serta keberanian dalam membela kebenaran.', 
+                        larangan: 'Dilarang berkelahi atau berselisih dengan sesama siswa maupun pihak luar, dilarang pamer kemampuan (sombong), dan tidak boleh absen latihan tanpa alasan yang jelas.' 
                     },
                     'hijau': { 
-                        senam: '1 - 60', jurus: '1 - 15', 
-                        keshan: 'Melambangkan ketentraman. Siswa harus mulai bisa memimpin dirinya sendiri dan meneduhkan suasana di sekitarnya.', 
-                        larangan: 'Dilarang bersikap sombong (Ojo Dumeh) dan merasa lebih pintar dari pelatih atau saudaranya.' 
+                        senam: '1 - 60', jurus: '1 - 15', total_pertemuan: 48,
+                        keshan: 'Melambangkan ketentraman dan kedewasaan berfikir. Siswa diharapkan mampu mengontrol emosi, menjaga kerukunan, dan mulai memahami ajaran budi luhur Setia Hati secara lebih mendalam.', 
+                        larangan: 'Dilarang menyalahgunakan ilmu bela diri untuk menindas orang lain, pantang mundur dalam membela keadilan, dan dilarang mencemarkan nama baik tempat latihan (rayon).' 
                     },
                     'putih': { 
-                        senam: '1 - 90', jurus: '1 - 35', 
-                        keshan: 'Fase kesucian hati dan kematangan teknik. Persiapan akhir untuk menjadi manusia yang tahu benar dan salah (Warga sejati).', 
-                        larangan: 'Dilarang keras melanggar sumpah, janji, dan Panca Dasar PSHT. Pelanggaran di tahap ini berakibat sanksi berat.' 
+                        senam: '1 - 90', jurus: '1 - 35', total_pertemuan: 48,
+                        keshan: 'Fase kesucian hati dan kematangan jiwa. Siswa bersiap untuk disahkan, wajib berpegang teguh pada kebenaran, jujur pada diri sendiri, dan menerapkan prinsip Memayu Hayuning Bawana.', 
+                        larangan: 'Dilarang keras melanggar sumpah/janji Setia Hati, dilarang berbuat asusila atau melanggar hukum negara, dan wajib menjaga kehormatan serta rahasia keluarga besar PSHT.' 
                     }
                 };
+
 
                 const materiSiswa = computed(() => {
                     const sabuk = (siswa.value.sabuk || 'polos').toLowerCase();
@@ -358,7 +387,27 @@
                     return silabusMateri['polos'];
                 });
 
-                const formatRp = (n) => new Intl.NumberFormat('id-ID').format(n);
+                const formatRp = (angka) => {
+    // Jika angka bukan angka atau null/undefined, kembalikan 0
+    const nilai = Number(angka);
+    if (isNaN(nilai) || nilai === null || typeof angka === 'undefined') {
+        return "Rp 0";
+    }
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(nilai);
+};
+// Tambahkan di setup()
+const saldoTerformat = computed(() => {
+    return formatRp(siswa.value.terkumpul || 0);
+});
+
+const targetTerformat = computed(() => {
+    return formatRp(siswa.value.target || 0);
+});
+
 
                 // --- FORMATTER TANGGAL OTOMATIS ---
                 const formatTanggalOtomatis = (tglString) => {
@@ -391,73 +440,65 @@ const dapatkanBulanPendek = (tglString) => {
 
 
                 const muatDataSiswa = async () => {
-                    const nisAktif = localStorage.getItem('terate_user_nis');
-                    
-                    if (!nisAktif) {
-                        isError.value = true;
-                        isFetching.value = false;
-                        return;
-                    }
+    if (!userNis) return;
 
-                    try {
-                        const response = await fetch(`${API_URL}?action=cek_siswa&nis=${nisAktif}`);
-                        const result = await response.json();
-                        
-                        if (result.status === "success") {
-                            siswa.value = {
-                                ...siswa.value, 
-                                nama: result.data.nama,
-                                gender: tentukanGender(result.data.nama),
-                                nis: result.data.nis,
-                                sabuk: result.data.sabuk || 'Polos',
-                                tabungan_pengesahan: parseInt(result.data.tabungan_pengesahan) || 0,
-                                target_pengesahan: parseInt(result.data.target_pengesahan) || 3500000,
-                                tabungan_sabuk: parseInt(result.data.tabungan_sabuk) || 0
-                            };
+    isFetching.value = true;
+    try {
+        const { data: profileData, error: profileError } = await supabase
+            .from('data_siswa')
+            .select('*')
+            .eq('nis', userNis)
+            .single();
 
-                            // Menarik Array Riwayat Tabungan dari Google Apps Script
-                            if (result.data.riwayat_tabungan && Array.isArray(result.data.riwayat_tabungan)) {
-                                riwayatTabungan.value = result.data.riwayat_tabungan;
-                            } else {
-                                riwayatTabungan.value = [];
-                            }
+        if (profileError) throw profileError;
+        
+        // LOG INI PENTING: Cek di Inspect Element > Console apakah nilainya angka
+        console.log("Data dari Supabase:", profileData);
 
-                            // Menarik Object Materi Terakhir dari Google Apps Script
-                            if (result.data.materi_terakhir) {
-                                materiTerakhir.value = result.data.materi_terakhir;
-                            } else {
-                                materiTerakhir.value = null; 
-                            }
+        // Di dalam muatDataSiswa, ganti blok pengisian siswa.value menjadi:
+siswa.value = {
+    nis: profileData.nis,
+    nama: profileData.nama,
+    sabuk: profileData.sabuk,
+    target: profileData.target_pengesahan, 
+    terkumpul: profileData.tabungan_pengesahan,
+    total_hadir: profileData.total_hadir || 0 // Pastikan kolom ini ditarik dari Supabase
+};
+console.log("State siswa setelah di-fetch:", siswa.value); // Cek di console
 
-                            // Menarik Object Agenda dari Google Apps Script
-if (result.data.agenda_terdekat && result.data.agenda_terdekat.tanggal) {
-    agendaSiswa.value = result.data.agenda_terdekat;
-} else {
-    // Jika dari database kosong, panggil fallback dari config.js
-    agendaSiswa.value = {
-        judul: "Pengesahan Warga Baru",
-        lokasi: "Padepokan Kota Mojokerto",
-        tanggal: typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.DEFAULT_TANGGAL_SURO : '2027-06-06'
+
+    } catch (error) {
+        console.error("Error fetching:", error);
+    } finally {
+        isFetching.value = false;
+    }
+};
+
+// Tambahkan computed property untuk progres absensi
+const progresAbsensi = computed(() => {
+    const targetHadir = materiSiswa.value.total_pertemuan;
+    const hadir = siswa.value.total_hadir || 0;
+    const persen = (hadir / targetHadir) * 100;
+    
+    return {
+        hadir,
+        target: targetHadir,
+        persen: persen > 100 ? 100 : Math.round(persen),
+        status_aman: persen >= 70 // Minimal 70% dari target
     };
-}
-
-
-                            isError.value = false;
-                        } else {
-                            isError.value = true;
-                        }
-                    } catch (error) {
-                        isError.value = true;
-                    } finally {
-                        isFetching.value = false;
-                    }
-                };
+});
 
                 const persentase = computed(() => {
-                    if (siswa.value.target_pengesahan === 0) return 0;
-                    let p = (siswa.value.tabungan_pengesahan / siswa.value.target_pengesahan) * 100;
-                    return p > 100 ? 100 : Math.floor(p);
-                });
+    const ter = siswa.value.terkumpul || 0;
+    const tar = siswa.value.target || 0;
+    
+    // Mencegah pembagian dengan nol
+    if (tar === 0) return 0;
+    
+    const hasil = (ter / tar) * 100;
+    return hasil.toFixed(1); // Mengunci 1 angka di belakang koma
+});
+
 
                 // State untuk AI
 const isAnalyzingAI = ref(false);
@@ -560,12 +601,12 @@ const dapatkanEvaluasiAI = async () => {
                     muatDataSiswa();
                 });
 
-                return {
+                                return {
                     sapaanWaktu, siswa, pengumuman, isFetching, isError, materiSiswa,
-                    formatRp, persentase, logout,
+                    formatRp, persentase, logout, saldoTerformat, targetTerformat,
                     riwayatTabungan, materiTerakhir, agendaSiswa,
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
-                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi // <-- Tambahkan di sini
                 };
             }
         }).mount('#app');

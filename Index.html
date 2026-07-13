@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lucide@0.292.0"></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
     <script src="config.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
 
     <style>
@@ -752,263 +752,210 @@
     <script>
         const { createApp, ref, reactive, computed, nextTick, onMounted } = Vue;
 
-        createApp({
-            setup() {
-    // 1. Ambil URL dari LocalStorage (jika disetting admin), 
-    // jika kosong, gunakan dari config.js
-    const API_URL = localStorage.getItem('terate_google_url') || TERATE_CONFIG.API_URL;
-    
-    // 2. Ambil Gemini API Key dari LocalStorage (jika disetting admin),
-    // jika kosong, gunakan dari config.js
-    let GEMINI_API_KEY = TERATE_CONFIG.GEMINI_API_KEY;
-    const configStr = localStorage.getItem('terate_config');
-    if (configStr) {
-        try {
-            const config = JSON.parse(configStr);
-            if (config.geminiKey) GEMINI_API_KEY = config.geminiKey;
-        } catch(e) {}
-    }
-                const isLoading = ref(false);
-                const targetSuro = new Date('2027-06-06T00:00:00');
-                const noWa = ref('6289660061234');
-const tanggalSuro = ref('2027-06-06T00:00:00');
-const pengumuman = ref({ tipe: '', judul: '', isi: '' });
+createApp({
+    setup() {
+        // 1. INISIALISASI SUPABASE
+        const supabase = window.supabase.createClient(
+            TERATE_CONFIG.SUPABASE_URL, 
+            TERATE_CONFIG.SUPABASE_ANON_KEY
+        );
 
-                
-                // State untuk Tab Lagu & URL PDF
-                const tabLagu = ref('mars');
-                // Ganti string ini dengan URL PDF asli/Google Drive embed link
-                const pdfUrl = ref(''); // Contoh: 'https://www.orimi.com/pdf-test.pdf'
-const posterFull = ref(false);
-                const DAFTAR_PELATIH = {
-                    'ADIT': 'Mas Adit',
-                    'UGIK': 'Mas Ugik',
-                    'HARIS': 'Mas Haris',
-                    'IQBAL': 'Mas Iqbal',
-                    'ADMIN': 'Admin Pusat'
-                };
-                                // DATA FAQ (TANYA JAWAB)
-                const faqs = ref([
-                    { 
-                        tanya: "Apakah ada batas umur untuk mendaftar?", 
-                        jawab: "Untuk jalur reguler, kami menerima mulai dari usia sekolah dasar (SD) hingga mahasiswa/pemuda. Sedangkan jalur privat khusus untuk usia 25 tahun ke atas atau yang sudah berkeluarga/bekerja.", 
-                        open: false 
-                    },
-                    { 
-                        tanya: "Berapa biaya pendaftaran awal?", 
-                        jawab: "Biaya pendaftaran di awal sangat terjangkau, mencakup biaya administrasi dan seragam (sakral) latihan standar. Rincian detailnya akan dijelaskan secara transparan langsung oleh pelatih pada pertemuan pertama.", 
-                        open: false 
-                    },
-                    { 
-                        tanya: "Bolehkah mendaftar jika saya perempuan?", 
-                        jawab: "Tentu saja boleh! PSHT sangat terbuka untuk perempuan (sering disebut Srikandi). Materi yang diajarkan sama, namun dengan porsi dan intensitas latihan fisik yang disesuaikan.", 
-                        open: false 
-                    },
-                    { 
-                        tanya: "Berapa lama waktu latihan hingga disahkan menjadi warga?", 
-                        jawab: "Normalnya, proses latihan memakan waktu sekitar 1 hingga 2 tahun (biasanya bertepatan dengan Bulan Suro). Waktu ini bervariasi tergantung kerajinan kehadiran dan penguasaan materi senam & jurus dari masing-masing siswa.", 
-                        open: false 
+        // State untuk menyimpan PIN dari Supabase
+        const pinPelatihDB = ref(TERATE_CONFIG.DEFAULT_PIN_PELATIH || '192201');
+        const pinAdminDB = ref(TERATE_CONFIG.DEFAULT_PIN_ADMIN || '192299');
+
+        const isLoading = ref(false);
+        const targetSuro = new Date('2027-06-06T00:00:00');
+        const noWa = ref('6289660061234');
+        const tanggalSuro = ref('2027-06-06T00:00:00');
+        const pengumuman = ref({ tipe: '', judul: '', isi: '' });
+        
+        const tabLagu = ref('mars');
+        const pdfUrl = ref('');
+        const posterFull = ref(false);
+
+        const DAFTAR_PELATIH = {
+            'ADIT': 'Mas Adit',
+            'UGIK': 'Mas Ugik',
+            'HARIS': 'Mas Haris',
+            'IQBAL': 'Mas Iqbal',
+            'ADMIN': 'Admin Pusat'
+        };
+
+        const faqs = ref([
+            { tanya: "Apakah ada batas umur untuk mendaftar?", jawab: "Untuk jalur reguler, kami menerima mulai dari usia sekolah dasar (SD) hingga mahasiswa/pemuda. Sedangkan jalur privat khusus untuk usia 25 tahun ke atas atau yang sudah berkeluarga/bekerja.", open: false },
+            { tanya: "Berapa biaya pendaftaran awal?", jawab: "Biaya pendaftaran di awal sangat terjangkau, mencakup biaya administrasi dan seragam (sakral) latihan standar. Rincian detailnya akan dijelaskan secara transparan langsung oleh pelatih pada pertemuan pertama.", open: false },
+            { tanya: "Bolehkah mendaftar jika saya perempuan?", jawab: "Tentu saja boleh! PSHT sangat terbuka untuk perempuan (sering disebut Srikandi). Materi yang diajarkan sama, namun dengan porsi dan intensitas latihan fisik yang disesuaikan.", open: false },
+            { tanya: "Berapa lama waktu latihan hingga disahkan menjadi warga?", jawab: "Normalnya, proses latihan memakan waktu sekitar 1 hingga 2 tahun (biasanya bertepatan dengan Bulan Suro). Waktu ini bervariasi tergantung kerajinan kehadiran dan penguasaan materi senam & jurus dari masing-masing siswa.", open: false }
+        ]);
+
+        const toggleFaq = (index) => {
+            faqs.value.forEach((faq, i) => { if (i !== index) faq.open = false; });
+            faqs.value[index].open = !faqs.value[index].open;
+        };
+
+        const modalLogin = reactive({ show: false, type: '', inputValue: '', usernameValue: '' });
+        const jadwalList = ref([]);
+        const liveUpdateTitle = ref('Menunggu sinkronisasi...');
+
+        const sisaHariSuro = computed(() => {
+            const target = new Date(tanggalSuro.value);
+            const diff = target - new Date();
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            return days > 0 ? days : 0;
+        });
+
+        const modalTitle = computed(() => {
+            if (modalLogin.type === 'siswa') return 'Portal Siswa';
+            if (modalLogin.type === 'pelatih') return 'Akses Pelatih';
+            return 'Konfigurasi Sistem';
+        });
+
+        const modalDesc = computed(() => {
+            if (modalLogin.type === 'siswa') return 'Pantau tabungan & target pengesahan.';
+            if (modalLogin.type === 'pelatih') return 'Login kasir & manajemen rayon.';
+            return 'Akses khusus administrator pusat.';
+        });
+
+        const inputLabel = computed(() => {
+            if (modalLogin.type === 'siswa') return 'Masukan NIS Anda';
+            return 'Sandi Keamanan';
+        });
+
+        const showToast = (msg, isSuccess = true) => {
+            const toast = document.createElement('div');
+            toast.className = `${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
+            toast.innerText = msg;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        };
+
+        const scrollTo = (id) => { 
+            const el = document.getElementById(id);
+            if(el) el.scrollIntoView({ behavior: 'smooth' }); 
+        };
+
+        // 2. LOAD DATA DARI SUPABASE (Termasuk PIN Login)
+        const loadDynamicJadwal = async () => {
+            try {
+                const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
+                if (data && !error) {
+                    if (data.no_wa) noWa.value = data.no_wa;
+                    if (data.tanggal_suro) tanggalSuro.value = data.tanggal_suro + 'T00:00:00';
+                    if (data.pdf_url) pdfUrl.value = data.pdf_url;
+                    
+                    // Simpan PIN dari Database agar eksekusiLogin bisa membacanya
+                    if (data.pin_pelatih) pinPelatihDB.value = data.pin_pelatih;
+                    if (data.pin_admin) pinAdminDB.value = data.pin_admin;
+                    
+                    if (data.judul_pengumuman) {
+                        pengumuman.value = {
+                            tipe: data.tipe_pengumuman,
+                            judul: data.judul_pengumuman,
+                            isi: data.isi_pengumuman
+                        };
+                        liveUpdateTitle.value = data.judul_pengumuman;
+                    } else {
+                        liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
                     }
-                ]);
-
-                const toggleFaq = (index) => {
-                    // Tutup semua FAQ lain (opsional, jika ingin hanya 1 yang terbuka)
-                    faqs.value.forEach((faq, i) => {
-                        if (i !== index) faq.open = false;
-                    });
-                    // Buka/Tutup FAQ yang diklik
-                    faqs.value[index].open = !faqs.value[index].open;
-                };
-
-
-                const modalLogin = reactive({ show: false, type: '', inputValue: '', usernameValue: '' });
-                const jadwalList = ref([]);
-                const liveUpdateTitle = ref('Menunggu sinkronisasi...');
-
-                const sisaHariSuro = computed(() => {
-    const target = new Date(tanggalSuro.value);
-    const diff = target - new Date();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 0;
-});
-
-                const modalTitle = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Portal Siswa';
-                    if (modalLogin.type === 'pelatih') return 'Akses Pelatih';
-                    return 'Konfigurasi Sistem';
-                });
-
-                const modalDesc = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Pantau tabungan & target pengesahan.';
-                    if (modalLogin.type === 'pelatih') return 'Login kasir & manajemen rayon.';
-                    return 'Akses khusus administrator pusat.';
-                });
-
-                const inputLabel = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Masukan NIS Anda';
-                    return 'Sandi Keamanan';
-                });
-
-                const showToast = (msg, isSuccess = true) => {
-                    const toast = document.createElement('div');
-                    toast.className = `${isSuccess ? 'bg-emerald-500' : 'bg-red-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
-                    toast.innerText = msg;
-                    document.getElementById('toastContainer').appendChild(toast);
-                    setTimeout(() => toast.remove(), 3500);
-                };
-
-                const scrollTo = (id) => { 
-                    const el = document.getElementById(id);
-                    if(el) el.scrollIntoView({ behavior: 'smooth' }); 
-                };
-
-                const loadDynamicJadwal = () => {
-    const configStr = localStorage.getItem('terate_config');
-    let dynamicJadwal = [];
-
-    if (configStr) {
-        try {
-            const configAdmin = JSON.parse(configStr);
-            
-            // Terapkan No WA dan Tanggal
-            if (configAdmin.noWa) noWa.value = configAdmin.noWa;
-            if (configAdmin.tanggalSuro) tanggalSuro.value = configAdmin.tanggalSuro + 'T00:00:00';
-            
-            // Ekstrak pengumuman ke state khusus, bukan ke dalam jadwal
-            if (configAdmin.judulPengumuman) {
-                pengumuman.value = {
-                    tipe: configAdmin.tipePengumuman,
-                    judul: configAdmin.judulPengumuman,
-                    isi: configAdmin.isiPengumuman
-                };
-                liveUpdateTitle.value = configAdmin.judulPengumuman;
-            } else {
+                }
+            } catch (e) {
+                console.error(e);
                 liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
             }
-        } catch(e) {}
-    } else {
-        liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
-    }
 
-                    dynamicJadwal.push({
-        kategori: 'Rutin',
-        judul: 'Latihan Reguler',
-        deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk masing-masing.',
-        waktu: '19:22 WIB - Selesai.',
-        icon: 'users-2',
-        colorIconBg: 'bg-emerald-50',
-        colorIconText: 'text-emerald-500',
-    });
+            jadwalList.value = [
+                {
+                    kategori: 'Rutin', judul: 'Latihan Reguler',
+                    deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk masing-masing.',
+                    waktu: '19:22 WIB - Selesai.', icon: 'users-2',
+                    colorIconBg: 'bg-emerald-50', colorIconText: 'text-emerald-500',
+                },
+                {
+                    kategori: 'Agenda', judul: 'Jadwal Latihan Privat',
+                    deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan kesepakatan.',
+                    waktu: 'Fleksibel', icon: 'briefcase',
+                    colorIconBg: 'bg-purple-50', colorIconText: 'text-purple-500',
+                }
+            ];
+            nextTick(() => { if (window.lucide) lucide.createIcons(); });
+        };
 
-    dynamicJadwal.push({
-        kategori: 'Agenda',
-        judul: 'Jadwal Latihan Privat',
-        deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan kesepakatan.',
-        waktu: 'Fleksibel',
-        icon: 'briefcase',
-        colorIconBg: 'bg-purple-50',
-        colorIconText: 'text-purple-500',
-    });
+        const bukaModalLogin = (type) => {
+            modalLogin.type = type;
+            modalLogin.inputValue = '';
+            modalLogin.usernameValue = '';
+            modalLogin.show = true;
+            nextTick(() => { if (window.lucide) lucide.createIcons(); });
+        };
 
-    jadwalList.value = dynamicJadwal;
-    nextTick(() => { if (window.lucide) lucide.createIcons(); });
-};
+        const tutupModalLogin = () => {
+            if (isLoading.value) return;
+            modalLogin.show = false;
+        };
 
-
-                const bukaModalLogin = (type) => {
-                    modalLogin.type = type;
-                    modalLogin.inputValue = '';
-                    modalLogin.usernameValue = '';
-                    modalLogin.show = true;
-                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                };
-
-                const tutupModalLogin = () => {
-                    if (isLoading.value) return;
-                    modalLogin.show = false;
-                };
-
-                const eksekusiLogin = () => {
-    if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
-    if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
-    
-    isLoading.value = true;
-
-    setTimeout(() => {
-        isLoading.value = false;
-        
-        if (modalLogin.type === 'siswa') {
-            localStorage.setItem('terate_user_nis', modalLogin.inputValue);
-            showToast("NIS Ditemukan! Membuka Portal...", true);
-            setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
-        } 
-        else {
-            const userStr = modalLogin.usernameValue.toUpperCase();
-            const passStr = modalLogin.inputValue;
-            const namaAsli = DAFTAR_PELATIH[userStr];
-
-            // 1. Ambil PIN dari LocalStorage atau default config.js
-            const configStr = localStorage.getItem('terate_config');
-            let pinPelatihAktual = typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.DEFAULT_PIN_PELATIH : '192201';
-            let pinAdminAktual = typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.DEFAULT_PIN_ADMIN : '192299';
+        // 3. EKSEKUSI LOGIN MENGGUNAKAN PIN DARI SUPABASE
+        const eksekusiLogin = () => {
+            if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
+            if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
             
-            if (configStr) {
-                try {
-                    const config = JSON.parse(configStr);
-                    if (config.pinPelatih) pinPelatihAktual = config.pinPelatih;
-                    if (config.pinAdmin) pinAdminAktual = config.pinAdmin;
-                } catch(e) {}
-            }
+            isLoading.value = true;
 
-            // 2. Tentukan PIN yang benar berdasarkan siapa yang login
-            const isLoginAdmin = (userStr === 'ADMIN' || modalLogin.type === 'maintenance');
-            const pinYangBenar = isLoginAdmin ? pinAdminAktual : pinPelatihAktual;
+            setTimeout(() => {
+                isLoading.value = false;
+                
+                if (modalLogin.type === 'siswa') {
+                    localStorage.setItem('terate_user_nis', modalLogin.inputValue);
+                    showToast("Membuka Portal Siswa...", true);
+                    setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
+                } 
+                else {
+                    const userStr = modalLogin.usernameValue.toUpperCase();
+                    const passStr = modalLogin.inputValue;
+                    const namaAsli = DAFTAR_PELATIH[userStr];
 
-            // 3. Validasi Sandi Dinamis
-            if (passStr === pinYangBenar && namaAsli) {
-                showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
-                localStorage.setItem('terate_nama_kasir', namaAsli);
+                    const isLoginAdmin = (userStr === 'ADMIN' || modalLogin.type === 'maintenance');
+                    
+                    // Baca PIN yang ditarik dari tabel 'pengaturan' Supabase
+                    const pinYangBenar = isLoginAdmin ? pinAdminDB.value : pinPelatihDB.value;
 
-                setTimeout(() => {
-                    if (isLoginAdmin) {
-                        window.location.href = 'setting.html';
+                    if (passStr === pinYangBenar && namaAsli) {
+                        showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
+                        localStorage.setItem('terate_nama_kasir', namaAsli);
+
+                        setTimeout(() => {
+                            if (isLoginAdmin) {
+                                window.location.href = 'setting.html';
+                            } else {
+                                window.location.href = 'kasir.html'; 
+                            }
+                        }, 800);
                     } else {
-                        window.location.href = 'kasir.html'; 
+                        showToast("ID Pengguna atau Sandi Salah!", false);
+                        modalLogin.inputValue = '';
                     }
-                }, 800);
-            } else {
-                showToast("ID Pengguna atau Sandi Salah!", false);
-                modalLogin.inputValue = '';
-            }
-        }
-    }, 1000);
-};
+                }
+            }, 1000);
+        };
 
-                const bukaPosterFull = () => {
-    posterFull.value = true;
-    nextTick(() => { if (window.lucide) lucide.createIcons(); });
-};
+        const bukaPosterFull = () => {
+            posterFull.value = true;
+            nextTick(() => { if (window.lucide) lucide.createIcons(); });
+        };
 
-                onMounted(() => { 
-                    loadDynamicJadwal();
-                    // Optional: Cek config dari server jika ada URL PDF tersimpan
-                    const configStr = localStorage.getItem('terate_config');
-                    if (configStr) {
-                        try {
-                            const cfg = JSON.parse(configStr);
-                            if (cfg.pdfUrl) pdfUrl.value = cfg.pdfUrl;
-                        } catch(e) {}
-                    }
-                });
+        onMounted(() => { 
+            loadDynamicJadwal();
+        });
 
-                return {
-    isLoading, modalLogin, modalTitle, modalDesc, inputLabel,
-    jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
-    bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq,
-    posterFull, bukaPosterFull, noWa, pengumuman
-};
-            }
-        }).mount('#app');
+        return {
+            isLoading, modalLogin, modalTitle, modalDesc, inputLabel,
+            jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
+            bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq,
+            posterFull, bukaPosterFull, noWa, pengumuman
+        };
+    }
+}).mount('#app');
+
     </script>
 </body>
 </html>
