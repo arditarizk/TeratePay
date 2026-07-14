@@ -102,16 +102,39 @@
 
     <div id="app" v-cloak class="w-full relative z-10 flex flex-col min-h-screen">
         
-        <!-- RUNNING TEXT PENGUMUMAN -->
-        <div class="bg-slate-900 text-white text-[11px] font-bold tracking-widest uppercase py-2.5 marquee-container">
-            <div class="marquee-content flex gap-8 items-center">
-                <span><span class="text-emerald-400">INFO:</span> {{ liveUpdateTitle }}</span>
-                <span></span>
-                <span>MEMAYU HAYUNING BAWONO</span>
-                <span></span>
-                <span>SELAMA MATAHARI MASIH TERBIT DARI TIMUR, PSHT AKAN TETAP JAYA SELAMA-LAMANYA</span>
+                <!-- RUNNING TEXT PENGUMUMAN (GAYA MODERN & GEN Z) -->
+        <div class="bg-slate-950 border-b border-slate-800 text-[10px] sm:text-[11px] font-bold tracking-widest uppercase py-2.5 marquee-container relative z-50 shadow-md">
+            
+            <!-- Efek Gradasi Sisi -->
+            <div class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none"></div>
+            
+            <div class="marquee-content flex items-center gap-10 text-slate-300">
+                
+                <!-- BADGE STATUS GEN Z (Pengganti Blink Dot Norak) -->
+                <!-- Menggunakan normal-case agar tidak kaku, dan soft glow pada titik hijau -->
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3.5 py-1 rounded-full border border-slate-700/60 normal-case tracking-normal shrink-0">
+                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                    <span class="text-[11px] font-medium text-slate-200">Selamat Datang di Rayon Japanan</span>
+                </div>
+
+                <!-- Status Info -->
+                <span class="flex items-center gap-2">
+                    <span class="text-emerald-400">Ranting Kemlagi</span> <span class="text-white">Cabang Mojokerto</span>
+                </span>
+                
+                <!-- Pemisah Ikon Terate -->
+                <i data-lucide="flower-2" class="w-4 h-4 text-amber-500 shrink-0"></i>
+                
+                <span class="text-amber-400">MEMAYU HAYUNING BAWONO</span>
+                
+                <!-- Pemisah Ikon Tameng -->
+                <i data-lucide="shield" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                
+                <span class="text-slate-400">SELAMA MATAHARI TERBIT DARI TIMUR, DAN SELAMA BUMI MASIH DIHUNI OLEH MANUSIA, SELAMA ITU PULA PERSAUDARAAN SETIA HATI TERATE AKAN TETAP JAYA, KEKAL, ABADI UNTUK SELAMA-LAMANYA.</span>
             </div>
         </div>
+
 
         <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-4">
             
@@ -127,7 +150,7 @@
 
                 <!-- Desktop Menu dengan Integrasi Smooth Scroll Vue -->
                 <nav class="hidden md:flex items-center gap-1">
-                    <a href="#" @click.prevent="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">Beranda</a>
+                    <a href="index.html" @click.prevent="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">Beranda</a>
                     
                     <div class="relative group">
                         <button class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50 flex items-center gap-1">
@@ -161,8 +184,8 @@
                 </div>
             </header>
 
-            <!-- PAPAN PENGUMUMAN DINAMIS -->
-            <div v-if="pengumuman.judul" class="animate-fade-in mb-8 mt-4 group">
+                <!-- PAPAN PENGUMUMAN DINAMIS (Disembunyikan di Mobile) -->
+            <div v-if="pengumuman.judul" class="hidden lg:block animate-fade-in mb-8 mt-4 group">
                 <div class="relative rounded-[2rem] p-6 transition-all duration-500 hover:scale-[1.01] bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.12)] overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div class="absolute -right-10 -top-10 w-40 h-40 opacity-20 pointer-events-none transition-all duration-500 group-hover:scale-125 group-hover:opacity-30" :class="pengumuman.tipe === 'penting' ? 'bg-gradient-to-br from-rose-500 to-amber-500' : 'bg-gradient-to-br from-emerald-500 to-cyan-500'" style="filter: blur(40px);"></div>
                     <div class="absolute -left-10 -bottom-10 w-40 h-40 opacity-10 pointer-events-none" :class="pengumuman.tipe === 'penting' ? 'bg-rose-400' : 'bg-emerald-400'" style="filter: blur(40px);"></div>
@@ -193,14 +216,9 @@
                             </p>
                         </div>
                     </div>
-
-                    <div class="shrink-0 relative z-10 w-full sm:w-auto border-t border-slate-100 sm:border-t-0 pt-4 sm:pt-0">
-                        <button @click="scrollTo('faq')" class="w-full sm:w-auto px-5 py-3 rounded-xl text-xs font-black tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2 bg-slate-900 text-white hover:bg-slate-800 shadow-md active:scale-95 group-hover:translate-x-1">
-                            Pelajari Detail <i data-lucide="arrow-up-right" class="w-4 h-4 text-emerald-400"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
+
 
             <!-- HERO SECTION -->
             <section class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 mb-24 mt-8">
@@ -605,150 +623,81 @@
                     </div>
                 </section>
 
-                <!-- Main Container: Membagi layar menjadi 2 kolom di perangkat besar (Desktop/Tablet) -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-auto lg:h-[800px]" id="app">
+            <!-- Main Container: PDF & Papan Pengumuman (2 Kolom di PC, 1 Kolom di HP) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-24">
 
-    <!-- ==========================================
-         SISI KIRI: PDF VIEWER
-         ========================================== -->
-    <section class="flex flex-col h-[500px] lg:h-full w-full rounded-[2rem] overflow-hidden border border-slate-200/60 shadow-xl shadow-slate-200/20 bg-white">
-        <!-- Header PDF -->
-        <div class="bg-slate-800 text-white p-4 flex justify-between items-center z-10 shadow-md">
-            <h3 class="font-bold flex items-center gap-2">
-                <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> Dokumen Resmi
-            </h3>
-            <a :href="edaranTerbaru.pdf_url" target="_blank" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-                <i data-lucide="download" class="w-4 h-4"></i> Unduh
-            </a>
-        </div>
-        
-        <div class="relative w-full h-[600px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center">
-    
-    <iframe 
-        v-if="pdfUrl" 
-        :src="convertDriveLink(pdfUrl)" 
-        class="w-full h-full border-none"
-        allow="autoplay">
-    </iframe>
-
-    <div v-else class="flex flex-col items-center text-slate-400">
-        <i data-lucide="file-x-2" class="w-16 h-16 mb-4 opacity-50"></i>
-        <p class="font-medium">Belum ada surat edaran</p>
-    </div>
-</div>
-
-    </section>
-
-    <!-- ==========================================
-         SISI KANAN: RINGKASAN (QUICK HIGHLIGHT)
-         ========================================== -->
-    <section id="ringkasan-edaran" class="scroll-mt-24 flex flex-col h-full">
-        <!-- Header Section -->
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-                <div class="p-2 bg-amber-100 text-amber-600 rounded-xl shadow-sm">
-                    <i data-lucide="zap" class="w-5 h-5"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800">Ringkasan Cepat</h3>
-            </div>
-        </div>
-
-        <!-- Glass Card Content -->
-        <div class="glass-card rounded-[2rem] p-6 flex-grow border border-slate-200/60 shadow-xl shadow-slate-200/20 flex flex-col relative overflow-hidden bg-white/50 backdrop-blur-xl">
-            <!-- Elemen Dekoratif -->
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-400/20 rounded-full blur-3xl pointer-events-none"></div>
-
-            <!-- Badge Status -->
-            <div class="flex items-center justify-between mb-4 relative z-10">
-                <span class="px-3 py-1 text-xs font-extrabold bg-red-100 text-red-600 rounded-full flex items-center gap-1.5 border border-red-200">
-                    <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
-                    </span>
-                    INFO PENTING
-                </span>
-                <span class="text-xs font-medium text-slate-400 flex items-center gap-1">
-                    <i data-lucide="clock" class="w-3.5 h-3.5"></i> Terkini
-                </span>
-            </div>
-
-            <!-- Loading Skeleton Teks (Jika data sedang di-fetch) -->
-            <div v-if="isLoading" class="animate-pulse space-y-4">
-                <div class="h-6 bg-slate-200 rounded w-3/4 mb-5"></div>
-                <div class="h-24 bg-slate-200 rounded-2xl w-full mb-5"></div>
-            </div>
-
-            <!-- Data Aktual -->
-            <template v-else>
-                <!-- Judul Highlight Dinamis -->
-                <h4 class="text-xl sm:text-2xl font-bold text-slate-800 mb-5 leading-tight relative z-10">
-                    {{ edaranTerbaru.judul }}
-                </h4>
-
-                <!-- Metadata Cepat Dinamis -->
-                <div class="bg-white/70 rounded-2xl p-4 mb-5 border border-slate-100 space-y-3 relative z-10">
-                    <div class="flex items-start gap-3">
-                        <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
-                            <i data-lucide="calendar-clock" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Pelaksanaan</p>
-                            <p class="text-sm font-semibold text-slate-700">{{ formatTanggal(edaranTerbaru.tanggal_kegiatan) }}</p>
+                <!-- SISI KIRI: PDF VIEWER -->
+                <section class="flex flex-col w-full h-full rounded-[2rem] overflow-hidden border border-slate-200/60 shadow-xl shadow-slate-200/20 bg-white">
+                    <div class="bg-slate-800 text-white p-4 lg:p-5 flex justify-between items-center z-10">
+                        <h3 class="font-bold flex items-center gap-2 text-sm lg:text-base">
+                            <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> Dokumen Resmi
+                        </h3>
+                    </div>
+                    
+                    <div class="relative w-full h-[450px] sm:h-[550px] lg:h-[600px] bg-slate-100 flex items-center justify-center">
+                        <iframe 
+                            v-if="pdfUrl" 
+                            :src="getViewerUrl(pdfUrl)" 
+                            class="w-full h-full border-none"
+                            loading="lazy">
+                        </iframe>
+                        <div v-else class="flex flex-col items-center text-slate-400 p-8 text-center">
+                            <i data-lucide="file-x-2" class="w-16 h-16 mb-4 opacity-50"></i>
+                            <p class="font-bold text-slate-600">Belum ada surat edaran</p>
+                            <p class="text-xs mt-1">Dokumen PDF yang diupload dari Pusat Kendali akan muncul di sini.</p>
                         </div>
                     </div>
-                    <div class="flex items-start gap-3">
-                        <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
-                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                </section>
+
+                <!-- SISI KANAN: PAPAN PENGUMUMAN MANUAL -->
+                <section id="papan-pengumuman" class="scroll-mt-24 flex flex-col w-full h-full">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-rose-100 text-rose-600 rounded-xl shadow-sm">
+                            <i data-lucide="megaphone" class="w-5 h-5"></i>
                         </div>
-                        <div>
-                            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Lokasi Tes</p>
-                            <p class="text-sm font-semibold text-slate-700">{{ edaranTerbaru.lokasi }}</p>
-                        </div>
+                        <h3 class="text-2xl font-black text-slate-800">Papan Pengumuman</h3>
                     </div>
-                    <div class="flex items-start gap-3">
-                        <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
-                            <i data-lucide="wallet" class="w-4 h-4"></i>
+
+                    <div class="glass-card rounded-[2rem] p-6 lg:p-8 border border-slate-200/60 shadow-xl shadow-slate-200/20 relative overflow-hidden bg-white/50 backdrop-blur-xl w-full flex flex-col h-full">
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div class="flex items-center justify-between mb-5 relative z-10">
+                            <span class="px-3 py-1.5 text-[10px] sm:text-xs font-black rounded-full flex items-center gap-2 border tracking-wider" :class="pengumuman.tipe === 'penting' ? 'bg-rose-100 text-rose-600 border-rose-200' : 'bg-emerald-100 text-emerald-600 border-emerald-200'">
+                                <span class="relative flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" :class="pengumuman.tipe === 'penting' ? 'bg-rose-400' : 'bg-emerald-400'"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2" :class="pengumuman.tipe === 'penting' ? 'bg-rose-600' : 'bg-emerald-600'"></span>
+                                </span>
+                                {{ pengumuman.tipe === 'penting' ? 'INFO PENTING' : 'INFO REGULER' }}
+                            </span>
+                            <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                                <i data-lucide="clock" class="w-4 h-4"></i> Terkini
+                            </span>
                         </div>
-                        <div>
-                            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Administrasi</p>
-                            <p class="text-sm font-semibold text-slate-700">
-                                {{ formatRupiah(edaranTerbaru.biaya) }} 
-                                <span v-if="edaranTerbaru.biaya > 0" class="text-xs font-normal text-emerald-600 bg-emerald-100/50 px-1.5 py-0.5 rounded ml-1">Bisa pakai saldo</span>
+
+                        <!-- Mengambil judul dari database Setting -->
+                        <h4 class="text-xl sm:text-2xl font-black text-slate-800 mb-6 leading-snug relative z-10">
+                            {{ pengumuman.judul || 'Belum Ada Pengumuman' }}
+                        </h4>
+
+                        <!-- Mengambil isi dari database Setting -->
+                        <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-100 relative z-10 shadow-sm flex-grow">
+                            <p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line">
+                                {{ pengumuman.isi || 'Tidak ada rincian tambahan. Silakan cek dokumen PDF jika tersedia.' }}
                             </p>
                         </div>
+
+                        <!-- Tombol Aksi Praktis -->
+                        <div class="mt-auto pt-5 border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+                            <a v-if="pdfUrl" :href="pdfUrl" target="_blank" class="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:-translate-y-1">
+                                <i data-lucide="download" class="w-4 h-4"></i> Unduh PDF Asli
+                            </a>
+                            <button @click="shareWA" class="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:-translate-y-1">
+                                <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Info
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Inti Surat (Bullet Points Dinamis dengan v-for) -->
-                <div class="mb-6 flex-grow relative z-10">
-                    <p class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                        <i data-lucide="list-checks" class="w-4 h-4 text-slate-400"></i> Catatan Tambahan:
-                    </p>
-                    <ul class="space-y-2.5">
-                        <li v-for="(poin, index) in edaranTerbaru.catatan" :key="index" class="flex items-start gap-2.5 text-sm text-slate-600 font-medium">
-                            <i data-lucide="check-circle-2" class="w-4.5 h-4.5 text-emerald-500 mt-0.5 shrink-0"></i>
-                            <span>{{ poin }}</span>
-                        </li>
-                        <li v-if="edaranTerbaru.catatan.length === 0" class="text-sm text-slate-400 italic">
-                            Tidak ada catatan tambahan.
-                        </li>
-                    </ul>
-                </div>
-            </template>
-
-            <!-- Call to Action (Share via WhatsApp) -->
-            <div class="mt-auto pt-4 border-t border-slate-200 flex items-center justify-between gap-3 relative z-10">
-                <p class="text-xs text-slate-500 font-medium hidden sm:flex items-center gap-1.5">
-                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Cek PDF untuk detail resmi
-                </p>
-                <!-- Tombol Share memanggil fungsi shareWA() -->
-                <button @click="shareWA" :disabled="isLoading" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50">
-                    <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Info
-                </button>
+                </section>
             </div>
-        </div>
-    </section>
-</div>
 
 
             <!-- LIRIK LAGU (MARS & HYMNE) -->
@@ -806,7 +755,7 @@
                 <div>
                     <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Akses Cepat</h5>
                     <ul class="space-y-2 text-xs font-bold text-slate-600">
-                        <li><a href="#" @click.prevent="window.scrollTo({top: 0, behavior: 'smooth'})" class="hover:text-emerald-500 transition-colors">Beranda Utama</a></li>
+                        <li><a href="index.html" @click.prevent="window.scrollTo({top: 0, behavior: 'smooth'})" class="hover:text-emerald-500 transition-colors">Beranda Utama</a></li>
                         <li><a href="#visimisi" @click.prevent="scrollTo('visimisi')" class="hover:text-emerald-500 transition-colors">Profil Organisasi</a></li>
                         <li><a href="#agenda" @click.prevent="scrollTo('agenda')" class="hover:text-emerald-500 transition-colors">Jadwal Latihan</a></li>
                     </ul>
@@ -884,248 +833,196 @@
     </div>
     
         <script>
-        const { createApp, ref, reactive, computed, nextTick, onMounted } = Vue;
+    const { createApp, ref, reactive, computed, nextTick, onMounted } = Vue;
 
-        createApp({
-            setup() {
-                const supabase = window.supabase.createClient(TERATE_CONFIG.SUPABASE_URL, TERATE_CONFIG.SUPABASE_ANON_KEY);
-                const pinPelatihDB = ref(TERATE_CONFIG.DEFAULT_PIN_PELATIH || '192201');
-                const pinAdminDB = ref(TERATE_CONFIG.DEFAULT_PIN_ADMIN || '192299');
-                const isLoading = ref(false);
-                const noWa = ref('6289660061234');
-                const tanggalSuro = ref('2027-06-06T00:00:00');
-                const pengumuman = ref({ tipe: '', judul: '', isi: '' });
-                const tabLagu = ref('mars');
-                const pdfUrl = ref('');
-                const posterFull = ref(false);
-                const statusSalin = ref(false);
+    createApp({
+        setup() {
+            const supabase = window.supabase.createClient(TERATE_CONFIG.SUPABASE_URL, TERATE_CONFIG.SUPABASE_ANON_KEY);
+            const pinPelatihDB = ref(TERATE_CONFIG.DEFAULT_PIN_PELATIH || '192201');
+            const pinAdminDB = ref(TERATE_CONFIG.DEFAULT_PIN_ADMIN || '192299');
+            const isLoading = ref(false);
+            const noWa = ref('6289660061234');
+            const tanggalSuro = ref('2027-06-06T00:00:00');
+            
+            // State untuk Papan Pengumuman & PDF
+            const pengumuman = ref({ tipe: '', judul: '', isi: '' });
+            const pdfUrl = ref('');
+            
+            const tabLagu = ref('mars');
+            const posterFull = ref(false);
+            const statusSalin = ref(false);
 
-                // --- STATE BARU UNTUK SURAT EDARAN DINAMIS ---
-                const isLoadingEdaran = ref(true);
-                const edaranTerbaru = ref({
-                    judul: 'Memuat data...',
-                    pdf_url: '',
-                    tanggal_kegiatan: '',
-                    lokasi: '',
-                    biaya: 0,
-                    catatan: []
-                });
+            const DAFTAR_PELATIH = {
+                'ADIT': 'Mas Adit', 'UGIK': 'Mas Ugik', 'HARIS': 'Mas Haris', 'IQBAL': 'Mas Iqbal', 'ADMIN': 'Admin Pusat'
+            };
 
-                const DAFTAR_PELATIH = {
-                    'ADIT': 'Mas Adit', 'UGIK': 'Mas Ugik', 'HARIS': 'Mas Haris', 'IQBAL': 'Mas Iqbal', 'ADMIN': 'Admin Pusat'
-                };
+            const faqs = ref([
+                { tanya: "Apakah ada batas umur untuk mendaftar?", jawab: "Untuk jalur reguler, kami menerima mulai dari usia SD hingga mahasiswa/pemuda. Sedangkan jalur privat khusus untuk usia 25 tahun ke atas atau yang sudah bekerja.", open: false },
+                { tanya: "Berapa biaya pendaftaran awal?", jawab: "Biaya pendaftaran awal sangat terjangkau, mencakup administrasi dan seragam. Rincian detailnya akan dijelaskan oleh pelatih.", open: false },
+                { tanya: "Bolehkah mendaftar jika saya perempuan?", jawab: "Tentu saja! PSHT terbuka untuk perempuan (Srikandi). Materi diajarkan sama, dengan porsi latihan fisik yang disesuaikan.", open: false },
+                { tanya: "Berapa lama waktu latihan hingga disahkan?", jawab: "Normalnya sekitar 1-2 tahun. Waktu ini bervariasi tergantung kerajinan kehadiran dan penguasaan materi.", open: false }
+            ]);
 
-                const faqs = ref([
-                    { tanya: "Apakah ada batas umur untuk mendaftar?", jawab: "Untuk jalur reguler, kami menerima mulai dari usia sekolah dasar (SD) hingga mahasiswa/pemuda. Sedangkan jalur privat khusus untuk usia 25 tahun ke atas atau yang sudah berkeluarga/bekerja.", open: false },
-                    { tanya: "Berapa biaya pendaftaran awal?", jawab: "Biaya pendaftaran di awal sangat terjangkau, mencakup biaya administrasi dan seragam (sakral) latihan standar. Rincian detailnya akan dijelaskan secara transparan langsung oleh pelatih pada pertemuan pertama.", open: false },
-                    { tanya: "Bolehkah mendaftar jika saya perempuan?", jawab: "Tentu saja boleh! PSHT sangat terbuka untuk perempuan (sering disebut Srikandi). Materi yang diajarkan sama, namun dengan porsi dan intensitas latihan fisik yang disesuaikan.", open: false },
-                    { tanya: "Berapa lama waktu latihan hingga disahkan menjadi warga?", jawab: "Normalnya, proses latihan memakan waktu sekitar 1 hingga 2 tahun (biasanya bertepatan dengan Bulan Suro). Waktu ini bervariasi tergantung kerajinan kehadiran dan penguasaan materi senam & jurus dari masing-masing siswa.", open: false }
-                ]);
+            const toggleFaq = (index) => {
+                faqs.value.forEach((faq, i) => { if (i !== index) faq.open = false; });
+                faqs.value[index].open = !faqs.value[index].open;
+            };
 
-                const toggleFaq = (index) => {
-                    faqs.value.forEach((faq, i) => { if (i !== index) faq.open = false; });
-                    faqs.value[index].open = !faqs.value[index].open;
-                };
+            const modalLogin = reactive({ show: false, type: '', inputValue: '', usernameValue: '' });
+            const jadwalList = ref([]);
+            const liveUpdateTitle = ref('Menunggu sinkronisasi...');
 
-                const modalLogin = reactive({ show: false, type: '', inputValue: '', usernameValue: '' });
-                const jadwalList = ref([]);
-                const liveUpdateTitle = ref('Menunggu sinkronisasi...');
+            const sisaHariSuro = computed(() => {
+                const target = new Date(tanggalSuro.value);
+                const diff = target - new Date();
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                return days > 0 ? days : 0;
+            });
 
-                const sisaHariSuro = computed(() => {
-                    const target = new Date(tanggalSuro.value);
-                    const diff = target - new Date();
-                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                    return days > 0 ? days : 0;
-                });
+            const modalTitle = computed(() => {
+                if (modalLogin.type === 'siswa') return 'Portal Siswa';
+                if (modalLogin.type === 'pelatih') return 'Akses Pelatih';
+                return 'Konfigurasi Sistem';
+            });
 
-                const modalTitle = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Portal Siswa';
-                    if (modalLogin.type === 'pelatih') return 'Akses Pelatih';
-                    return 'Konfigurasi Sistem';
-                });
+            const modalDesc = computed(() => {
+                if (modalLogin.type === 'siswa') return 'Pantau tabungan & target pengesahan.';
+                if (modalLogin.type === 'pelatih') return 'Login kasir & manajemen rayon.';
+                return 'Akses khusus administrator pusat.';
+            });
 
-                const modalDesc = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Pantau tabungan & target pengesahan.';
-                    if (modalLogin.type === 'pelatih') return 'Login kasir & manajemen rayon.';
-                    return 'Akses khusus administrator pusat.';
-                });
+            const inputLabel = computed(() => {
+                if (modalLogin.type === 'siswa') return 'Masukan NIS Anda';
+                return 'Sandi Keamanan';
+            });
 
-                const inputLabel = computed(() => {
-                    if (modalLogin.type === 'siswa') return 'Masukan NIS Anda';
-                    return 'Sandi Keamanan';
-                });
+            const showToast = (msg, isSuccess = true) => {
+                const toast = document.createElement('div');
+                toast.className = `${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
+                toast.innerText = msg;
+                document.getElementById('toastContainer').appendChild(toast);
+                setTimeout(() => toast.remove(), 4000);
+            };
 
-                const showToast = (msg, isSuccess = true) => {
-                    const toast = document.createElement('div');
-                    toast.className = `${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'} text-white px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm text-center transition-all animate-fade-in z-[99999]`;
-                    toast.innerText = msg;
-                    document.getElementById('toastContainer').appendChild(toast);
-                    setTimeout(() => toast.remove(), 3500);
-                };
+            const scrollTo = (id) => { 
+                const el = document.getElementById(id);
+                if(el) el.scrollIntoView({ behavior: 'smooth' }); 
+            };
 
-                const scrollTo = (id) => { 
-                    const el = document.getElementById(id);
-                    if(el) el.scrollIntoView({ behavior: 'smooth' }); 
-                };
+            const shareWA = () => {
+                const judul = pengumuman.value.judul || 'Informasi Terbaru Rayon';
+                const url = window.location.href;
+                const text = `*INFO PENTING RAYON*\n\n*${judul}*\n\nCek pengumuman & edaran selengkapnya di sini:\n${url}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            };
 
-                // --- UTILITY FORMATTER BARU ---
-                const formatTanggal = (dateString) => {
-                    if (!dateString) return '-';
-                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                    return new Date(dateString).toLocaleDateString('id-ID', options);
-                };
+            const getViewerUrl = (url) => {
+                if (!url) return '';
+                if (url.includes('supabase.co')) {
+                    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+                }
+                if (url.includes('drive.google.com')) {
+                    return url.replace(/\/view.*|\/edit.*|\/usp=.*/, '/preview');
+                }
+                return url;
+            };
 
-                const formatRupiah = (angka) => {
-                    if (angka === undefined || angka === null) return 'Rp 0';
-                    return new Intl.NumberFormat('id-ID', { 
-                        style: 'currency', 
-                        currency: 'IDR', 
-                        minimumFractionDigits: 0 
-                    }).format(angka);
-                };
-
-                const shareWA = () => {
-                    const judul = edaranTerbaru.value.judul || 'Informasi Surat Edaran';
-                    const tanggal = formatTanggal(edaranTerbaru.value.tanggal_kegiatan);
-                    const lokasi = edaranTerbaru.value.lokasi || '-';
-                    const url = window.location.href;
+            // LOAD DATA (SUPER CEPAT TANPA AI)
+            const loadSemuaData = async () => {
+                try {
+                    const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
                     
-                    const text = `*INFO PENTING RAYON*\n\n*${judul}*\n\n📅 Pelaksanaan: ${tanggal}\n📍 Lokasi: ${lokasi}\n\nCek edaran selengkapnya di sini:\n${url}`;
-                    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-                };
-
-                // --- FUNGSI LOAD DATA ---
-                const loadDynamicJadwal = async () => {
-                    try {
-                        const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
-                        if (data && !error) {
-                            if (data.no_wa) noWa.value = data.no_wa;
-                            if (data.tanggal_suro) tanggalSuro.value = data.tanggal_suro + 'T00:00:00';
-                            if (data.pin_pelatih) pinPelatihDB.value = data.pin_pelatih;
-                            if (data.pin_admin) pinAdminDB.value = data.pin_admin;
-                            
-                            // Fallback PDF URL jika tabel surat_edaran belum terisi
-                            if (data.pdf_url) pdfUrl.value = data.pdf_url; 
-                            
-                            if (data.judul_pengumuman) {
-                                pengumuman.value = { tipe: data.tipe_pengumuman, judul: data.judul_pengumuman, isi: data.isi_pengumuman };
-                                liveUpdateTitle.value = data.judul_pengumuman;
-                            } else {
-                                liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
-                            }
-                        }
-                    } catch (e) {
-                        console.error(e);
-                        liveUpdateTitle.value = 'Jadwal latihan reguler berjalan normal.';
-                    }
-
-                    jadwalList.value = [
-                        { kategori: 'Rutin', judul: 'Latihan Regular', deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk masing-masing.', waktu: '19:22 WIB - Selesai.', icon: 'users-2', colorIconBg: 'bg-emerald-50', colorIconText: 'text-emerald-500' },
-                        { kategori: 'Agenda', judul: 'Jadwal Latihan Privat', deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan kesepakatan.', waktu: 'Fleksibel', icon: 'briefcase', colorIconBg: 'bg-purple-50', colorIconText: 'text-purple-500' }
-                    ];
-                    nextTick(() => { if (window.lucide) lucide.createIcons(); })
-                };
-
-                const loadSuratEdaran = async () => {
-                    isLoadingEdaran.value = true;
-                    try {
-                        const { data, error } = await supabase
-                            .from('surat_edaran')
-                            .select('*')
-                            .eq('is_active', true)
-                            .order('created_at', { ascending: false })
-                            .limit(1)
-                            .single();
-
-                        if (!error && data) {
-                            edaranTerbaru.value = {
-                                judul: data.judul,
-                                pdf_url: data.pdf_url,
-                                tanggal_kegiatan: data.tanggal_kegiatan,
-                                lokasi: data.lokasi,
-                                biaya: data.biaya,
-                                catatan: data.catatan || []
+                    if (data && !error) {
+                        if (data.no_wa) noWa.value = data.no_wa;
+                        if (data.tanggal_suro) tanggalSuro.value = data.tanggal_suro + 'T00:00:00';
+                        if (data.pin_pelatih) pinPelatihDB.value = data.pin_pelatih;
+                        if (data.pin_admin) pinAdminDB.value = data.pin_admin;
+                        
+                        if (data.judul_pengumuman) {
+                            pengumuman.value = { 
+                                tipe: data.tipe_pengumuman, 
+                                judul: data.judul_pengumuman, 
+                                isi: data.isi_pengumuman 
                             };
-                            // Menimpa pdfUrl dari tabel pengaturan dengan pdf_url dari tabel surat_edaran
-                            pdfUrl.value = data.pdf_url; 
+                            liveUpdateTitle.value = data.judul_pengumuman;
                         }
-                    } catch (e) {
-                        console.warn("Gagal/Belum ada data surat_edaran:", e.message);
-                    } finally {
-                        isLoadingEdaran.value = false;
-                        nextTick(() => { if (window.lucide) lucide.createIcons(); });
+
+                        if (data.pdf_url) {
+                            pdfUrl.value = data.pdf_url;
+                        }
                     }
-                };
-
-                const bukaModalLogin = (type) => {
-                    modalLogin.type = type;
-                    modalLogin.inputValue = '';
-                    modalLogin.usernameValue = '';
-                    modalLogin.show = true;
+                } catch (e) {
+                    console.error("Kesalahan jaringan:", e);
+                } finally {
+                    jadwalList.value = [
+                        { kategori: 'Rutin', judul: 'Latihan Regular', deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk.', waktu: '19:22 WIB - Selesai.', icon: 'users-2', colorIconBg: 'bg-emerald-50', colorIconText: 'text-emerald-500' },
+                        { kategori: 'Agenda', judul: 'Jadwal Latihan Privat', deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan.', waktu: 'Fleksibel', icon: 'briefcase', colorIconBg: 'bg-purple-50', colorIconText: 'text-purple-500' }
+                    ];
                     nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                };
+                }
+            };
 
-                const tutupModalLogin = () => { if (isLoading.value) return; modalLogin.show = false; };
+            const bukaModalLogin = (type) => {
+                modalLogin.type = type;
+                modalLogin.inputValue = '';
+                modalLogin.usernameValue = '';
+                modalLogin.show = true;
+                nextTick(() => { if (window.lucide) lucide.createIcons(); });
+            };
 
-                const eksekusiLogin = () => {
-                    if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
-                    if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
-                    
-                    isLoading.value = true;
-                    setTimeout(() => {
-                        isLoading.value = false;
-                        if (modalLogin.type === 'siswa') {
-                            localStorage.setItem('terate_user_nis', modalLogin.inputValue);
-                            showToast("Membuka Portal Siswa...", true);
-                            setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
+            const tutupModalLogin = () => { if (isLoading.value) return; modalLogin.show = false; };
+
+            const eksekusiLogin = () => {
+                if (modalLogin.type === 'siswa' && !modalLogin.inputValue) return;
+                if (modalLogin.type !== 'siswa' && (!modalLogin.inputValue || !modalLogin.usernameValue)) return showToast("Isi ID dan Sandi!", false);
+                
+                isLoading.value = true;
+                setTimeout(() => {
+                    isLoading.value = false;
+                    if (modalLogin.type === 'siswa') {
+                        localStorage.setItem('terate_user_nis', modalLogin.inputValue);
+                        showToast("Membuka Portal Siswa...", true);
+                        setTimeout(() => { window.location.href = 'portal-siswa.html'; }, 800);
+                    } else {
+                        const userStr = modalLogin.usernameValue.toUpperCase();
+                        const passStr = modalLogin.inputValue;
+                        const namaAsli = DAFTAR_PELATIH[userStr];
+                        const isLoginAdmin = (userStr === 'ADMIN' || modalLogin.type === 'maintenance');
+                        const pinYangBenar = isLoginAdmin ? pinAdminDB.value : pinPelatihDB.value;
+
+                        if (passStr === pinYangBenar && namaAsli) {
+                            showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
+                            localStorage.setItem('terate_nama_kasir', namaAsli);
+                            setTimeout(() => { window.location.href = isLoginAdmin ? 'setting.html' : 'kasir.html'; }, 800);
                         } else {
-                            const userStr = modalLogin.usernameValue.toUpperCase();
-                            const passStr = modalLogin.inputValue;
-                            const namaAsli = DAFTAR_PELATIH[userStr];
-                            const isLoginAdmin = (userStr === 'ADMIN' || modalLogin.type === 'maintenance');
-                            const pinYangBenar = isLoginAdmin ? pinAdminDB.value : pinPelatihDB.value;
-
-                            if (passStr === pinYangBenar && namaAsli) {
-                                showToast(`Akses Diberikan. Selamat datang, ${namaAsli}!`, true);
-                                localStorage.setItem('terate_nama_kasir', namaAsli);
-                                setTimeout(() => { window.location.href = isLoginAdmin ? 'setting.html' : 'kasir.html'; }, 800);
-                            } else {
-                                showToast("ID Pengguna atau Sandi Salah!", false);
-                                modalLogin.inputValue = '';
-                            }
+                            showToast("ID Pengguna atau Sandi Salah!", false);
+                            modalLogin.inputValue = '';
                         }
-                    }, 1000);
-                };
+                    }
+                }, 1000);
+            };
 
-                const bukaPosterFull = () => { posterFull.value = true; nextTick(() => { if (window.lucide) lucide.createIcons(); }); };
-                const copyRekening = (noRek) => {
-                    navigator.clipboard.writeText(noRek).then(() => {
-                        statusSalin.value = true;
-                        setTimeout(() => { statusSalin.value = false; }, 2000);
-                    }).catch(err => console.error('Gagal menyalin: ', err));
-                };
-                // Fungsi untuk membersihkan dan mengonversi link Google Drive
-const convertDriveLink = (url) => {
-    if (!url) return '';
-    // Mengubah /view, /edit, atau /usp=drivesdk menjadi /preview
-    return url.replace(/\/view.*|\/edit.*|\/usp=.*/, '/preview');
-};
+            const bukaPosterFull = () => { posterFull.value = true; nextTick(() => { if (window.lucide) lucide.createIcons(); }); };
+            
+            const copyRekening = (noRek) => {
+                navigator.clipboard.writeText(noRek).then(() => {
+                    statusSalin.value = true;
+                    setTimeout(() => { statusSalin.value = false; }, 2000);
+                }).catch(err => console.error('Gagal menyalin: ', err));
+            };
 
+            onMounted(() => { 
+                loadSemuaData(); 
+            });
 
-                onMounted(() => { 
-                    loadDynamicJadwal();
-                    loadSuratEdaran(); // Menjalankan fetch data surat edaran saat web dibuka
-                });
-
-                return {
-                    isLoading, modalLogin, modalTitle, modalDesc, inputLabel, jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
-                    bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq, posterFull, bukaPosterFull, noWa, pengumuman, statusSalin, copyRekening,
-                    // Return state dan fungsi baru untuk Edaran
-                    edaranTerbaru, isLoadingEdaran, formatTanggal, formatRupiah, shareWA, convertDriveLink
-                };
-            }
-        }).mount('#app');
-    </script>
+            return {
+                isLoading, modalLogin, modalTitle, modalDesc, inputLabel, jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
+                bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq, posterFull, bukaPosterFull, noWa, pengumuman, statusSalin, copyRekening,
+                shareWA, getViewerUrl
+            };
+        }
+    }).mount('#app');
+</script>
 
 </body>
 </html>
