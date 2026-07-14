@@ -10,7 +10,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@0.292.0"></script>
+    <script src="https://unpkg.com/lucide@0.292.0" defer></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -165,7 +165,7 @@
                     </div>
                     
                     <a href="#agenda" @click.prevent="scrollTo('agenda')" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">Jadwal</a>
-                    <a href="#edaran" @click.prevent="scrollTo('edaran')" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">Surat Edaran</a>
+                    <a href="#faq" @click.prevent="scrollTo('faq')" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">FAQ</a>                    
                 </nav>
 
                 <!-- Area Tombol Login di Header (DIPERBAIKI AGAR SIMETRIS & PROPORSIONAL) -->
@@ -184,48 +184,12 @@
                 </div>
             </header>
 
-                <!-- PAPAN PENGUMUMAN DINAMIS (Disembunyikan di Mobile) -->
-            <div v-if="pengumuman.judul" class="hidden lg:block animate-fade-in mb-8 mt-4 group">
-                <div class="relative rounded-[2rem] p-6 transition-all duration-500 hover:scale-[1.01] bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(16,185,129,0.12)] overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div class="absolute -right-10 -top-10 w-40 h-40 opacity-20 pointer-events-none transition-all duration-500 group-hover:scale-125 group-hover:opacity-30" :class="pengumuman.tipe === 'penting' ? 'bg-gradient-to-br from-rose-500 to-amber-500' : 'bg-gradient-to-br from-emerald-500 to-cyan-500'" style="filter: blur(40px);"></div>
-                    <div class="absolute -left-10 -bottom-10 w-40 h-40 opacity-10 pointer-events-none" :class="pengumuman.tipe === 'penting' ? 'bg-rose-400' : 'bg-emerald-400'" style="filter: blur(40px);"></div>
-
-                    <div class="flex items-start gap-4 relative z-10">
-                        <div class="p-3.5 rounded-2xl shrink-0 transition-transform duration-300 group-hover:rotate-6 shadow-sm flex items-center justify-center relative" :class="pengumuman.tipe === 'penting' ? 'bg-rose-50 text-rose-500 border border-rose-100' : 'bg-emerald-50 text-emerald-500 border border-emerald-100'">
-                            <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" :class="pengumuman.tipe === 'penting' ? 'bg-rose-400' : 'bg-emerald-400'"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3" :class="pengumuman.tipe === 'penting' ? 'bg-rose-500' : 'bg-emerald-500'"></span>
-                            </span>
-                            <i :data-lucide="pengumuman.tipe === 'penting' ? 'bell-ring' : 'sparkles'" class="w-6 h-6 animate-pulse"></i>
-                        </div>
-                        
-                        <div class="space-y-1">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full border shadow-2xs" :class="pengumuman.tipe === 'penting' ? 'bg-rose-500/10 text-rose-600 border-rose-200/50' : 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50'">
-                                    {{ pengumuman.tipe === 'penting' ? 'Critical Alert' : 'System Update' }}
-                                </span>
-                                <span class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                    <i data-lucide="refresh-cw" class="w-3 h-3 animate-spin" style="animation-duration: 4s;"></i> Terverifikasi Dekat
-                                </span>
-                            </div>
-                            <h3 class="text-lg font-black tracking-tight text-slate-800 transition-colors group-hover:text-slate-900 pt-1">
-                                {{ pengumuman.judul }}
-                            </h3>
-                            <p class="text-sm font-medium text-slate-500 group-hover:text-slate-600 leading-relaxed max-w-3xl">
-                                {{ pengumuman.isi }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
             <!-- HERO SECTION -->
             <section class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 mb-24 mt-8">
                 <div class="w-full lg:w-1/2 space-y-6 text-center lg:text-left animate-fade-in">
                     <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-full mb-2 shadow-sm">
                         <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span>
-                        <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Sistem Digital Ranting Kemlagi</p>
+                        <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Persaudaraan Setia Hati Terate</p>
                     </div>
                     <h2 class="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-800 tracking-tighter leading-[1.05]">
                         Ekosistem <br>
@@ -621,88 +585,7 @@
                             </div>
                         </div>
                     </div>
-                </section>
-
-            <!-- Main Container: PDF & Papan Pengumuman (2 Kolom di PC, 1 Kolom di HP) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-24">
-
-                <!-- SISI KIRI: PDF VIEWER -->
-                <section class="flex flex-col w-full h-full rounded-[2rem] overflow-hidden border border-slate-200/60 shadow-xl shadow-slate-200/20 bg-white">
-    <div class="bg-slate-800 text-white p-4 lg:p-5 flex justify-between items-center z-10">
-        <h3 class="font-bold flex items-center gap-2 text-sm lg:text-base">
-            <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> Dokumen Resmi
-        </h3>
-    </div>
-    
-    <div class="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-slate-100 overflow-hidden" style="-webkit-overflow-scrolling: touch;">
-        <iframe 
-            v-if="pdfUrl" 
-            :src="getViewerUrl(pdfUrl)" 
-            class="absolute top-0 left-0 w-full h-full border-none"
-            loading="lazy"
-            allowfullscreen>
-        </iframe>
-        
-        <div v-else class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-100">
-            <i data-lucide="file-x-2" class="w-16 h-16 mb-4 opacity-50"></i>
-            <p class="font-bold text-slate-600">Belum ada surat edaran</p>
-            <p class="text-xs mt-1">Dokumen PDF yang diupload dari Pusat Kendali akan muncul di sini.</p>
-        </div>
-    </div>
-</section>
-
-
-                <!-- SISI KANAN: PAPAN PENGUMUMAN MANUAL -->
-                <section id="papan-pengumuman" class="scroll-mt-24 flex flex-col w-full h-full">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="p-2 bg-rose-100 text-rose-600 rounded-xl shadow-sm">
-                            <i data-lucide="megaphone" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-2xl font-black text-slate-800">Papan Pengumuman</h3>
-                    </div>
-
-                    <div class="glass-card rounded-[2rem] p-6 lg:p-8 border border-slate-200/60 shadow-xl shadow-slate-200/20 relative overflow-hidden bg-white/50 backdrop-blur-xl w-full flex flex-col h-full">
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-400/20 rounded-full blur-3xl pointer-events-none"></div>
-
-                        <div class="flex items-center justify-between mb-5 relative z-10">
-                            <span class="px-3 py-1.5 text-[10px] sm:text-xs font-black rounded-full flex items-center gap-2 border tracking-wider" :class="pengumuman.tipe === 'penting' ? 'bg-rose-100 text-rose-600 border-rose-200' : 'bg-emerald-100 text-emerald-600 border-emerald-200'">
-                                <span class="relative flex h-2 w-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" :class="pengumuman.tipe === 'penting' ? 'bg-rose-400' : 'bg-emerald-400'"></span>
-                                  <span class="relative inline-flex rounded-full h-2 w-2" :class="pengumuman.tipe === 'penting' ? 'bg-rose-600' : 'bg-emerald-600'"></span>
-                                </span>
-                                {{ pengumuman.tipe === 'penting' ? 'INFO PENTING' : 'INFO REGULER' }}
-                            </span>
-                            <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
-                                <i data-lucide="clock" class="w-4 h-4"></i> Terkini
-                            </span>
-                        </div>
-
-                        <!-- Mengambil judul dari database Setting -->
-                        <h4 class="text-xl sm:text-2xl font-black text-slate-800 mb-6 leading-snug relative z-10">
-                            {{ pengumuman.judul || 'Belum Ada Pengumuman' }}
-                        </h4>
-
-                        <!-- Mengambil isi dari database Setting -->
-                        <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-100 relative z-10 shadow-sm flex-grow">
-                            <p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line">
-                                {{ pengumuman.isi || 'Tidak ada rincian tambahan. Silakan cek dokumen PDF jika tersedia.' }}
-                            </p>
-                        </div>
-
-                        <!-- Tombol Aksi Praktis -->
-                        <div class="mt-auto pt-5 border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-                            <a v-if="pdfUrl" :href="pdfUrl" target="_blank" class="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:-translate-y-1">
-                                <i data-lucide="download" class="w-4 h-4"></i> Unduh PDF Asli
-                            </a>
-                            <button @click="shareWA" class="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:-translate-y-1">
-                                <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan Info
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-
+                </section> 
             <!-- LIRIK LAGU (MARS & HYMNE) -->
             <section id="lagu" class="mb-24 scroll-mt-24">
                 <div class="glass-card rounded-[3rem] p-8 lg:p-12 border border-white">
@@ -872,9 +755,9 @@
 
         <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[999999] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
     </div>
-    
-        <script>
-    const { createApp, ref, reactive, computed, nextTick, onMounted } = Vue;
+            <script>
+    // Menambahkan onUpdated agar ikon tidak hilang saat state berubah
+    const { createApp, ref, reactive, computed, nextTick, onMounted, onUpdated } = Vue;
 
     createApp({
         setup() {
@@ -885,13 +768,11 @@
             const noWa = ref('6289660061234');
             const tanggalSuro = ref('2027-06-06T00:00:00');
             
-            // State untuk Papan Pengumuman & PDF
-            const pengumuman = ref({ tipe: '', judul: '', isi: '' });
-            const pdfUrl = ref('');
-            
+            // Variabel lagu dipertahankan agar lirik tetap muncul
             const tabLagu = ref('mars');
             const posterFull = ref(false);
             const statusSalin = ref(false);
+            const jadwalList = ref([]);
 
             const DAFTAR_PELATIH = {
                 'ADIT': 'Mas Adit', 'UGIK': 'Mas Ugik', 'HARIS': 'Mas Haris', 'IQBAL': 'Mas Iqbal', 'ADMIN': 'Admin Pusat'
@@ -910,8 +791,6 @@
             };
 
             const modalLogin = reactive({ show: false, type: '', inputValue: '', usernameValue: '' });
-            const jadwalList = ref([]);
-            const liveUpdateTitle = ref('Menunggu sinkronisasi...');
 
             const sisaHariSuro = computed(() => {
                 const target = new Date(tanggalSuro.value);
@@ -950,28 +829,14 @@
                 if(el) el.scrollIntoView({ behavior: 'smooth' }); 
             };
 
+            // Fungsi shareWA diperbarui karena variabel pengumuman dihapus
             const shareWA = () => {
-                const judul = pengumuman.value.judul || 'Informasi Terbaru Rayon';
                 const url = window.location.href;
-                const text = `*INFO PENTING RAYON*\n\n*${judul}*\n\nCek pengumuman & edaran selengkapnya di sini:\n${url}`;
+                const text = `*INFO TERBARU RAYON JAPANAN*\n\nCek informasi, FAQ, dan jadwal latihan di sini:\n${url}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
             };
 
-            const getViewerUrl = (url) => {
-    if (!url) return '';
-    
-    // 1. Jika ini link Google Drive, gunakan mode preview bawaan Drive
-    if (url.includes('drive.google.com')) {
-        return url.replace(/\/view.*|\/edit.*|\/usp=.*/, '/preview');
-    }
-    
-    // 2. Untuk link Supabase atau link PDF lainnya, kita PAKSA masuk ke Google Docs Viewer (gview).
-    // Ini adalah kunci agar HP (Android/iOS) merender PDF sebagai halaman web, BUKAN mendownloadnya.
-    return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
-};
-
-
-            // LOAD DATA (SUPER CEPAT TANPA AI)
+            // Load data disederhanakan tanpa memanggil PDF
             const loadSemuaData = async () => {
                 try {
                     const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
@@ -981,19 +846,6 @@
                         if (data.tanggal_suro) tanggalSuro.value = data.tanggal_suro + 'T00:00:00';
                         if (data.pin_pelatih) pinPelatihDB.value = data.pin_pelatih;
                         if (data.pin_admin) pinAdminDB.value = data.pin_admin;
-                        
-                        if (data.judul_pengumuman) {
-                            pengumuman.value = { 
-                                tipe: data.tipe_pengumuman, 
-                                judul: data.judul_pengumuman, 
-                                isi: data.isi_pengumuman 
-                            };
-                            liveUpdateTitle.value = data.judul_pengumuman;
-                        }
-
-                        if (data.pdf_url) {
-                            pdfUrl.value = data.pdf_url;
-                        }
                     }
                 } catch (e) {
                     console.error("Kesalahan jaringan:", e);
@@ -1002,7 +854,11 @@
                         { kategori: 'Rutin', judul: 'Latihan Regular', deskripsi: 'Setiap Rabu & Sabtu. Memakai sakral lengkap & sabuk.', waktu: '19:22 WIB - Selesai.', icon: 'users-2', colorIconBg: 'bg-emerald-50', colorIconText: 'text-emerald-500' },
                         { kategori: 'Agenda', judul: 'Jadwal Latihan Privat', deskripsi: 'Khusus jalur privat. Waktu dan tempat menyesuaikan.', waktu: 'Fleksibel', icon: 'briefcase', colorIconBg: 'bg-purple-50', colorIconText: 'text-purple-500' }
                     ];
-                    nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                    
+                    // Render ikon setelah list jadwal terisi
+                    nextTick(() => { 
+                        if (window.lucide) lucide.createIcons(); 
+                    });
                 }
             };
 
@@ -1011,7 +867,6 @@
                 modalLogin.inputValue = '';
                 modalLogin.usernameValue = '';
                 modalLogin.show = true;
-                nextTick(() => { if (window.lucide) lucide.createIcons(); });
             };
 
             const tutupModalLogin = () => { if (isLoading.value) return; modalLogin.show = false; };
@@ -1046,7 +901,7 @@
                 }, 1000);
             };
 
-            const bukaPosterFull = () => { posterFull.value = true; nextTick(() => { if (window.lucide) lucide.createIcons(); }); };
+            const bukaPosterFull = () => { posterFull.value = true; };
             
             const copyRekening = (noRek) => {
                 navigator.clipboard.writeText(noRek).then(() => {
@@ -1055,14 +910,27 @@
                 }).catch(err => console.error('Gagal menyalin: ', err));
             };
 
+            // Setup lifecycle hooks agar ikon aman 100%
             onMounted(() => { 
-                loadSemuaData(); 
+                loadSemuaData();
+                nextTick(() => {
+                    setTimeout(() => {
+                        if (window.lucide) {
+                            lucide.createIcons();
+                        }
+                    }, 100);
+                });
             });
 
+            onUpdated(() => {
+                if (window.lucide) lucide.createIcons();
+            });
+
+            // Return bersih, tidak ada sisa pengumuman atau pdfUrl
             return {
-                isLoading, modalLogin, modalTitle, modalDesc, inputLabel, jadwalList, sisaHariSuro, liveUpdateTitle, tabLagu, pdfUrl,
-                bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq, posterFull, bukaPosterFull, noWa, pengumuman, statusSalin, copyRekening,
-                shareWA, getViewerUrl
+                isLoading, modalLogin, modalTitle, modalDesc, inputLabel, jadwalList, sisaHariSuro, tabLagu,
+                bukaModalLogin, tutupModalLogin, eksekusiLogin, scrollTo, faqs, toggleFaq, posterFull, bukaPosterFull, noWa, statusSalin, copyRekening,
+                shareWA
             };
         }
     }).mount('#app');
