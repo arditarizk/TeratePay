@@ -9,9 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@0.292.0"></script>
     <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
-    
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    
     <script src="config.js"></script>
 
     <style>
@@ -76,7 +74,7 @@
                 </button>
             </header>
 
-            <div class="p-5 lg:p-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <div class="p-5 lg:p-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
                 
                 <div class="space-y-6">
                     <div>
@@ -93,12 +91,23 @@
                         </div>
                     </div>
 
-                    <div>
+                                        <div>
                         <div class="flex items-center gap-2 mb-3">
-                            <div class="p-1.5 bg-amber-50 text-amber-500 rounded-lg"><i data-lucide="key" class="w-4 h-4"></i></div>
-                            <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">Akses & Keamanan</h2>
+                            <div class="p-1.5 bg-rose-50 text-rose-500 rounded-lg"><i data-lucide="power" class="w-4 h-4"></i></div>
+                            <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">Status Penerimaan Siswa</h2>
                         </div>
-                        
+                        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between transition-all" :class="!form.statusPendaftaran ? 'border-rose-200 bg-rose-50/30' : ''">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800" :class="!form.statusPendaftaran ? 'text-rose-600' : ''">Pendaftaran Dibuka</h3>
+                                <p class="text-[10px] text-slate-500 mt-1 font-medium">Matikan untuk menutup form pendaftaran di beranda.</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="form.statusPendaftaran" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
                         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center">PIN Pelatih</label>
@@ -111,38 +120,32 @@
                         </div>
                     </div>
 
-                    <div class="relative group">
-    <input type="file" ref="fileInput" @change="handleFileUpload" accept="application/pdf" class="hidden">
-    
-    <div @click="$refs.fileInput.click()" 
-         class="cursor-pointer border-2 border-dashed rounded-3xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 bg-white hover:bg-indigo-50/30 border-indigo-100 hover:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/20 shadow-sm hover:shadow-lg hover:shadow-indigo-500/10">
-        
-        <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <i data-lucide="upload-cloud" class="w-6 h-6 text-indigo-500"></i>
-        </div>
+                    <div v-if=hide class="relative group">
+                        <input type="file" ref="fileInput" @change="handleFileUpload" accept="application/pdf" class="hidden">
+                        
+                        <div @click="$refs.fileInput.click()" class="cursor-pointer border-2 border-dashed rounded-3xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 bg-white hover:bg-indigo-50/30 border-indigo-100 hover:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/20 shadow-sm hover:shadow-lg hover:shadow-indigo-500/10">
+                            <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i data-lucide="upload-cloud" class="w-6 h-6 text-indigo-500"></i>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm font-bold text-slate-700">Click to upload PDF</p>
+                                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Max size 5MB</p>
+                            </div>
+                        </div>
 
-        <div class="text-center">
-            <p class="text-sm font-bold text-slate-700">Click to upload PDF</p>
-            <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Max size 5MB</p>
-        </div>
-    </div>
-
-    <div v-if="form.pdfUrl" class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-    <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
-        <i data-lucide="file-check-2" class="w-5 h-5"></i>
-    </div>
-    <div class="flex-grow overflow-hidden">
-        <p class="text-xs font-bold text-slate-700 truncate">{{ form.fileName }}</p>
-        <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">File Ready to Sync</p>
-    </div>
-    <button @click="form.pdfUrl = ''; form.fileName = ''" class="text-slate-400 hover:text-rose-500 transition-colors">
-        <i data-lucide="x" class="w-4 h-4"></i>
-    </button>
-</div>
-
-
-
-                <div class="space-y-6 flex flex-col justify-between">
+                        <div v-if="form.pdfUrl" class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                <i data-lucide="file-check-2" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-grow overflow-hidden">
+                                <p class="text-xs font-bold text-slate-700 truncate">{{ form.fileName }}</p>
+                                <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">File Ready to Sync</p>
+                            </div>
+                            <button @click="form.pdfUrl = ''; form.fileName = ''" class="text-slate-400 hover:text-rose-500 transition-colors">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div> </div> <div class="space-y-6 flex flex-col h-full">
                     <div>
                         <div class="flex items-center gap-2 mb-3">
                             <div class="p-1.5 bg-sky-50 text-sky-500 rounded-lg"><i data-lucide="layout-template" class="w-4 h-4"></i></div>
@@ -160,13 +163,21 @@
                         </div>
                     </div>
 
-                    <div class="flex-grow flex flex-col">
-                        <div class="flex items-center gap-2 mb-3">
-                            <div class="p-1.5 bg-emerald-50 text-emerald-500 rounded-lg"><i data-lucide="radio" class="w-4 h-4"></i></div>
-                            <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">Live Announcement (Sync to Index)</h2>
+                                        <div class="flex-grow flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="p-1.5 bg-emerald-50 text-emerald-500 rounded-lg"><i data-lucide="radio" class="w-4 h-4"></i></div>
+                                <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">Pengumuman Siswa</h2>
+                            </div>
+                            <!-- Tab Switcher -->
+                            <div class="flex bg-slate-100 p-1 rounded-lg">
+                                <button @click="tabPengumuman = 'beranda'" :class="tabPengumuman === 'beranda' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500'" class="px-3 py-1 text-[10px] font-bold uppercase rounded-md transition-all">Beranda</button>
+                                <button @click="tabPengumuman = 'portal'" :class="tabPengumuman === 'portal' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500'" class="px-3 py-1 text-[10px] font-bold uppercase rounded-md transition-all">Portal Siswa</button>
+                            </div>
                         </div>
 
-                        <div class="bg-slate-900 p-5 rounded-3xl shadow-xl flex-grow flex flex-col border border-slate-800 relative overflow-hidden">
+                        <!-- Form Tab Beranda -->
+                        <div v-show="tabPengumuman === 'beranda'" class="bg-slate-900 p-5 rounded-3xl shadow-xl flex-grow flex flex-col border border-slate-800 relative overflow-hidden">
                             <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 blur-3xl rounded-full pointer-events-none"></div>
                             
                             <div class="flex gap-3 mb-5 bg-slate-800 p-1.5 rounded-2xl relative z-10">
@@ -184,132 +195,192 @@
                                 </label>
                             </div>
 
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1 relative z-10">Judul Pengumuman</label>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1 relative z-10">Judul Pengumuman (Marquee)</label>
                             <input type="text" v-model="form.judulPengumuman" placeholder="Contoh: Tes Sabuk Dipercepat" class="w-full px-5 py-4 bg-slate-800 border-none text-white rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500 transition-all mb-4 relative z-10">
                             
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1 relative z-10">Detail Pesan</label>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1 relative z-10">Detail Pesan (Marquee)</label>
                             <textarea v-model="form.isiPengumuman" rows="3" placeholder="Ketik rincian agenda untuk tampil di halaman depan..." class="w-full px-5 py-4 bg-slate-800 border-none text-white rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500 transition-all resize-none flex-grow relative z-10"></textarea>
                         </div>
-                    </div>
-                </div>
 
+                        <!-- Form Tab Portal Siswa -->
+                        <div v-show="tabPengumuman === 'portal'" class="bg-indigo-950 p-5 rounded-3xl shadow-xl flex-grow flex flex-col border border-indigo-900 relative overflow-hidden">
+                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                            
+                            <div class="flex gap-3 mb-5 bg-indigo-900 p-1.5 rounded-2xl relative z-10">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" value="info" v-model="form.portalTipe" class="peer sr-only">
+                                    <div class="px-4 py-2.5 rounded-xl text-indigo-300 font-bold text-[10px] text-center peer-checked:bg-white peer-checked:text-indigo-900 transition-all uppercase tracking-widest flex justify-center items-center gap-1.5">
+                                        <i data-lucide="info" class="w-3.5 h-3.5"></i> Pesan Biasa
+                                    </div>
+                                </label>
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" value="penting" v-model="form.portalTipe" class="peer sr-only">
+                                    <div class="px-4 py-2.5 rounded-xl text-indigo-300 font-bold text-[10px] text-center peer-checked:bg-amber-500 peer-checked:text-white transition-all uppercase tracking-widest flex justify-center items-center gap-1.5">
+                                        <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Peringatan
+                                    </div>
+                                </label>
+                            </div>
+
+                            <label class="block text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2 ml-1 relative z-10">Topik Pemberitahuan</label>
+                            <input type="text" v-model="form.portalJudul" placeholder="Contoh: Jadwal Ambil Sabuk" class="w-full px-5 py-4 bg-indigo-900 border-none text-white rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-400 transition-all mb-4 relative z-10">
+                            
+                            <label class="block text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2 ml-1 relative z-10">Isi Pengumuman Dashboard</label>
+                            <textarea v-model="form.portalIsi" rows="3" placeholder="Siswa diwajibkan melunasi tunggakan..." class="w-full px-5 py-4 bg-indigo-900 border-none text-white rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-400 transition-all resize-none flex-grow relative z-10"></textarea>
+                        </div>
+                    </div>
+
+                           <div class="px-8 mt-4">
+                <div class="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
             </div>
 
-            <div class="lg:mt-auto border-t border-slate-100 bg-white p-5 lg:p-6 sticky bottom-0 z-20">
-                <button @click="simpanPengaturan" :disabled="isSaving" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-4 rounded-2xl active:scale-95 flex justify-center items-center gap-2 transition-all shadow-xl shadow-slate-900/20 disabled:opacity-50 text-sm uppercase tracking-widest">
-                    <i v-if="isSaving" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
-                    <span v-else class="flex items-center gap-2">
-                        <i data-lucide="save" class="w-5 h-5"></i> Simpan Semua Konfigurasi
+            <div class="p-6 lg:p-8 w-full">
+                <button @click="simpanPengaturan" :disabled="isSaving" class="group relative w-full h-16 bg-slate-900 overflow-hidden rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 shadow-[0_15px_30px_-10px_rgba(15,23,42,0.3)] hover:shadow-[0_20px_40px_-10px_rgba(15,23,42,0.5)] active:scale-[0.98] border border-slate-800 disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100">
+                    
+                    <div class="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-[30deg] -translate-x-[300%] group-hover:translate-x-[400%] transition-transform duration-1000 ease-out pointer-events-none"></div>
+                    
+                    <span v-show="isSaving" class="relative z-10 flex items-center gap-2.5 text-white font-black tracking-widest uppercase text-xs sm:text-sm">
+                        <svg class="w-5 h-5 animate-spin text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Menyinkronkan Data...
                     </span>
+
+                    <span v-show="!isSaving" class="relative z-10 flex items-center gap-2.5 text-white font-black tracking-widest uppercase text-xs sm:text-sm">
+                        <svg class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Simpan & Terapkan Konfigurasi
+                    </span>
+                    
                 </button>
             </div>
+
 
         </main>
     </div>
 
-    <script>
-        const { createApp, ref, reactive, onMounted, nextTick } = Vue;
+        <script>
+    const { createApp, ref, reactive, onMounted, nextTick } = Vue;
 
-        createApp({
-            setup() {
-                const supabase = window.supabase.createClient(
-                    TERATE_CONFIG.SUPABASE_URL, 
-                    TERATE_CONFIG.SUPABASE_ANON_KEY
-                );
-                
-                const toasts = ref([]);
-                const isSaving = ref(false);
+    createApp({
+        setup() {
+            const supabase = window.supabase.createClient(
+                TERATE_CONFIG.SUPABASE_URL, 
+                TERATE_CONFIG.SUPABASE_ANON_KEY
+            );
+            
+            const toasts = ref([]);
+            const isSaving = ref(false);
+            const tabPengumuman = ref('beranda');
 
-                const form = reactive({
-    googleUrl: '', geminiKey: '', pdfUrl: '', fileName: '', // Tambahkan fileName
-    pinPelatih: '', pinAdmin: '',
-    tipePengumuman: 'info', judulPengumuman: '', isiPengumuman: '',
-    noWa: '', tanggalSuro: ''
-});
+            const form = reactive({
+                googleUrl: '', geminiKey: '', pdfUrl: '', fileName: '', 
+                pinPelatih: '', pinAdmin: '',
+                tipePengumuman: 'info', judulPengumuman: '', isiPengumuman: '',
+                portalTipe: 'info', portalJudul: '', portalIsi: '',
+                noWa: '', tanggalSuro: '',
+                statusPendaftaran: true
+            });
 
+            const showToast = (msg, isError = false) => {
+                const id = Date.now();
+                toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
+                setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
+                nextTick(() => { if (window.lucide) lucide.createIcons(); });
+            };
 
-                const showToast = (msg, isError = false) => {
-                    const id = Date.now();
-                    toasts.value.push({ id, msg, type: isError ? 'error' : 'success' });
-                    setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
+            const muatPengaturanDB = async () => {
+                const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
+                if (data) {
+                    form.googleUrl = data.google_url || '';
+                    form.geminiKey = data.gemini_key || '';
+                    form.pdfUrl = data.pdf_url || '';
+                    form.pinPelatih = data.pin_pelatih || '192201';
+                    form.pinAdmin = data.pin_admin || '192299';
+                    form.tipePengumuman = data.tipe_pengumuman || 'info';
+                    form.judulPengumuman = data.judul_pengumuman || '';
+                    form.isiPengumuman = data.isi_pengumuman || '';
+                    form.portalTipe = data.portal_tipe || 'info';
+                    form.portalJudul = data.portal_judul || '';
+                    form.portalIsi = data.portal_isi || '';
+                    form.noWa = data.no_wa || '6289660061234';
+                    form.tanggalSuro = data.tanggal_suro || '2027-06-06';
+                    form.statusPendaftaran = data.status_pendaftaran !== false;
+                }
+            };
+
+            const simpanPengaturan = async () => {
+                isSaving.value = true;
+                const payload = {
+                    google_url: form.googleUrl,
+                    gemini_key: form.geminiKey,
+                    pdf_url: form.pdfUrl,
+                    pin_pelatih: form.pinPelatih,
+                    pin_admin: form.pinAdmin,
+                    tipe_pengumuman: form.tipePengumuman,
+                    judul_pengumuman: form.judulPengumuman,
+                    isi_pengumuman: form.isiPengumuman,
+                    portal_tipe: form.portalTipe,
+                    portal_judul: form.portalJudul,
+                    portal_isi: form.portalIsi,
+                    no_wa: form.noWa,
+                    tanggal_suro: form.tanggalSuro,
+                    status_pendaftaran: form.statusPendaftaran
+                };
+
+                try {
+                    const { error } = await supabase.from('pengaturan').update(payload).eq('id', 1);
+                    if (error) throw error;
+                    showToast("Konfigurasi sukses disimpan!");
+                } catch (error) {
+                    console.error(error);
+                    showToast("Gagal menyimpan ke server.", true);
+                } finally {
+                    isSaving.value = false;
+                }
+            };
+
+            const handleFileUpload = async (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                isSaving.value = true;
+                try {
+                    form.fileName = file.name; 
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `surat_${Date.now()}.${fileExt}`;
+                    
+                    const { error } = await supabase.storage.from('surat-edaran').upload(fileName, file);
+                    if (error) throw error;
+
+                    const { data: urlData } = supabase.storage.from('surat-edaran').getPublicUrl(fileName);
+                    form.pdfUrl = urlData.publicUrl;
+                    
                     nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                };
+                    showToast("File berhasil diupload!");
+                } catch (err) {
+                    showToast("Gagal upload file: " + err.message, true);
+                } finally {
+                    isSaving.value = false;
+                }
+            };
 
-                const muatPengaturanDB = async () => {
-                    const { data, error } = await supabase.from('pengaturan').select('*').eq('id', 1).single();
-                    if (data) {
-                        form.googleUrl = data.google_url || '';
-                        form.geminiKey = data.gemini_key || '';
-                        form.pdfUrl = data.pdf_url || '';
-                        form.pinPelatih = data.pin_pelatih || '192201';
-                        form.pinAdmin = data.pin_admin || '192299';
-                        form.tipePengumuman = data.tipe_pengumuman || 'info';
-                        form.judulPengumuman = data.judul_pengumuman || '';
-                        form.isiPengumuman = data.isi_pengumuman || '';
-                        form.noWa = data.no_wa || '6289660061234';
-                        form.tanggalSuro = data.tanggal_suro || '2027-06-06';
-                    }
-                };
+            const keluar = () => { window.location.href = 'index.html'; };
 
-                const simpanPengaturan = async () => {
-    isSaving.value = true;
-    
-    const payload = {
-        // ... (data lainnya)
-        pdf_url: form.pdfUrl, // Menggunakan URL langsung dari hasil upload tadi
-    };
+            onMounted(() => {
+                muatPengaturanDB();
+                if (window.lucide) lucide.createIcons();
+            });
 
-    try {
-        const { error } = await supabase.from('pengaturan').update(payload).eq('id', 1);
-        if (error) throw error;
-        showToast("Konfigurasi sukses disimpan!");
-    } catch (error) {
-        showToast("Gagal menyimpan ke server.", true);
-    } finally {
-        isSaving.value = false;
-    }
-};
-
-                const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    isSaving.value = true;
-    try {
-        form.fileName = file.name; // Simpan nama file asli di sini
-        const fileExt = file.name.split('.').pop();
-        const fileName = `surat_${Date.now()}.${fileExt}`;
-        
-        const { data, error } = await supabase.storage
-            .from('surat-edaran')
-            .upload(fileName, file);
-
-        if (error) throw error;
-
-        const { data: urlData } = supabase.storage
-            .from('surat-edaran')
-            .getPublicUrl(fileName);
-
-        form.pdfUrl = urlData.publicUrl;
-        alert("File berhasil diupload!");
-    } catch (err) {
-        console.error(err);
-        alert("Gagal upload file: " + err.message);
-    } finally {
-        isSaving.value = false;
-    }
-};
-
-                const keluar = () => { window.location.href = 'index.html'; };
-
-                onMounted(() => {
-                    muatPengaturanDB();
-                    if (window.lucide) lucide.createIcons();
-                });
-
-                return { toasts, isSaving, form, simpanPengaturan, keluar };
-            }
-        }).mount('#app');
+            return { 
+                toasts, isSaving, form, simpanPengaturan, handleFileUpload, keluar, 
+                tabPengumuman // <-- Sekarang terdaftar
+            };
+        }
+    }).mount('#app');
     </script>
+
 </body>
 </html>

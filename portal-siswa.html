@@ -367,12 +367,12 @@
                     return 'Malam';
                 });
 
-                const savedConfig = JSON.parse(localStorage.getItem('terate_config') || '{}');
-                const pengumuman = ref({
-                    tipe: savedConfig.tipePengumuman || 'info',
-                    judul: savedConfig.judulPengumuman || '',
-                    isi: savedConfig.isiPengumuman || ''
+                                const pengumuman = ref({
+                    tipe: 'info',
+                    judul: '',
+                    isi: ''
                 });
+
 
                 const siswa = ref({
                     nama: '', nis: '', sabuk: '', rayon: 'Rayon Japanan',
@@ -447,41 +447,59 @@
                     const hari = Math.ceil(diff / (1000 * 60 * 60 * 24));
                     return hari > 0 ? hari : 0;
                 };
+                
+                        const muatDataSiswa = async () => {
+    if (!userNis) {
+        isError.value = true;
+        isFetching.value = false;
+        return;
+    }
+    isFetching.value = true;
+    try {
+        // 1. Ambil Data Siswa
+        const { data: profileData, error: profileError } = await supabase
+            .from('data_siswa')
+            .select('*')
+            .eq('nis', userNis)
+            .single();
 
-                const muatDataSiswa = async () => {
-                    if (!userNis) {
-                        isError.value = true;
-                        isFetching.value = false;
-                        return;
-                    }
-                    isFetching.value = true;
-                    try {
-                        const { data: profileData, error: profileError } = await supabase
-                            .from('data_siswa')
-                            .select('*')
-                            .eq('nis', userNis)
-                            .single();
+        if (profileError || !profileData) {
+            isError.value = true;
+            return;
+        }
+        
+        siswa.value = {
+            nis: profileData.nis,
+            nama: profileData.nama,
+            sabuk: profileData.sabuk,
+            target: profileData.target_pengesahan || 0, 
+            terkumpul: profileData.tabungan_pengesahan || 0,
+            total_hadir: profileData.total_hadir || 0
+        };
 
-                        if (profileError || !profileData) {
-                            isError.value = true;
-                            return;
-                        }
-                        
-                        siswa.value = {
-                            nis: profileData.nis,
-                            nama: profileData.nama,
-                            sabuk: profileData.sabuk,
-                            target: profileData.target_pengesahan || 0, 
-                            terkumpul: profileData.tabungan_pengesahan || 0,
-                            total_hadir: profileData.total_hadir || 0
-                        };
-                    } catch (error) {
-                        console.error("Error fetching data:", error);
-                        isError.value = true;
-                    } finally {
-                        isFetching.value = false;
-                    }
-                };
+        // 2. Ambil Data Pengaturan untuk Pengumuman Portal (setelah data siswa sukses)
+        const { data: configData, error: configError } = await supabase
+            .from('pengaturan')
+            .select('portal_tipe, portal_judul, portal_isi')
+            .eq('id', 1)
+            .single();
+            
+        if (configData && !configError) {
+            pengumuman.value = {
+                tipe: configData.portal_tipe || 'info',
+                judul: configData.portal_judul || '',
+                isi: configData.portal_isi || ''
+            };
+        }
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        isError.value = true;
+    } finally {
+        isFetching.value = false;
+    }
+};
+
 
                 const progresAbsensi = computed(() => {
                     const targetHadir = materiSiswa.value.total_pertemuan;
