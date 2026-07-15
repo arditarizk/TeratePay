@@ -50,7 +50,7 @@
                         <img src="rayon_japanan.webp" alt="Logo Rayon Japanan" class="relative w-20 h-20 object-contain rounded-full bg-white p-3 border border-slate-200 shadow-sm">
                     </div>
                     <div>
-                        <h1 class="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Formulir Kelas Privat</h1>
+                        <h1 class="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Formulir Siswa Privat</h1>
                         <p class="text-[10px] font-black text-teal-700 uppercase tracking-widest mt-2 bg-teal-50 px-3 py-1.5 rounded-full inline-block border border-teal-100">Khusus Dewasa (Usia 25+)</p>
                     </div>
                 </header>
@@ -102,7 +102,7 @@
                     <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-teal-500 to-transparent"></div>
                     
                     <div class="flex-grow min-h-[380px] flex flex-col justify-between">
-                        <transition name="fade" mode="out-in" @after-enter="triggerIcons">
+                        <transition name="fade" mode="out-in" @after-enter="handleAfterEnter">
                             
                             <!-- STEP 1: IDENTITAS -->
                             <div v-if="step === 1" key="step1" class="space-y-4">
@@ -235,6 +235,14 @@
 
                 const triggerIcons = () => { if (window.lucide) lucide.createIcons(); };
 
+// Tambahkan kode ini:
+const handleAfterEnter = () => {
+    triggerIcons();
+    if (step.value === 3) {
+        initCanvas();
+    }
+};
+
                 const nextStep = () => {
                     if (step.value === 1) {
                         if (!form.nama_siswa || !form.umur || !form.alamat || !form.wa_siswa || !form.pekerjaan || !form.wa_ortu) {
@@ -252,10 +260,9 @@
                             return showToast("Anda diwajibkan menyetujui seluruh pakta integritas!", false);
                         }
                     }
-                    step.value++;
-                    if(step.value === 3) { nextTick(() => { initCanvas(); }); }
-                    nextTick(() => { triggerIcons(); });
-                };
+                            step.value++;
+    };
+
 
                 let canvas, ctx, isDrawing = false, lastX = 0, lastY = 0;
 
@@ -308,48 +315,68 @@
                 const clearSignature = () => { if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); };
 
                 const submitForm = async () => {
-                    const blank = document.createElement('canvas');
-                    blank.width = canvas.width; blank.height = canvas.height;
-                    if (canvas.toDataURL() === blank.toDataURL()) return showToast("Goresan tanda tangan digital wajib diisi!", false);
-                    
-                    isSubmitting.value = true;
-                    const signatureData = canvas.toDataURL("image/png");
-                    
-                    const d = new Date();
-                    const generatedNIS = `5${String(d.getFullYear()).slice(-2)}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}${Math.floor(Math.random() * 90) + 10}`;
+    const blank = document.createElement('canvas');
+    blank.width = canvas.width; blank.height = canvas.height;
+    if (canvas.toDataURL() === blank.toDataURL()) return showToast("Goresan tanda tangan digital wajib diisi!", false);
+    
+    isSubmitting.value = true;
+    const signatureData = canvas.toDataURL("image/png");
+    
+    const d = new Date();
+    const yy = String(d.getFullYear()).slice(-2);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
 
-                    try {
-                        const { error } = await supabase.from('data_siswa').insert([{
-                            nis: generatedNIS,
-                            nama: form.nama_siswa.toUpperCase(),
-                            gender: form.gender,
-                            umur: form.umur,
-                            alamat: form.alamat,
-                            wa_siswa: form.wa_siswa,
-                            nama_ortu: form.pekerjaan.toUpperCase(),
-                            wa_ortu: form.wa_ortu, 
-                            target_pengesahan: 4500000, 
-                            tabungan_pengesahan: 0,
-                            tabungan_sabuk: 0,
-                            ttd_base64: signatureData,
-                            jalur_pendaftaran: 'Privat'
-                        }]);
+    // Prefix khusus Privat (awalan 6) + Tahun + Bulan
+    const prefixBulan = `6${yy}${mm}`;
 
-                        if (error) throw error;
+    try {
+        // Menghitung jumlah pendaftar di bulan yang sama
+        const { count, error: countError } = await supabase
+            .from('data_siswa')
+            .select('*', { count: 'exact', head: true })
+            .like('nis', `${prefixBulan}%`);
 
-                        showToast(`Pendaftaran Privat Berhasil! NIS: ${generatedNIS}`, true);
-                        localStorage.setItem('terate_user_nis', generatedNIS);
-                        setTimeout(() => { window.location.href = 'index.html'; }, 2200);
-                    } catch (error) { 
-                        console.error(error);
-                        showToast("Sinkronisasi cloud gagal. Periksa jaringan Anda.", false); 
-                    } finally { isSubmitting.value = false; }
-                };
+        if (countError) throw countError;
+
+        // Tentukan urutan (tambah 1 dari total pendaftar bulan ini)
+        const urutan = (count || 0) + 1;
+        
+        // Gabungkan: Prefix + Tanggal + Urutan 2 digit
+        const generatedNIS = `${prefixBulan}${dd}${String(urutan).padStart(2, '0')}`;
+
+        const { error } = await supabase.from('data_siswa').insert([{
+            nis: generatedNIS,
+            nama: form.nama_siswa.toUpperCase(),
+            gender: form.gender,
+            umur: form.umur,
+            alamat: form.alamat,
+            wa_siswa: form.wa_siswa,
+            nama_ortu: form.pekerjaan.toUpperCase(),
+            wa_ortu: form.wa_ortu, 
+            target_pengesahan: 4500000, 
+            tabungan_pengesahan: 0,
+            tabungan_sabuk: 0,
+            ttd_base64: signatureData,
+            jalur_pendaftaran: 'Privat'
+        }]);
+
+        if (error) throw error;
+
+        showToast(`Pendaftaran Privat Berhasil! NIS: ${generatedNIS}`, true);
+        localStorage.setItem('terate_user_nis', generatedNIS);
+        setTimeout(() => { window.location.href = 'index.html'; }, 2200);
+    } catch (error) { 
+        console.error(error);
+        showToast("Sinkronisasi cloud gagal. Periksa jaringan Anda.", false); 
+    } finally { isSubmitting.value = false; }
+};
+
 
                 onMounted(() => { triggerIcons(); });
 
-                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons };
-            }
+                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons, handleAfterEnter };
+}
         }).mount('#app');
     </script>
 </body>
