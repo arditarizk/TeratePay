@@ -331,17 +331,22 @@
                     status_pendaftaran: form.statusPendaftaran
                 };
 
-                try {
+                                try {
                     const { error } = await supabase.from('pengaturan').update(payload).eq('id', 1);
-                    if (error) throw error;
+                    if (error) {
+                        console.error("Detail Error Supabase:", error);
+                        throw error; 
+                    }
                     showToast("Konfigurasi sukses disimpan!");
                 } catch (error) {
                     console.error(error);
-                    showToast("Gagal menyimpan ke server.", true);
+                    // MUNCULKAN PESAN ERROR ASLI DARI SUPABASE DI LAYAR
+                    const pesanAsli = error.message || error.details || "Cek console browser";
+                    showToast("Gagal: " + pesanAsli, true);
                 } finally {
                     isSaving.value = false;
                 }
-            };
+};
 
             const handleFileUpload = async (event) => {
                 const file = event.target.files[0];

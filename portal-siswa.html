@@ -566,6 +566,19 @@
                     localStorage.removeItem('terate_user_nis');
                     window.location.href = 'index.html';
                 };
+                const formatWaktuWIB = (tanggalUTC) => {
+    if (!tanggalUTC) return '-';
+    const date = new Date(tanggalUTC);
+    return date.toLocaleString('id-ID', { 
+        timeZone: 'Asia/Jakarta', 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    }) + ' WIB';
+};
+
 
                 onMounted(() => {
                     muatDataSiswa();
@@ -576,7 +589,8 @@
                     formatRp, persentase, logout, saldoTerformat, targetTerformat,
                     riwayatTabungan, materiTerakhir, agendaSiswa,
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
-                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi,
+                    formatWaktuWIB
                 };
             }
         }).mount('#app');
