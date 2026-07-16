@@ -194,38 +194,74 @@
 
                     </section>
 
-                    <section class="w-full lg:w-5/12 p-5 lg:p-8 flex flex-col bg-slate-50/50 border-l border-slate-200">
-                        <transition name="fade" mode="out-in">
-                            <div v-if="isFormReadyToPreview" class="w-full animate-fade-in flex flex-col h-full justify-center">
-                                <div id="strukCard" class="receipt-paper">
-                                    <div class="text-center mb-5 relative z-10">
-                                        <h2 class="text-2xl font-black tracking-tighter leading-none mb-1 uppercase" :class="modeTransaksi === 'masuk' ? 'text-slate-800' : 'text-rose-600'">{{ modeTransaksi === 'masuk' ? 'TeratePay' : 'KAS KELUAR' }}</h2>
-                                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Rayon Japanan</p>
-                                    </div>
-                                    <div class="dashed-line"></div>
-                                    <div class="flex-between mb-1.5"><span class="text-[9px] uppercase font-bold text-slate-400">Waktu:</span><span class="text-[9px] font-bold">{{ waktuSekarang }}</span></div>
-                                    <div class="flex-between mb-4"><span class="text-[9px] uppercase font-bold text-slate-400">Pelatih:</span><span class="text-[9px] font-bold uppercase">{{ namaKasir }}</span></div>
-                                    
-                                    <template v-if="modeTransaksi === 'masuk'">
-                                        <div class="flex-between mb-1.5"><span class="text-[10px] font-black uppercase text-slate-400">NIS Siswa:</span><span class="text-[10px] font-black uppercase text-slate-700">{{ selectedSiswa.nis }}</span></div>
-                                        <div class="flex-between mb-4"><span class="text-xs font-black uppercase text-slate-400">Nama:</span><span class="text-xs font-black uppercase text-slate-800 text-right">{{ selectedSiswa.nama }}</span></div>
-                                        <div class="dashed-line"></div>
-                                        <div class="flex-between mb-3 items-end"><span class="text-[10px] font-black uppercase text-slate-500">Setor<br>{{ kategoriMasuk }}</span><span class="text-lg font-black text-slate-800">Rp {{ formatRp(nominalRaw) }}</span></div>
-                                    </template>
-                                </div>
-                                <div v-if="isSaved" class="mt-8 w-full max-w-[340px] mx-auto animate-fade-in flex flex-col gap-3">
-                                    <button @click="shareKeWhatsApp" class="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 text-xs uppercase tracking-wider hover:bg-green-600"><i data-lucide="message-circle" class="w-5 h-5"></i> Kirim ke WA</button>
-                                    <button @click="resetForm" class="w-full bg-white text-slate-600 border border-slate-200 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-sm text-xs uppercase tracking-wider hover:bg-slate-50"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Transaksi Baru</button>
-                                </div>
-                            </div>
-                            <div v-else class="flex flex-col items-center justify-center w-full min-h-[300px] py-10 z-10">
-                                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-slate-100">
-                                    <i data-lucide="receipt" class="w-8 h-8 text-slate-300"></i>
-                                </div>
-                                <p class="text-xs font-bold text-slate-400 text-center uppercase tracking-widest leading-relaxed">Isi form transaksi<br>untuk pratinjau struk</p>
-                            </div>
-                        </transition>
-                    </section>
+                  <section class="w-full lg:w-5/12 p-5 lg:p-8 flex flex-col bg-slate-50/50 border-l border-slate-200">
+    <transition name="fade" mode="out-in">
+        <div v-if="isFormReadyToPreview" class="w-full animate-fade-in flex flex-col h-full justify-center">
+            
+            <!-- MULAI STRUK CARD BARU -->
+            <div id="strukCard" class="receipt-paper">
+                <!-- Header Struk -->
+                <div class="text-center mb-4 relative z-10">
+                    <div class="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white mx-auto mb-2 shadow-sm">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-xl font-black tracking-tighter uppercase" :class="modeTransaksi === 'masuk' ? 'text-slate-800' : 'text-rose-600'">
+                        {{ modeTransaksi === 'masuk' ? 'TERATEPAY' : 'KAS KELUAR' }}
+                    </h2>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Rayon Japanan</p>
+                </div>
+                
+                <div class="dashed-line mb-4"></div>
+
+                <!-- Info Dasar -->
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">No. Transaksi</span><span class="text-[10px] font-black text-slate-800">{{ idTransaksi || '-' }}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">Waktu</span><span class="text-[10px] font-black text-slate-800">{{ waktuSekarang }}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">Pelatih</span><span class="text-[10px] font-black text-slate-800 uppercase">{{ namaKasir }}</span></div>
+                </div>
+
+                <!-- Box Detail Transaksi -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 mb-4 shadow-sm relative z-10">
+                    <template v-if="modeTransaksi === 'masuk'">
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">NIS Siswa</span><span class="text-xs font-black text-slate-800">{{ selectedSiswa.nis }}</span></div>
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Nama Siswa</span><span class="text-xs font-black text-slate-800 text-right truncate pl-2">{{ selectedSiswa.nama }}</span></div>
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kategori</span><span class="text-[11px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">{{ kategoriMasuk }}</span></div>
+                    </template>
+                    
+                    <template v-else>
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kategori</span><span class="text-[11px] font-black text-rose-700 bg-rose-100 px-2 py-0.5 rounded">{{ kategoriKeluar }}</span></div>
+                        <div class="flex justify-between items-start mt-2"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Catatan</span><span class="text-[10px] font-bold text-slate-700 text-right max-w-[150px] leading-tight">{{ keteranganKeluar }}</span></div>
+                    </template>
+                    
+                    <!-- Total Keseluruhan -->
+                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-200">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Total</span>
+                        <span class="text-lg font-black" :class="modeTransaksi === 'masuk' ? 'text-emerald-600' : 'text-rose-600'">Rp {{ formatRp(nominalRaw) }}</span>
+                    </div>
+                </div>
+
+                <div class="dashed-line mb-3"></div>
+                
+                <div class="text-center relative z-10">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Simpan struk ini sebagai bukti<br>transaksi yang sah.</p>
+                </div>
+            </div>
+            <!-- SELESAI STRUK CARD BARU -->
+
+            <div v-if="isSaved" class="mt-8 w-full max-w-[340px] mx-auto animate-fade-in flex flex-col gap-3">
+                <button @click="shareKeWhatsApp" class="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 text-xs uppercase tracking-wider hover:bg-green-600"><i data-lucide="message-circle" class="w-5 h-5"></i> Kirim ke WA</button>
+                <button @click="resetForm" class="w-full bg-white text-slate-600 border border-slate-200 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-sm text-xs uppercase tracking-wider hover:bg-slate-50"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Transaksi Baru</button>
+            </div>
+        </div>
+        
+        <div v-else class="flex flex-col items-center justify-center w-full min-h-[300px] py-10 z-10">
+            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-slate-100">
+                <i data-lucide="receipt" class="w-8 h-8 text-slate-300"></i>
+            </div>
+            <p class="text-xs font-bold text-slate-400 text-center uppercase tracking-widest leading-relaxed">Isi form transaksi<br>untuk pratinjau struk</p>
+        </div>
+    </transition>
+</section>
                 </template>
 
                 <template v-if="activeMenu === 'absensi'">
@@ -601,7 +637,7 @@
 
                 const isAndroid = /android/i.test(navigator.userAgent.toLowerCase());
                 let linkWA = `https://api.whatsapp.com/send?phone=${noWa}&text=${encodeURIComponent(teksWA)}`;
-                if (isAndroid) linkWA = `intent://send?phone=${noWa}&text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp.w4b;scheme=whatsapp;end;`;
+                if (isAndroid) linkWA = `intent://send?phone=${noWa}&text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp;scheme=whatsapp;end;`;
                 
                 window.open(linkWA, '_blank');
                 showToast(`Absen ${status} berhasil disimpan & disiapkan ke WA.`);
@@ -677,9 +713,9 @@
                         let linkWA = `https://api.whatsapp.com/send?text=${encodeURIComponent(teksWA)}`;
                         if (rawNoWa) linkWA = `https://api.whatsapp.com/send?phone=${rawNoWa}&text=${encodeURIComponent(teksWA)}`;
                         if (isAndroid) {
-                            linkWA = `intent://send?text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp.w4b;scheme=whatsapp;end;`;
-                            if (rawNoWa) linkWA = `intent://send?phone=${rawNoWa}&text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp.w4b;scheme=whatsapp;end;`;
-                        }
+    linkWA = `intent://send?text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp;scheme=whatsapp;end;`;
+    if (rawNoWa) linkWA = `intent://send?phone=${rawNoWa}&text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp;scheme=whatsapp;end;`;
+}
                         window.open(linkWA, '_blank');
                     }, 800);
                 });
