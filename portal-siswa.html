@@ -539,16 +539,22 @@
             total_hadir: profileData.total_hadir || 0
         };
 
-        // 2. Ambil Data Pengaturan untuk Pengumuman Portal (setelah data siswa sukses)
+       // 2. Ambil Data Absensi (Disesuaikan dengan nama kolom database yang benar)
         const { data: absenData, error: absenError } = await supabase
-            .from('absensi') // Sesuaikan dengan nama tabel presensi Anda
-            .select('tanggal, status')
-            .eq('nis', userNis)
-            .order('tanggal', { ascending: false })
+            .from('absensi')
+            .select('waktu_absen, status') // Ubah 'tanggal' jadi 'waktu_absen'
+            .eq('nis_siswa', userNis)      // Ubah 'nis' jadi 'nis_siswa'
+            .order('waktu_absen', { ascending: false }) // Urutkan berdasarkan 'waktu_absen'
             .limit(5);
 
         if (absenData && !absenError) {
-            riwayatAbsensi.value = absenData;
+            // Mapping data agar properti 'waktu_absen' dari DB dibaca sebagai 'tanggal' oleh Vue/HTML
+            riwayatAbsensi.value = absenData.map(item => ({
+                tanggal: item.waktu_absen,
+                status: item.status
+            }));
+        } else if (absenError) {
+            console.error("Gagal menarik data absensi:", absenError.message);
         }
 
     } catch (error) {
