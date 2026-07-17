@@ -594,7 +594,7 @@
     try {
         const response = await fetch(targetUrl, {
             method: "POST",
-            headers: { "Content-Type": "text/plain" },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
                 tipe: "ASK_AI",
                 prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama || 'Siswa'}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Persentase Kehadiran: ${progresAbsensi.value.persen}%. Berikan nasihat pendek yang tegas khas warga PSHT agar dia semakin giat berlatih dan semangat menabung untuk pengesahan.`
