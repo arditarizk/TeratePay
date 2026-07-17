@@ -136,9 +136,22 @@
                                 <div class="animate-fade-in bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">1. Kategori Pengeluaran</label>
                                     <div class="grid grid-cols-2 gap-3 mb-4">
-                                        <label v-for="kat in ['Tes Sabuk', 'Biaya Pengesahan', 'Kas Ranting', 'Operasional Latihan']" :key="kat" class="cursor-pointer">
-                                            <input type="radio" :value="kat" v-model="kategoriKeluar" class="peer sr-only">
-                                            <div class="px-3 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-rose-500 peer-checked:text-white peer-checked:border-rose-500 text-slate-600 font-bold text-[10px] text-center transition-all uppercase tracking-wider shadow-sm">{{ kat }}</div>
+                                        <!-- Penambahan Lucide Icons Konsisten dengan Setoran Masuk -->
+                                        <label class="cursor-pointer">
+                                            <input type="radio" value="Tes Sabuk" v-model="kategoriKeluar" class="peer sr-only">
+                                            <div class="px-3 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-rose-500 peer-checked:text-white peer-checked:border-rose-500 text-slate-600 font-bold text-[10px] text-center transition-all uppercase tracking-wider shadow-sm flex flex-col items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4"></i> Tes Sabuk</div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" value="Biaya Pengesahan" v-model="kategoriKeluar" class="peer sr-only">
+                                            <div class="px-3 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-rose-500 peer-checked:text-white peer-checked:border-rose-500 text-slate-600 font-bold text-[10px] text-center transition-all uppercase tracking-wider shadow-sm flex flex-col items-center gap-1.5"><i data-lucide="target" class="w-4 h-4"></i> Biaya Pengesahan</div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" value="Kas Ranting" v-model="kategoriKeluar" class="peer sr-only">
+                                            <div class="px-3 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-rose-500 peer-checked:text-white peer-checked:border-rose-500 text-slate-600 font-bold text-[10px] text-center transition-all uppercase tracking-wider shadow-sm flex flex-col items-center gap-1.5"><i data-lucide="building-2" class="w-4 h-4"></i> Kas Ranting</div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" value="Operasional Latihan" v-model="kategoriKeluar" class="peer sr-only">
+                                            <div class="px-3 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 peer-checked:bg-rose-500 peer-checked:text-white peer-checked:border-rose-500 text-slate-600 font-bold text-[10px] text-center transition-all uppercase tracking-wider shadow-sm flex flex-col items-center gap-1.5"><i data-lucide="activity" class="w-4 h-4"></i> Ops Latihan</div>
                                         </label>
                                     </div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1 mt-5">2. Keterangan Detail</label>
@@ -194,80 +207,79 @@
 
                     </section>
 
-                  <section class="w-full lg:w-5/12 p-5 lg:p-8 flex flex-col bg-slate-50/50 border-l border-slate-200">
-    <transition name="fade" mode="out-in">
-        <div v-if="isFormReadyToPreview" class="w-full animate-fade-in flex flex-col h-full justify-center">
-            
-            <!-- MULAI STRUK CARD BARU -->
-<!-- MULAI STRUK CARD BARU -->
-<div id="strukCard" class="receipt-paper">
-    <!-- Header Struk -->
-    <div class="text-center mb-4 relative z-10">
-        <div class="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white mx-auto mb-2 shadow-sm">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-        </div>
-        <h2 class="text-xl font-black tracking-tighter uppercase" :class="modeTransaksi === 'masuk' ? 'text-slate-800' : 'text-rose-600'">
-            {{ modeTransaksi === 'masuk' ? 'TERATEPAY' : 'KAS KELUAR' }}
-        </h2>
-        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Rayon Japanan</p>
-    </div>
-    
-    <div class="dashed-line mb-4"></div>
+                    <section class="w-full lg:w-5/12 p-5 lg:p-8 flex flex-col bg-slate-50/50 border-l border-slate-200">
+                        <transition name="fade" mode="out-in">
+                            <div v-if="isFormReadyToPreview" class="w-full animate-fade-in flex flex-col h-full justify-center">
+                                
+                                <!-- MULAI STRUK CARD BARU -->
+                                <div id="strukCard" class="receipt-paper">
+                                    <!-- Header Struk -->
+                                    <div class="text-center mb-4 relative z-10">
+                                        <div class="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white mx-auto mb-2 shadow-sm">
+                                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                        </div>
+                                        <h2 class="text-xl font-black tracking-tighter uppercase" :class="modeTransaksi === 'masuk' ? 'text-slate-800' : 'text-rose-600'">
+                                            {{ modeTransaksi === 'masuk' ? 'TERATEPAY' : 'KAS KELUAR' }}
+                                        </h2>
+                                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Rayon Japanan</p>
+                                    </div>
+                                    
+                                    <div class="dashed-line mb-4"></div>
 
-    <!-- Info Dasar -->
-    <div class="space-y-2 mb-4">
-        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">No. Transaksi</span><span class="text-[10px] font-black text-slate-800">{{ idTransaksi || '-' }}</span></div>
-        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">Waktu</span><span class="text-[10px] font-black text-slate-800">{{ waktuSekarang }}</span></div>
-        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">Pelatih</span><span class="text-[10px] font-black text-slate-800 uppercase">{{ namaKasir }}</span></div>
-    </div>
+                                    <!-- Info Dasar -->
+                                    <div class="space-y-2 mb-4">
+                                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">No. Transaksi</span><span class="text-[10px] font-black text-slate-800">{{ idTransaksi || '-' }}</span></div>
+                                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">Waktu</span><span class="text-[10px] font-black text-slate-800">{{ waktuSekarang }}</span></div>
+                                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-500 uppercase">Pelatih</span><span class="text-[10px] font-black text-slate-800 uppercase">{{ namaKasir }}</span></div>
+                                    </div>
 
-    <!-- Box Detail Transaksi -->
-    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 mb-4 shadow-sm relative z-10">
-        <template v-if="modeTransaksi === 'masuk'">
-            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">NIS Siswa</span><span class="text-xs font-black text-slate-800">{{ selectedSiswa.nis }}</span></div>
-            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Nama Siswa</span><span class="text-xs font-black text-slate-800 text-right truncate pl-2">{{ selectedSiswa.nama }}</span></div>
-            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kategori</span><span class="text-[11px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">{{ kategoriMasuk }}</span></div>
-        </template>
-        
-        <template v-else>
-            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kategori</span><span class="text-[11px] font-black text-rose-700 bg-rose-100 px-2 py-0.5 rounded">{{ kategoriKeluar }}</span></div>
-            <div class="flex justify-between items-start mt-2"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Catatan</span><span class="text-[10px] font-bold text-slate-700 text-right max-w-[150px] leading-tight">{{ keteranganKeluar }}</span></div>
-        </template>
-        
-        <!-- Total Keseluruhan -->
-        <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-200">
-            <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Total</span>
-            <span class="text-lg font-black" :class="modeTransaksi === 'masuk' ? 'text-emerald-600' : 'text-rose-600'">Rp {{ formatRp(nominalRaw) }}</span>
-        </div>
-    </div>
+                                    <!-- Box Detail Transaksi -->
+                                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 mb-4 shadow-sm relative z-10">
+                                        <template v-if="modeTransaksi === 'masuk'">
+                                            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">NIS Siswa</span><span class="text-xs font-black text-slate-800">{{ selectedSiswa.nis }}</span></div>
+                                            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Nama Siswa</span><span class="text-xs font-black text-slate-800 text-right truncate pl-2">{{ selectedSiswa.nama }}</span></div>
+                                            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kategori</span><span class="text-[11px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">{{ kategoriMasuk }}</span></div>
+                                        </template>
+                                        
+                                        <template v-else>
+                                            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kategori</span><span class="text-[11px] font-black text-rose-700 bg-rose-100 px-2 py-0.5 rounded">{{ kategoriKeluar }}</span></div>
+                                            <div class="flex justify-between items-start mt-2"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Catatan</span><span class="text-[10px] font-bold text-slate-700 text-right max-w-[150px] leading-tight">{{ keteranganKeluar }}</span></div>
+                                        </template>
+                                        
+                                        <!-- Total Keseluruhan -->
+                                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-200">
+                                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Total</span>
+                                            <span class="text-lg font-black" :class="modeTransaksi === 'masuk' ? 'text-emerald-600' : 'text-rose-600'">Rp {{ formatRp(nominalRaw) }}</span>
+                                        </div>
+                                    </div>
 
-    <div class="dashed-line mb-3"></div>
-    
-    <div class="text-center relative z-10">
-        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Simpan struk ini sebagai bukti<br>transaksi yang sah.</p>
-    </div>
-</div>
-<!-- SELESAI STRUK CARD BARU -->
+                                    <div class="dashed-line mb-3"></div>
+                                    
+                                    <div class="text-center relative z-10">
+                                        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Simpan struk ini sebagai bukti<br>transaksi yang sah.</p>
+                                    </div>
+                                </div>
+                                <!-- SELESAI STRUK CARD BARU -->
 
-            <div v-if="isSaved" class="mt-8 w-full max-w-[340px] mx-auto animate-fade-in flex flex-col gap-3">
-                <button id="btnWhatsApp" @click="shareKeWhatsApp" class="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 text-xs uppercase tracking-wider hover:bg-green-600">
-    <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim ke WA
-</button>
-                <button @click="resetForm" class="w-full bg-white text-slate-600 border border-slate-200 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-sm text-xs uppercase tracking-wider hover:bg-slate-50"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Transaksi Baru</button>
-            </div>
-        </div>
-        
-        <div v-else class="flex flex-col items-center justify-center w-full min-h-[300px] py-10 z-10">
-            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-slate-100">
-                <i data-lucide="receipt" class="w-8 h-8 text-slate-300"></i>
-            </div>
-            <p class="text-xs font-bold text-slate-400 text-center uppercase tracking-widest leading-relaxed">Isi form transaksi<br>untuk pratinjau struk</p>
-        </div>
-    </transition>
-</section>
+                                <div v-if="isSaved" class="mt-8 w-full max-w-[340px] mx-auto animate-fade-in flex flex-col gap-3">
+                                    <button id="btnWhatsApp" @click="shareKeWhatsApp" class="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 text-xs uppercase tracking-wider hover:bg-green-600">
+                                        <i data-lucide="message-circle" class="w-5 h-5"></i> Kirim ke WA
+                                    </button>
+                                    <button @click="resetForm" class="w-full bg-white text-slate-600 border border-slate-200 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-sm text-xs uppercase tracking-wider hover:bg-slate-50"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Transaksi Baru</button>
+                                </div>
+                            </div>
+                            
+                            <div v-else class="flex flex-col items-center justify-center w-full min-h-[300px] py-10 z-10">
+                                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-slate-100">
+                                    <i data-lucide="receipt" class="w-8 h-8 text-slate-300"></i>
+                                </div>
+                                <p class="text-xs font-bold text-slate-400 text-center uppercase tracking-widest leading-relaxed">Isi form transaksi<br>untuk pratinjau struk</p>
+                            </div>
+                        </transition>
+                    </section>
                 </template>
 
-                <template v-if="activeMenu === 'absensi'">
+              <template v-if="activeMenu === 'absensi'">
                     <section class="w-full p-4 sm:p-6 lg:p-8 flex flex-col pb-10 min-h-[60vh] bg-slate-50/30">
                         
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
@@ -376,12 +388,8 @@
                     </section>
                 </template>
 
-            </div>
-        </main>
-    </div>
-
 <script>
-    const { createApp, ref, computed, onMounted, nextTick, watch } = Vue;
+    const { createApp, ref, computed, onMounted, onUpdated, nextTick, watch } = Vue;
 
     createApp({
         setup() {
@@ -404,7 +412,6 @@
             const keteranganKeluar = ref('');
             const dataSiswa = ref([]);
             
-            // Variabel riwayat & chart
             const riwayatSiswa = ref([]);
             let chartInstance = null;
 
@@ -434,7 +441,43 @@
                 setTimeout(() => { toasts.value = toasts.value.filter(t => t.id !== id); }, 3000);
             };
 
-            const setMode = (m) => { modeTransaksi.value = m; resetNominal(); };
+            const refreshIcons = () => {
+                nextTick(() => {
+                    if (typeof lucide === 'undefined') return;
+                    
+                    document.querySelectorAll('[data-lucide]').forEach(el => {
+                        const iconName = el.getAttribute('data-lucide');
+                        if (!iconName) return;
+                        
+                        const lastRendered = el.getAttribute('data-last-icon');
+                        if (lastRendered === iconName && el.querySelector('svg')) return;
+                        
+                        const tempDiv = document.createElement('div');
+                        const tempIcon = document.createElement('i');
+                        tempIcon.setAttribute('data-lucide', iconName);
+                        
+                        const classes = el.getAttribute('class') || '';
+                        tempIcon.setAttribute('class', classes);
+                        tempDiv.appendChild(tempIcon);
+                        
+                        lucide.createIcons({ root: tempDiv });
+                        
+                        const svgElement = tempDiv.querySelector('svg');
+                        if (svgElement) {
+                            el.innerHTML = '';
+                            el.appendChild(svgElement);
+                            el.setAttribute('data-last-icon', iconName);
+                            el.style.display = 'contents';
+                        }
+                    });
+                });
+            };
+
+            const setMode = (m) => { 
+                modeTransaksi.value = m; 
+                resetNominal(); 
+                refreshIcons(); 
+            };
 
             const isFormValid = computed(() => {
                 if (nominalRaw.value <= 0) return false;
@@ -459,14 +502,13 @@
                         sabuk: item.sabuk || 'Polos', 
                         wa: item.wa_siswa,
                         wa_ortu: item.wa_ortu || item.wa_siswa,
-                        tabungan: item.tabungan || 0 // Ambil tabungan awal jika ada
+                        tabungan: item.tabungan || 0
                     }));
                 } catch (error) { 
                     showToast("Gagal memuat data siswa", "error"); 
                 }
             };
 
-            // Fungsi muat riwayat spesifik dari siswa yang dipilih
             const muatRiwayatSiswa = async (nis) => {
                 try {
                     const { data, error } = await supabase
@@ -474,24 +516,25 @@
                         .select('*')
                         .eq('nis_siswa', nis)
                         .eq('jenis', 'MASUK')
-                        .order('tanggal', { ascending: true }); // Ascending untuk chart logic
+                        .order('tanggal', { ascending: true });
                     
                     if (error) throw error;
-                    riwayatSiswa.value = data.reverse(); // Reverse agar di tabel yang terbaru paling atas
-                    renderChart();
+                    riwayatSiswa.value = data.reverse();
+                    
+                    nextTick(() => {
+                        renderChart();
+                    });
                 } catch (e) {
                     console.error("Gagal load riwayat:", e);
                 }
             };
 
-            // Render Chart.js
             const renderChart = () => {
-                if (chartInstance) chartInstance.destroy(); // Hancurkan chart lama
+                if (chartInstance) chartInstance.destroy();
                 
                 const ctx = document.getElementById('chartTabungan');
                 if (!ctx) return;
 
-                // Ambil data yang sudah di-reverse kembali ke urutan tanggal untuk chart
                 const chartData = [...riwayatSiswa.value].reverse(); 
                 
                 let cumulative = 0;
@@ -511,7 +554,7 @@
                         datasets: [{
                             label: 'Total Tabungan (Rp)',
                             data: dataPoints,
-                            borderColor: '#10b981', // emerald-500
+                            borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             borderWidth: 2,
                             tension: 0.4,
@@ -532,11 +575,11 @@
                 });
             };
 
-            // Watcher agar setiap pindah siswa, tabel & grafik diupdate otomatis
             watch(selectedSiswa, (newVal) => {
                 if(newVal && modeTransaksi.value === 'masuk') {
                     nextTick(() => muatRiwayatSiswa(newVal.nis));
                 }
+                refreshIcons(); 
             });
 
             // WAKTU LENGKAP
@@ -576,7 +619,6 @@
 
             const waktuLengkap = ref(getPenanggalanLengkap());
             setInterval(() => { waktuLengkap.value = getPenanggalanLengkap(); }, 1000);
-
             const filteredSiswa = computed(() => {
                 const q = searchQuery.value.toLowerCase();
                 if (!q) return dataSiswa.value;
@@ -593,183 +635,190 @@
             const waktuSekarang = ref(d.toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }));
             const idTransaksi = ref(`TRX-${d.getFullYear().toString().slice(-2)}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*1000)}`);
 
-            const formatInputManual = (e) => { nominalRaw.value = parseRp(e.target.value); nominalDisplay.value = nominalRaw.value === 0 ? '' : formatRp(nominalRaw.value); };
+            const formatInputManual = (e) => { nominalRaw.value = parseRp(e.target.value); nominalDisplay.value = nominalRaw.value === 0 ? '' : formatRp(nominalRaw.value); refreshIcons(); };
             const resetNominal = () => { nominalRaw.value = 0; nominalDisplay.value = ''; };
-
-            const getSabukColor = (sabuk) => {
-                const s = String(sabuk).toLowerCase();
-                if (s === 'polos') return 'bg-slate-900';
-                if (s === 'jambon') return 'bg-pink-500';
-                if (s === 'hijau') return 'bg-emerald-600';
-                if (s === 'putih') return 'bg-slate-300 text-slate-800';
-                return 'bg-slate-500';
+            
+            // LENGKAP: Kode Warna Sabuk Siswa
+            const getSabukColor = (sabuk) => { 
+                if (!sabuk) return 'bg-slate-900 text-white';
+                const s = sabuk.toLowerCase();
+                if (s.includes('polos')) return 'bg-slate-900 text-white';
+                if (s.includes('jambon')) return 'bg-pink-500 text-white';
+                if (s.includes('hijau')) return 'bg-emerald-600 text-white';
+                if (s.includes('putih')) return 'bg-slate-100 text-slate-800 border border-slate-300';
+                return 'bg-slate-900 text-white'; 
             };
 
-            // PERBAIKAN ABSENSI (Insert ke Supabase Langsung)
-            const kirimNotifAbsen = async (siswa, status) => {
-                const waktu = getPenanggalanLengkap();
-                
-                try {
-                    // Masukkan ke tabel 'absensi'
-                    const { error } = await supabase.from('absensi').insert([{
-                        nis_siswa: siswa.nis,
-                        status: status,
-                        waktu_absen: waktu.iso
-                    }]);
-                    if (error) throw error;
-                } catch (e) {
-                    console.error("Gagal simpan absensi ke Supabase:", e);
-                    showToast("Gagal menyimpan ke database", "error");
-                    return; // Stop jika gagal DB agar konsisten
-                }
-
-                let noWa = siswa.wa_ortu;
-                if (!noWa || noWa.trim() === '') {
-                    return showToast("Disimpan ke DB. (Gagal kirim WA: Nomor Ortu kosong)", "error");
+            // LENGKAP: Kirim Notifikasi Absensi via WhatsApp
+            const kirimNotifAbsen = async (siswa, status) => { 
+                const nomorWa = siswa.wa_ortu || siswa.wa;
+                if (!nomorWa) {
+                    showToast(`Nomor WA untuk ${siswa.nama} tidak tersedia.`, 'error');
+                    return;
                 }
                 
-                noWa = String(noWa).replace(/[-+ \D]/g, '');
-                if (noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
-                else if (noWa.startsWith('8')) noWa = '62' + noWa;
-
-                let teksWA = '';
-                if (status === 'Hadir') { teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nNyuwun sewu Bapak/Ibu, ngaturaken bilih lare panjenengan *${siswa.nama}* (Sabuk ${siswa.sabuk}) dinten niki mpun dugi wonten panggenan latihan kanthi wilujeng.\n\nKadosipun latihan dalu niki radi wengi, mugi-mugi diparingi kelancaran lan manfaat. Maturnuwun sanget kagem kepercayaane.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`; } 
-                else if (status === 'Telat') { teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nNyuwun sewu Bapak/Ibu wali dari *${siswa.nama}*. Kami menginformasikan bahwa ananda hari ini sudah hadir di tempat latihan, namun sedikit *terlambat* dari jadwal biasanya.\n\nBilih angsal nyuwun pirsa, menapa wau wonten kendala nalika bidhal? Kami menanyakan hal ini sekadar untuk memastikan keselamatan dan evaluasi kedisiplinan ananda bersama-sama.\n\nMaturnuwun sanget atas perhatiannya.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`; } 
-                else if (status === 'Izin') { teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nBapak/Ibu wali dari *${siswa.nama}*, sampun kulo catet bilih ananda dinten niki *Izin* tidak dapat mengikuti jadwal latihan.\n\nMugi-mugi urusan/halangan ananda dilancarkan. Kami tunggu kehadiran ananda kembali di jadwal latihan berikutnya. Terima kasih atas konfirmasinya.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`; } 
-                else if (status === 'Alpha') { teksWA = `Assalamu'alaikum wr. wb.\nSalam Persaudaraan 🙏\n\nNyuwun sewu Bapak/Ibu wali dari *${siswa.nama}*. Kami dari jajaran pelatih ingin menanyakan kabar ananda, dikarenakan pada jadwal latihan hari ini ananda belum terlihat hadir (*Tanpa Keterangan*).\n\nApakah ananda sedang kurang enak badan atau ada halangan mendadak di rumah? Mohon berkenan memberikan kabar agar kami tidak khawatir dan bisa menyesuaikan rekap kehadiran ananda.\n\nMaturnuwun sanget.\n\n(Hormat kami, Pelatih: ${namaKasir.value})`; }
-
-                const isAndroid = /android/i.test(navigator.userAgent.toLowerCase());
-                let linkWA = `https://api.whatsapp.com/send?phone=${noWa}&text=${encodeURIComponent(teksWA)}`;
-                if (isAndroid) linkWA = `intent://send?phone=${noWa}&text=${encodeURIComponent(teksWA)}#Intent;package=com.whatsapp;scheme=whatsapp;end;`;
+                // Format nomor WA dari awalan 0 menjadi 62
+                let nomorTujuan = nomorWa.startsWith('0') ? '62' + nomorWa.substring(1) : nomorWa;
                 
-                window.open(linkWA, '_blank');
-                showToast(`Absen ${status} berhasil disimpan & disiapkan ke WA.`);
+                const pesan = `*INFO ABSENSI LATIHAN*\n\nNama Siswa: *${siswa.nama}*\nStatus: *${status.toUpperCase()}*\nTanggal: ${waktuLengkap.value.tanggal}\nPukul: ${waktuLengkap.value.jam} WIB\n\n_Pesan otomatis dari Sistem Manajemen Rayon_`;
+                const urlWa = `https://wa.me/${nomorTujuan}?text=${encodeURIComponent(pesan)}`;
+                
+                window.open(urlWa, '_blank');
+                showToast(`Membuka WhatsApp untuk ${siswa.nama}`, 'success');
             };
 
-            // PERBAIKAN LOADING TRANSAKSI & UPDATE TABUNGAN
             const prosesTransaksi = async () => {
-    isSaving.value = true;
-    try {
-        const payload = {
-            id_transaksi: idTransaksi.value,
-            nis_siswa: modeTransaksi.value === 'masuk' ? selectedSiswa.value.nis : null,
-            jenis: modeTransaksi.value === 'masuk' ? 'MASUK' : 'KELUAR',
-            kategori: modeTransaksi.value === 'masuk' ? kategoriMasuk.value : kategoriKeluar.value,
-            nominal: nominalRaw.value,
-            keterangan: modeTransaksi.value === 'masuk' ? `Setor ${kategoriMasuk.value}` : keteranganKeluar.value,
-            kasir: namaKasir.value,
-            tanggal: new Date().toISOString() 
-        };
+                isSaving.value = true;
+                try {
+                    const payload = {
+                        id_transaksi: idTransaksi.value,
+                        nis_siswa: modeTransaksi.value === 'masuk' ? selectedSiswa.value.nis : null,
+                        jenis: modeTransaksi.value === 'masuk' ? 'MASUK' : 'KELUAR',
+                        kategori: modeTransaksi.value === 'masuk' ? kategoriMasuk.value : kategoriKeluar.value,
+                        nominal: nominalRaw.value,
+                        keterangan: modeTransaksi.value === 'masuk' ? `Setor ${kategoriMasuk.value}` : keteranganKeluar.value,
+                        kasir: namaKasir.value,
+                        tanggal: new Date().toISOString() 
+                    };
 
-        const { error } = await supabase.from('transaksi_kas').insert([payload]);
-        if (error) throw error;
+                    const { error } = await supabase.from('transaksi_kas').insert([payload]);
+                    if (error) throw error;
 
-        // Update Tabungan Siswa
-        if (modeTransaksi.value === 'masuk' && selectedSiswa.value) {
-            const { data: sData, error: errFetch } = await supabase.from('data_siswa').select('tabungan').eq('nis', selectedSiswa.value.nis).single();
-            if(!errFetch) {
-                const tabunganSekarang = sData.tabungan || 0;
-                const tabunganBaru = tabunganSekarang + nominalRaw.value;
-                await supabase.from('data_siswa').update({ tabungan: tabunganBaru }).eq('nis', selectedSiswa.value.nis);
-            }
-        }
+                    if (modeTransaksi.value === 'masuk' && selectedSiswa.value) {
+                        const { data: sData, error: errFetch } = await supabase.from('data_siswa').select('tabungan').eq('nis', selectedSiswa.value.nis).single();
+                        if(!errFetch) {
+                            const tabunganSekarang = sData.tabungan || 0;
+                            const tabunganBaru = tabunganSekarang + nominalRaw.value;
+                            await supabase.from('data_siswa').update({ tabungan: tabunganBaru }).eq('nis', selectedSiswa.value.nis);
+                        }
+                    }
 
-        isSaved.value = true;
-        showToast("Transaksi Berhasil Dicatat & Diupdate!", "success");
+                    isSaved.value = true;
+                    showToast("Transaksi Berhasil Dicatat & Diupdate!", "success");
 
-        // --- TAMBAHAN AUTO-SCROLL KE BAWAH ---
-        nextTick(() => {
-            const btnWA = document.getElementById('btnWhatsApp');
-            if (btnWA) {
-                btnWA.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
-        });
-        // -------------------------------------
+                    refreshIcons();
+                    
+                    nextTick(() => {
+                        const btnWA = document.getElementById('btnWhatsApp');
+                        if (btnWA) {
+                            btnWA.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                        }
+                    });
 
-    } catch (error) { 
-        showToast("Terjadi error di database. Gagal menyimpan.", "error"); 
-        console.error("Proses Transaksi Error: ", error);
-    } finally { 
-        isSaving.value = false; 
-    }
-};
+                } catch (error) { 
+                    showToast("Terjadi error di database. Gagal menyimpan.", "error"); 
+                    console.error("Proses Transaksi Error: ", error);
+                } finally { 
+                    isSaving.value = false; 
+                }
+            };
 
+            // LENGKAP: Capture Gambar Struk & Buka WhatsApp
+            const shareKeWhatsApp = async () => { 
+                const btnWA = document.getElementById('btnWhatsApp');
+                const strukElement = document.getElementById('strukCard');
+                
+                if (!strukElement) return;
 
-            const shareKeWhatsApp = async () => {
-    showToast("Menyiapkan struk...", "success");
-    const el = document.getElementById('strukCard');
-    
-    // 1. Generate canvas
-    const canvas = await html2canvas(el, { scale: 2.5, backgroundColor: "#ffffff" });
-    
-    // 2. Konversi ke Blob untuk dibagikan
-    canvas.toBlob(async (blob) => {
-        const file = new File([blob], `Struk_${idTransaksi.value}.png`, { type: "image/png" });
+                try {
+                    // Animasi loading pada tombol
+                    const originalText = btnWA.innerHTML;
+                    btnWA.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Memproses...`;
+                    refreshIcons();
 
-                // 3. Siapkan teks struk
-        let teksWA = '';
-        const linkPortal = 'https://teratepay.netlify.app/portal-siswa.html'; // Link portal siswa
+                    // 1. Render Elemen Struk Menjadi Gambar
+                    const canvas = await html2canvas(strukElement, {
+                        scale: 2, // Kualitas HD agar tidak pecah saat dibaca lewat HP
+                        backgroundColor: '#ffffff',
+                        windowWidth: strukElement.scrollWidth,
+                        windowHeight: strukElement.scrollHeight
+                    });
+                    
+                    // Ekstrak data gambar untuk diunduh otomatis
+                    const imgData = canvas.toDataURL('image/png');
+                    const linkDownload = document.createElement('a');
+                    linkDownload.download = `Struk_${idTransaksi.value}.png`;
+                    linkDownload.href = imgData;
+                    linkDownload.click(); // Paksa browser untuk mendownload gambar
 
-        if (modeTransaksi.value === 'masuk') {
-            teksWA = `Salam Persaudaraan 🙏\n\nAlhamdulillah dek *${selectedSiswa.value.nama}*, setoran untuk ${kategoriMasuk.value} sebesar *Rp ${formatRp(nominalRaw.value)}* telah kami terima.\n\nTetap semangat berlatih! (Penerima: ${namaKasir.value})\n\n---\n*Cek Riwayat & Tabungan Mandiri:*\n${linkPortal}`;
-        } else {
-            teksWA = `Laporan Pengeluaran Kas 🙏\n\nKategori: ${kategoriKeluar.value}\nDetail: ${keteranganKeluar.value}\nNominal: *Rp ${formatRp(nominalRaw.value)}*\n\n(Dikeluarkan oleh: ${namaKasir.value})`;
-        }
+                    // 2. Format Pesan Teks untuk WhatsApp (Fallback)
+                    let textMsg = `*BUKTI TRANSAKSI TERATEPAY*\n\n`;
+                    textMsg += `No. TRX: ${idTransaksi.value}\n`;
+                    textMsg += `Waktu: ${waktuSekarang.value}\n`;
+                    textMsg += `Pelatih: ${namaKasir.value}\n\n`;
+                    
+                    if (modeTransaksi.value === 'masuk') {
+                        textMsg += `*DETAIL SETORAN MASUK*\n`;
+                        textMsg += `Nama: ${selectedSiswa.value.nama}\n`;
+                        textMsg += `NIS: ${selectedSiswa.value.nis}\n`;
+                        textMsg += `Kategori: ${kategoriMasuk.value}\n`;
+                    } else {
+                        textMsg += `*DETAIL PENGELUARAN*\n`;
+                        textMsg += `Kategori: ${kategoriKeluar.value}\n`;
+                        textMsg += `Keterangan: ${keteranganKeluar.value}\n`;
+                    }
+                    
+                    textMsg += `\n*TOTAL: Rp ${formatRp(nominalRaw.value)}*\n\n`;
+                    textMsg += `_Simpan pesan dan lampirkan gambar struk yang baru saja diunduh sebagai bukti yang sah._`;
 
+                    // 3. Eksekusi Buka WhatsApp
+                    // Jika setoran masuk dan ada nomor HP ortu/siswa, arahkan langsung. Jika tidak, buka WA Kosong.
+                    let targetWa = "";
+                    if (modeTransaksi.value === 'masuk' && selectedSiswa.value) {
+                        const nomorHPSiswa = selectedSiswa.value.wa_ortu || selectedSiswa.value.wa;
+                        if (nomorHPSiswa) {
+                            targetWa = nomorHPSiswa.startsWith('0') ? '62' + nomorHPSiswa.substring(1) : nomorHPSiswa;
+                        }
+                    }
 
-        // 4. Gunakan Web Share API untuk kirim Gambar + Caption sekaligus
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    files: [file],
-                    text: teksWA,
-                    title: 'Struk Transaksi'
-                });
-            } catch (err) {
-                console.error("Gagal membagikan:", err);
-                showToast("Gagal membagikan struk", "error");
-            }
-        } else {
-            // Fallback: Jika perangkat tidak mendukung, kembali ke metode download
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Struk_${idTransaksi.value}.png`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast("Fitur share tidak didukung, struk diunduh", "info");
-        }
-    }, "image/png");
-};
+                    const waLink = `https://wa.me/${targetWa}?text=${encodeURIComponent(textMsg)}`;
+                    window.open(waLink, '_blank');
+                    
+                    showToast("Gambar Struk diunduh & WA dibuka!", "success");
+
+                    // Kembalikan tombol ke semula
+                    btnWA.innerHTML = originalText;
+                    refreshIcons();
+                    
+                } catch (err) {
+                    showToast("Gagal memproses struk untuk WA", "error");
+                    console.error("HTML2Canvas Error:", err);
+                    btnWA.innerHTML = `<i data-lucide="message-circle" class="w-5 h-5"></i> Kirim ke WA`;
+                    refreshIcons();
+                }
+            };
 
             const resetForm = () => {
-                selectedSiswa.value = null; searchQuery.value = ''; resetNominal(); keteranganKeluar.value = ''; isSaved.value = false;
-                const dNew = new Date(); idTransaksi.value = `TRX-${dNew.getFullYear().toString().slice(-2)}${(dNew.getMonth()+1).toString().padStart(2,'0')}${dNew.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*1000)}`;
-                waktuSekarang.value = dNew.toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
-                // Kosongkan riwayat
-                riwayatSiswa.value = [];
-                if(chartInstance) chartInstance.destroy();
+                // ... (Solusi Reload SPA)
+                window.location.reload(); 
             };
 
-            // FITUR FULLSCREEN UNTUK WEBVIEW
-            const toggleFullscreen = () => {
-                const elem = document.documentElement;
+            watch(activeMenu, () => {
+                refreshIcons();
+            });
+
+            // LENGKAP: Fungsionalitas Layar Penuh (Fullscreen)
+            const toggleFullscreen = () => { 
                 if (!document.fullscreenElement) {
-                    if (elem.requestFullscreen) { elem.requestFullscreen(); } 
-                    else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } // Safari
-                    else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); } // IE11
+                    document.documentElement.requestFullscreen().catch(err => {
+                        showToast(`Tidak bisa layar penuh: ${err.message}`, "error");
+                    });
                 } else {
-                    if (document.exitFullscreen) { document.exitFullscreen(); }
-                    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
-                    else if (document.msExitFullscreen) { document.msExitFullscreen(); }
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
                 }
             };
 
             const keluar = () => { localStorage.removeItem('terate_nama_kasir'); window.location.href = 'index.html'; };
 
-            onMounted(() => { 
-                muatDataSiswa(); 
-                if (window.lucide) lucide.createIcons(); 
+            onMounted(() => {
+                muatDataSiswa();
+                refreshIcons();
+            });
+
+            onUpdated(() => {
+                refreshIcons();
             });
 
             return {
@@ -781,16 +830,10 @@
                 formatRp, formatTanggalSingkat, formatInputManual, resetNominal, getSabukColor,
                 prosesTransaksi, shareKeWhatsApp, resetForm, kirimNotifAbsen, keluar, toggleFullscreen
             };
-        },
-        updated() {
-            this.$nextTick(() => {
-                if (window.lucide) {
-                    lucide.createIcons();
-                }
-            });
-        }
+        },        
     }).mount('#app');
 </script>
+
 
 </body>
 </html>
