@@ -217,6 +217,67 @@
 
                     </div>
 
+<!-- Jika ada data absen -->
+<div v-if="riwayatAbsensi.length > 0" class="mt-4">
+    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
+        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        5 Pertemuan Terakhir
+    </h3>
+    
+    <div class="glass-card rounded-[2rem] p-6 relative overflow-hidden border-t-4 border-t-orange-500">
+        <div class="relative border-l-2 border-slate-100 ml-3 space-y-6">
+            <div v-for="(absen, index) in riwayatAbsensi" :key="index" class="relative pl-6">
+                <!-- Ikon Indikator Status -->
+                <div class="absolute -left-[11px] top-0 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center shadow-sm"
+                     :class="{
+                         'bg-emerald-500': absen.status.toLowerCase() === 'hadir',
+                         'bg-rose-500': absen.status.toLowerCase() === 'alpha',
+                         'bg-amber-500': ['izin', 'sakit'].includes(absen.status.toLowerCase()),
+                         'bg-blue-500': absen.status.toLowerCase() === 'telat'
+                     }">
+                </div>
+                
+                <!-- Detail Waktu & Status -->
+                <div>
+                    <p class="text-xs font-black text-slate-800">{{ formatTanggalOtomatis(absen.tanggal) }}</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider"
+                          :class="{
+                              'bg-emerald-50 text-emerald-600 border border-emerald-100': absen.status.toLowerCase() === 'hadir',
+                              'bg-rose-50 text-rose-600 border border-rose-100': absen.status.toLowerCase() === 'alpha',
+                              'bg-amber-50 text-amber-600 border border-amber-100': ['izin', 'sakit'].includes(absen.status.toLowerCase()),
+                              'bg-blue-50 text-blue-600 border border-blue-100': absen.status.toLowerCase() === 'telat'
+                          }">
+                        {{ absen.status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-center mt-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 pt-3">
+            Jaga terus kedisiplinanmu!
+        </p>
+    </div>
+</div>
+
+<!-- JIKA DATA ABSEN KOSONG (Belum pernah diinput) -->
+<div v-else class="mt-4">
+    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 px-1">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        5 Pertemuan Terakhir
+    </h3>
+    <div class="glass-card rounded-[2rem] p-6 text-center border-t-4 border-t-slate-300 flex flex-col items-center justify-center opacity-70">
+        <svg class="w-10 h-10 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+        </svg>
+        <p class="text-xs font-bold text-slate-500">Belum ada riwayat presensi.</p>
+        <p class="text-[10px] text-slate-400 mt-1">Data akan muncul setelah pelatih mengabsen.</p>
+    </div>
+</div>
+
 
                     <div class="flex flex-col gap-4">
                         
@@ -358,6 +419,7 @@
                 const agendaSiswa = ref(null);
                 const isAnalyzingAI = ref(false);
                 const pesanPelatihAI = ref('');
+                const riwayatAbsensi = ref([]);
 
                 const sapaanWaktu = computed(() => {
                     const jam = new Date().getHours();
@@ -478,18 +540,15 @@
         };
 
         // 2. Ambil Data Pengaturan untuk Pengumuman Portal (setelah data siswa sukses)
-        const { data: configData, error: configError } = await supabase
-            .from('pengaturan')
-            .select('portal_tipe, portal_judul, portal_isi')
-            .eq('id', 1)
-            .single();
-            
-        if (configData && !configError) {
-            pengumuman.value = {
-                tipe: configData.portal_tipe || 'info',
-                judul: configData.portal_judul || '',
-                isi: configData.portal_isi || ''
-            };
+        const { data: absenData, error: absenError } = await supabase
+            .from('absensi') // Sesuaikan dengan nama tabel presensi Anda
+            .select('tanggal, status')
+            .eq('nis', userNis)
+            .order('tanggal', { ascending: false })
+            .limit(5);
+
+        if (absenData && !absenError) {
+            riwayatAbsensi.value = absenData;
         }
 
     } catch (error) {
@@ -499,6 +558,7 @@
         isFetching.value = false;
     }
 };
+
 
 
                 const progresAbsensi = computed(() => {
@@ -522,45 +582,59 @@
                 });
 
                 const dapatkanEvaluasiAI = async () => {
-                    const targetUrl = window.TERATE_CONFIG?.API_URL || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
-                    
-                    if (!targetUrl) {
-                        console.error("API_URL tidak ditemukan di TERATE_CONFIG!");
-                        pesanPelatihAI.value = "Konfigurasi sistem (API_URL) belum diatur di config.js.";
-                        return;
-                    }
+    const targetUrl = window.TERATE_CONFIG?.API_URL || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
+    
+    if (!targetUrl) {
+        console.error("❌ ERROR KONFIGURASI: API_URL tidak ditemukan di TERATE_CONFIG (config.js)!");
+        pesanPelatihAI.value = "Konfigurasi sistem (API_URL) belum diatur di config.js.";
+        return;
+    }
 
-                    isAnalyzingAI.value = true;
-                    try {
-                        const response = await fetch(targetUrl, {
-                            method: "POST",
-                            headers: { "Content-Type": "text/plain" },
-                            body: JSON.stringify({
-                                tipe: "ASK_AI",
-                                prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama || 'Siswa'}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Berikan nasihat pendek yang tegas khas warga PSHT agar dia semakin giat berlatih dan semangat menabung untuk pengesahan.`
-                            })
-                        });
+    isAnalyzingAI.value = true;
+    try {
+        const response = await fetch(targetUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({
+                tipe: "ASK_AI",
+                prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama || 'Siswa'}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Persentase Kehadiran: ${progresAbsensi.value.persen}%. Berikan nasihat pendek yang tegas khas warga PSHT agar dia semakin giat berlatih dan semangat menabung untuk pengesahan.`
+            })
+        });
 
-                        if (!response.ok) {
-                            throw { code: response.status, message: `HTTP Error Status ${response.status}` };
-                        }
+        if (!response.ok) {
+            // Melempar error spesifik agar ditangkap di catch
+            throw new Error(`HTTP Error Status: ${response.status} - ${response.statusText}`);
+        }
 
-                        const result = await response.json();
+        const result = await response.json();
 
-                        if (result.status === "success") {
-                            pesanPelatihAI.value = result.data;
-                        } else {
-                            throw { 
-                                code: result.code || 500, 
-                                message: result.message || "Gagal memproses AI" 
-                            };
-                        }
-                    } catch (error) {
-                        pesanPelatihAI.value = "Maaf, sistem nasihat pelatih sedang gangguan. Silakan hubungi admin.";
-                    } finally {
-                        isAnalyzingAI.value = false;
-                    }
-                };
+        if (result.status === "success") {
+            pesanPelatihAI.value = result.data;
+        } else {
+            throw new Error(`API Response Error: ${result.message || result.code}`);
+        }
+        
+    } catch (error) {
+        // PERBAIKAN LOGGING: Identifikasi error lebih spesifik
+        console.group("🚨 Gagal Terhubung ke AI Pelatih");
+        
+        if (error instanceof TypeError && error.message === "Failed to fetch") {
+            console.error("Tipe Error: Masalah Jaringan / CORS");
+            console.error("Penjelasan: Perangkat tidak terkoneksi internet, URL API Script diblokir oleh browser (CORS), atau URL API di config.js salah.");
+        } else {
+            console.error("Tipe Error: Eksekusi / Server");
+            console.error("Detail Message:", error.message || error);
+        }
+        
+        console.error("Target URL yang dituju:", targetUrl);
+        console.groupEnd();
+
+        // Pesan yang tampil di layar HP user
+        pesanPelatihAI.value = "Koneksi ke sistem pelatih terputus. Pastikan internet lancar atau hubungi admin.";
+    } finally {
+        isAnalyzingAI.value = false;
+    }
+};
 
                 const logout = () => {
                     localStorage.removeItem('terate_user_nis');
@@ -590,7 +664,7 @@
                     riwayatTabungan, materiTerakhir, agendaSiswa,
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
                     pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi,
-                    formatWaktuWIB
+                    formatWaktuWIB, riwayatAbsensi
                 };
             }
         }).mount('#app');
