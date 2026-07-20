@@ -3,7 +3,7 @@ const TERATE_CONFIG = {
     // KONEKSI DATABASE & API
     // ==========================================
     // URL Google Apps Script yang baru (Khusus Proxy AI & Config)
-    API_URL: 'https://script.google.com/macros/s/AKfycbwa_cazbp65-9YR5dl-cPNh79XlJQZ4a3osVFTh8NT6tZBkGGKgTfHAem1nsNouD_Gh/exec',
+    API_URL: 'https://script.google.com/macros/s/AKfycbwtUY-OtqbzmSXh9LkvexkaPpP7jvQc_5t9x4skTdljHkPysuC1btMiWGU3ODcShWhG/exec',
     
     // Supabase Backend Utama
     SUPABASE_URL: 'https://azoksmzduifvalgicozc.supabase.co',
