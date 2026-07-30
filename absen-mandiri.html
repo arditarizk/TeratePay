@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id" class="antialiased">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Absen Mandiri - PSHT</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.292.0"></script>
+<script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; -webkit-tap-highlight-color: transparent; }
+  .mesh-bg { position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1;
+    background-image: radial-gradient(at 10% 0%, hsla(160,80%,75%,0.4) 0px, transparent 50%),
+                       radial-gradient(at 90% 10%, hsla(210,90%,80%,0.4) 0px, transparent 50%),
+                       radial-gradient(at 50% 90%, hsla(280,80%,85%,0.4) 0px, transparent 50%);
+    filter: blur(40px);
+  }
+  .glass-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.9); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08); }
+  [v-cloak] { display: none !important; }
+  .pop-in { animation: popIn .4s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes popIn { from{opacity:0; transform:scale(.85translateY(10px));} to{opacity:1; transform:scale(1);} }
+  .fade-enter-active,.fade-leave-active{ transition: all .25s ease; }
+  .fade-enter-from,.fade-leave-to{ opacity:0; transform:translateY(8px); }
+  .ring-pulse { animation: ringPulse 2s ease-out infinite; }
+  @keyframes ringPulse { 0%{box-shadow:0 0 0 0 rgba(16,185,129,.5);} 100%{box-shadow:0 0 0 22px rgba(16,185,129,0);} }
+</style>
+</head>
+<body class="selection:bg-emerald-100 selection:text-emerald-900 min-h-screen flex items-center justify-center p-4">
+<div class="mesh-bg"></div>
+
+<div id="app" v-cloak class="w-full max-w-md">
+
+  <!-- Header brand -->
+  <div class="text-center mb-6">
+    <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg mb-3">
+      <i data-lucide="shield-check" class="w-7 h-7 text-emerald-400"></i>
+    </div>
+    <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest bg-emerald-50 inline-block px-3 py-1 rounded-full border border-emerald-100">Rayon Japanan</p>
+    <h1 class="text-xl font-black text-slate-900 mt-2 tracking-tight">Absen Mandiri Latihan</h1>
+  </div>
+
+  <!-- STATE: LOADING (cek waktu) -->
+  <div v-if="fase==='cek'" class="glass-card rounded-[2rem] p-10 flex flex-col items-center gap-3">
+    <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-xs font-bold text-slate-400">Menyiapkan sesi absensi...</p>
+  </div>
+
+  <!-- STATE: BUKAN HARI LATIHAN / SUDAH TUTUP -->
+  <div v-else-if="fase==='tutup'" class="glass-card rounded-[2rem] p-8 text-center pop-in">
+    <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+      <i data-lucide="lock" class="w-8 h-8 text-slate-400"></i>
+    </div>
+    <h2 class="font-black text-slate-800 text-lg">{{ pesanTutup.judul }}</h2>
+    <p class="text-xs text-slate-500 mt-2 leading-relaxed">{{ pesanTutup.isi }}</p>
+    <div class="mt-5 p-3 bg-amber-50 border border-amber-100 rounded-xl">
+      <p class="text-[11px] font-bold text-amber-700">Sudah datang tapi absen tertutup? Sampaikan langsung ke pelatih agar dikoreksi manual.</p>
+    </div>
+  </div>
+
+  <!-- STATE: FORM ABSEN (masih dalam window) -->
+  <div v-else-if="fase==='form'" class="glass-card rounded-[2rem] p-6 pop-in">
+
+    <!-- Countdown -->
+    <div class="flex items-center justify-between mb-5 p-3 bg-slate-900 rounded-2xl text-white">
+      <div class="flex items-center gap-2">
+        <i data-lucide="timer" class="w-4 h-4 text-emerald-400"></i>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-300">Sesi ditutup pukul {{ jamTutupLabel }} WIB</span>
+      </div>
+      <span class="text-sm font-black text-emerald-400 tabular-nums">{{ sisaWaktuLabel }}</span>
+    </div>
+
+    <template v-if="!siswaKonfirmasi">
+      <h2 class="font-bold text-slate-800 text-sm mb-1">Masukkan NIS Kamu</h2>
+      <p class="text-xs text-slate-500 mb-4">Latihan {{ namaHariIni }}, {{ tanggalLabel }}</p>
+
+      <input v-model="nisInput" @keyup.enter="cariSiswa" inputmode="numeric" placeholder="Contoh: 52507031"
+        class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 text-center tracking-widest outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all shadow-sm">
+
+      <p v-if="errorMsg" class="text-[11px] font-bold text-rose-500 mt-2 text-center">{{ errorMsg }}</p>
+
+      <button @click="cariSiswa" :disabled="isLoading || !nisInput"
+        class="w-full mt-4 bg-emerald-600 text-white font-black py-3.5 rounded-xl active:scale-95 transition-all shadow-md shadow-emerald-600/20 text-xs uppercase tracking-wider hover:bg-emerald-700 disabled:opacity-40 flex items-center justify-center gap-2">
+        <i v-if="isLoading" data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+        <span>{{ isLoading ? 'Mencari...' : 'Lanjutkan' }}</span>
+      </button>
+    </template>
+
+    <!-- Konfirmasi identitas sebelum submit -->
+    <template v-else>
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3" :class="warnaSabuk(siswaKonfirmasi.sabuk)">
+          <span class="font-black text-lg">{{ inisial(siswaKonfirmasi.nama) }}</span>
+        </div>
+        <h2 class="font-black text-slate-900 text-base">{{ siswaKonfirmasi.nama }}</h2>
+        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">NIS {{ siswaKonfirmasi.nis }} &bull; Sabuk {{ siswaKonfirmasi.sabuk || '-' }}</p>
+      </div>
+
+      <div class="mt-5 p-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
+        <p class="text-xs text-slate-600 font-semibold leading-relaxed">Konfirmasi kehadiranmu di latihan <b>{{ namaHariIni }}, {{ tanggalLabel }}</b>?</p>
+      </div>
+
+      <div class="flex gap-3 mt-5">
+        <button @click="batalKonfirmasi" class="px-5 py-3 bg-white border border-slate-200 text-slate-500 font-bold rounded-xl active:scale-95 transition-all text-xs">Bukan Saya</button>
+        <button @click="kirimAbsen" :disabled="isSaving"
+          class="flex-grow bg-slate-900 text-white font-black py-3 rounded-xl active:scale-95 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50">
+          <i v-if="isSaving" data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+          <i v-else data-lucide="check-circle-2" class="w-4 h-4"></i>
+          <span>{{ isSaving ? 'Menyimpan...' : 'Ya, Saya Hadir' }}</span>
+        </button>
+      </div>
+    </template>
+  </div>
+
+  <!-- STATE: SUDAH ABSEN SEBELUMNYA -->
+  <div v-else-if="fase==='sudah_absen'" class="glass-card rounded-[2rem] p-8 text-center pop-in">
+    <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
+      <i data-lucide="badge-check" class="w-8 h-8 text-emerald-600"></i>
+    </div>
+    <h2 class="font-black text-slate-800 text-lg">Kamu Sudah Absen</h2>
+    <p class="text-xs text-slate-500 mt-2">{{ dataAbsenLama?.nama }}, kehadiranmu untuk latihan hari ini sudah tercatat pukul {{ dataAbsenLama?.jam }} WIB.</p>
+  </div>
+
+  <!-- STATE: SUKSES -->
+  <div v-else-if="fase==='sukses'" class="glass-card rounded-[2rem] p-8 text-center pop-in">
+    <div class="w-20 h-20 mx-auto rounded-full bg-emerald-500 ring-pulse flex items-center justify-center mb-5">
+      <i data-lucide="check" class="w-10 h-10 text-white"></i>
+    </div>
+    <h2 class="font-black text-slate-900 text-xl">Sae, {{ namaPanggilan }}!</h2>
+    <p class="text-sm text-slate-600 mt-1 font-semibold">Absensi hadir tercatat</p>
+    <p class="text-[11px] text-slate-400 mt-3 leading-relaxed">Rawe-rawe rantas, malang-malang putung. Selamat berlatih dan jaga persaudaraan, Dek!</p>
+    <div class="mt-5 pt-4 border-t border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+      {{ namaHariIni }}, {{ tanggalLabel }} &bull; {{ jamSekarangLabel }} WIB
+    </div>
+  </div>
+
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+
+// ====== KONFIGURASI JADWAL ======
+// Hari latihan: 3 = Rabu, 6 = Sabtu (0=Minggu ... 6=Sabtu)
+const HARI_LATIHAN = [3, 6];
+const JAM_TUTUP = { jam: 18, menit: 30 }; // absen mandiri terkunci otomatis pukul 18:30
+
+createApp({
+  setup() {
+    const supabase = window.supabase.createClient(TERATE_CONFIG.SUPABASE_URL, TERATE_CONFIG.SUPABASE_ANON_KEY);
+
+    const fase = ref('cek'); // cek | tutup | form | sudah_absen | sukses
+    const pesanTutup = ref({ judul: '', isi: '' });
+    const nisInput = ref('');
+    const errorMsg = ref('');
+    const isLoading = ref(false);
+    const isSaving = ref(false);
+    const siswaKonfirmasi = ref(null);
+    const dataAbsenLama = ref(null);
+    const namaPanggilan = ref('');
+    const sisaDetik = ref(0);
+    let timerInterval = null;
+
+    const namaHari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const namaHariIni = computed(() => namaHari[new Date().getDay()]);
+    const tanggalLabel = computed(() => new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }));
+    const jamTutupLabel = computed(() => `${String(JAM_TUTUP.jam).padStart(2,'0')}.${String(JAM_TUTUP.menit).padStart(2,'0')}`);
+    const jamSekarangLabel = computed(() => new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }));
+
+    const sisaWaktuLabel = computed(() => {
+      const j = Math.floor(sisaDetik.value / 3600);
+      const m = Math.floor((sisaDetik.value % 3600) / 60);
+      const s = sisaDetik.value % 60;
+      return `${String(j).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    });
+
+    const tanggalHariIniISO = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    };
+
+    const hitungDetikMenujuTutup = () => {
+      const now = new Date();
+      const tutup = new Date();
+      tutup.setHours(JAM_TUTUP.jam, JAM_TUTUP.menit, 0, 0);
+      return Math.max(0, Math.floor((tutup - now) / 1000));
+    };
+
+    const cekWaktuSesi = () => {
+      const now = new Date();
+      const hariIni = now.getDay();
+
+      if (!HARI_LATIHAN.includes(hariIni)) {
+        pesanTutup.value = {
+          judul: 'Bukan Jadwal Latihan',
+          isi: 'Absen mandiri hanya aktif setiap hari Rabu dan Sabtu. Sampai jumpa di sesi latihan berikutnya!'
+        };
+        fase.value = 'tutup';
+        return false;
+      }
+
+      sisaDetik.value = hitungDetikMenujuTutup();
+      if (sisaDetik.value <= 0) {
+        pesanTutup.value = {
+          judul: 'Sesi Absen Sudah Ditutup',
+          isi: `Absen mandiri untuk latihan hari ini sudah tutup pukul ${jamTutupLabel.value} WIB.`
+        };
+        fase.value = 'tutup';
+        return false;
+      }
+      return true;
+    };
+
+    const cekSudahAbsen = async () => {
+      const { data } = await supabase
+        .from('absensi')
+        .select('nis, tanggal, status, created_at')
+        .eq('nis', siswaKonfirmasi.value?.nis || nisInput.value.trim())
+        .eq('tanggal', tanggalHariIniISO())
+        .maybeSingle();
+      return data || null;
+    };
+
+    const cariSiswa = async () => {
+      errorMsg.value = '';
+      if (!nisInput.value.trim()) return;
+      isLoading.value = true;
+      try {
+        const nis = nisInput.value.trim();
+        const { data, error } = await supabase.from('data_siswa').select('nis, nama, sabuk').eq('nis', nis).single();
+        if (error || !data) {
+          errorMsg.value = 'NIS tidak ditemukan. Periksa kembali penulisannya.';
+          return;
+        }
+
+        const existing = await cekSudahAbsen();
+        if (existing) {
+          dataAbsenLama.value = {
+            nama: data.nama,
+            jam: existing.created_at ? new Date(existing.created_at).toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'}) : '-'
+          };
+          fase.value = 'sudah_absen';
+          return;
+        }
+
+        siswaKonfirmasi.value = data;
+      } catch (e) {
+        errorMsg.value = 'Gagal menghubungi server. Coba lagi.';
+      } finally {
+        isLoading.value = false;
+      }
+    };
+
+    const batalKonfirmasi = () => {
+      siswaKonfirmasi.value = null;
+      nisInput.value = '';
+      errorMsg.value = '';
+    };
+
+    const kirimAbsen = async () => {
+      isSaving.value = true;
+      try {
+        const payload = {
+          nis: siswaKonfirmasi.value.nis,
+          tanggal: tanggalHariIniISO(),
+          status: 'Hadir'
+        };
+        const { error } = await supabase.from('absensi').insert([payload]);
+        if (error) throw error;
+
+        namaPanggilan.value = (siswaKonfirmasi.value.nama || '').split(' ')[0];
+        fase.value = 'sukses';
+        if (timerInterval) clearInterval(timerInterval);
+      } catch (e) {
+        errorMsg.value = 'Gagal menyimpan absen. Coba lagi ya.';
+        siswaKonfirmasi.value = null;
+      } finally {
+        isSaving.value = false;
+      }
+    };
+
+    const inisial = (nama) => (nama || '').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+    const warnaSabuk = (sabuk) => {
+      const s = (sabuk || '').toLowerCase();
+      if (s.includes('jambon')) return 'bg-pink-100 text-pink-700';
+      if (s.includes('hijau')) return 'bg-emerald-100 text-emerald-700';
+      if (s.includes('putih')) return 'bg-slate-100 text-slate-700 border border-slate-300';
+      return 'bg-slate-900 text-white';
+    };
+
+    onMounted(() => {
+      if (window.lucide) lucide.createIcons();
+      if (cekWaktuSesi()) {
+        fase.value = 'form';
+        timerInterval = setInterval(() => {
+          sisaDetik.value = hitungDetikMenujuTutup();
+          if (sisaDetik.value <= 0) {
+            clearInterval(timerInterval);
+            cekWaktuSesi();
+          }
+        }, 1000);
+      }
+    });
+
+    onUnmounted(() => { if (timerInterval) clearInterval(timerInterval); });
+
+    return {
+      fase, pesanTutup, nisInput, errorMsg, isLoading, isSaving, siswaKonfirmasi,
+      dataAbsenLama, namaPanggilan, sisaWaktuLabel, namaHariIni, tanggalLabel,
+      jamTutupLabel, jamSekarangLabel, cariSiswa, batalKonfirmasi, kirimAbsen, inisial, warnaSabuk
+    };
+  }
+}).mount('#app');
+
+// Re-render ikon Lucide tiap kali Vue selesai update DOM
+const observer = new MutationObserver(() => { if (window.lucide) lucide.createIcons(); });
+observer.observe(document.getElementById('app'), { childList: true, subtree: true });
+</script>
+</body>
+</html>
