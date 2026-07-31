@@ -2706,7 +2706,7 @@
 
                                         <span :class="progresAbsensi.status_aman ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'" class="px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest">
 
-                                            {{ progresAbsensi.status_aman ? 'Aman (≥70%)' : 'Rentan Ujian' }}
+                                            {{ progresAbsensi.status_aman ? `Konsisten (${konsistensiHadir}%)` : `Kurang Konsisten (${konsistensiHadir}%)` }}
 
                                         </span>
 
@@ -2720,7 +2720,7 @@
 
                                 </div>
 
-                                <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Kehadiran Sabuk {{ siswa.sabuk }}</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Pertemuan Menuju Kurikulum Sabuk {{ siswa.sabuk }}</p>
 
                             </div>
 
@@ -6227,6 +6227,22 @@
 
         
 
+        // Total SESI yang sudah tercatat untuk siswa ini (semua status), dipakai
+
+        // untuk menghitung KONSISTENSI kehadiran (hadir / sesi tercatat), bukan
+
+        // hadir / target kurikulum (48) yang wajar rendah kalau baru mulai.
+
+        const { count: totalSesiNyata, error: sesiError } = await supabase
+
+            .from('absensi')
+
+            .select('*', { count: 'exact', head: true })
+
+            .eq('nis', userNis);
+
+        
+
         siswa.value = {
 
             nis: profileData.nis,
@@ -6239,7 +6255,9 @@
 
             terkumpul: totalTerkumpulNyata,
 
-            total_hadir: hadirError ? (profileData.total_hadir || 0) : (totalHadirNyata || 0)
+            total_hadir: hadirError ? (profileData.total_hadir || 0) : (totalHadirNyata || 0),
+
+            total_sesi: sesiError ? 0 : (totalSesiNyata || 0)
 
         };
 
@@ -6289,6 +6307,28 @@
 
 
 
+                // Konsistensi kehadiran = dari sesi yang SUDAH tercatat untuknya, berapa
+
+                // persen yang dia hadiri. Ini beda dari progres kurikulum (48 pertemuan)
+
+                // yang wajar rendah kalau siswa baru mulai di tengah semester.
+
+                const konsistensiHadir = computed(() => {
+
+                    const totalSesi = siswa.value.total_sesi || 0;
+
+                    const hadir = siswa.value.total_hadir || 0;
+
+                    if (totalSesi === 0) return 100; // belum ada sesi tercatat, jangan divonis buruk
+
+                    const persen = (hadir / totalSesi) * 100;
+
+                    return Math.round(persen);
+
+                });
+
+
+
                 const progresAbsensi = computed(() => {
 
                     const targetHadir = materiSiswa.value.total_pertemuan;
@@ -6305,7 +6345,7 @@
 
                         persen: persen > 100 ? 100 : Math.round(persen),
 
-                        status_aman: persen >= 70
+                        status_aman: konsistensiHadir.value >= 70
 
                     };
 
@@ -6337,21 +6377,36 @@
         // Ambil data aktual siswa
         const namaPanggilan = siswa.value.nama ? siswa.value.nama.split(' ')[0] : 'Siswa';
         const persenUang = parseFloat(persentase.value);
-        const persenAbsen = progresAbsensi.value.persen;
+        // Konsistensi (hadir/sesi tercatat) dipakai untuk menilai kedisiplinan,
+        // BUKAN progresAbsensi.persen (hadir/48) yang wajar rendah kalau siswa
+        // baru mulai di tengah kurikulum. Progres kurikulum tidak layak dijadikan
+        // dasar "kehadiranmu anjlok" karena itu soal waktu, bukan disiplin.
+        const persenAbsen = konsistensiHadir.value;
+
+        // Sisa waktu menuju Bulan Suro (target pengesahan), supaya nada nasihat
+        // tidak terkesan mendesak kalau waktunya sebenarnya masih panjang.
+        const tanggalPengesahan = new Date('2027-06-06');
+        const hariIni = new Date();
+        const sisaBulan = Math.round((tanggalPengesahan - hariIni) / (1000 * 60 * 60 * 24 * 30));
+        const konteksWaktu = sisaBulan > 6
+            ? `Waktu menuju Suro 2027 masih ada sekitar ${sisaBulan} bulan lagi, jadi ini saatnya membangun kebiasaan, bukan waktunya panik.`
+            : sisaBulan > 2
+                ? `Waktu menuju Suro 2027 tersisa sekitar ${sisaBulan} bulan, mulai atur ritme supaya tidak keteteran di akhir.`
+                : `Waktu menuju Suro 2027 tinggal sekitar ${sisaBulan} bulan, ini momen krusial untuk tancap gas.`;
         
         let nasihat = "";
 
         // Logika merangkai kalimat pelatih yang mengalir berdasarkan kondisi
         if (persenUang >= 100 && persenAbsen >= 70) {
-            nasihat = `Luar biasa, Dek ${namaPanggilan}! Tabungan pengesahanmu sudah LUNAS dan kehadiranmu sangat baik (${persenAbsen}%). Pertahankan kedisiplinan ini, fokus perbanyak hafalan jurus, dan bantu dulur-dulurmu yang lain.`;
+            nasihat = `Luar biasa, Dek ${namaPanggilan}! Tabungan pengesahanmu sudah LUNAS dan kehadiranmu konsisten (${persenAbsen}% dari sesi yang tercatat). Pertahankan kedisiplinan ini, fokus perbanyak hafalan jurus, dan bantu dulur-dulurmu yang lain.`;
         } else if (persenUang >= 50 && persenAbsen >= 70) {
-            nasihat = `Perkembanganmu bagus, Dek ${namaPanggilan}. Tabungan sudah mencapai ${persenUang}% dan absensi aman di angka ${persenAbsen}%. Tetap konsisten, sedikit lagi targetmu tercapai. Jangan kasih kendor!`;
+            nasihat = `Perkembanganmu bagus, Dek ${namaPanggilan}. Tabungan sudah mencapai ${persenUang}% dan kehadiranmu konsisten di angka ${persenAbsen}%. Tetap konsisten, sedikit lagi targetmu tercapai. Jangan kasih kendor!`;
         } else if (persenUang < 50 && persenAbsen >= 70) {
-            nasihat = `Kehadiran latihanmu patut diacungi jempol (${persenAbsen}%), pelatih bangga. Tapi ingat, Dek ${namaPanggilan}, target tabunganmu baru ${persenUang}%. Coba lebih berhemat lagi ya, agar urusan Suro nanti tenang.`;
+            nasihat = `Kehadiran latihanmu patut diacungi jempol (konsisten ${persenAbsen}% dari sesi yang ada), pelatih bangga. Progres pertemuan kurikulummu ${progresAbsensi.value.hadir}/${progresAbsensi.value.target}, itu wajar kalau memang baru berjalan. Soal tabungan baru ${persenUang}%, ${konteksWaktu}`;
         } else if (persenUang >= 50 && persenAbsen < 70) {
-            nasihat = `Dek ${namaPanggilan}, tabunganmu lumayan bagus (${persenUang}%), tapi sayang kehadiran latihanmu sangat kurang (${persenAbsen}%). Uang memang penting, tapi ilmu SH hanya didapat dari latihan rutin. Jangan malas turun ke lapangan!`;
+            nasihat = `Dek ${namaPanggilan}, tabunganmu lumayan bagus (${persenUang}%), tapi kehadiranmu belum konsisten — dari sesi latihan yang tercatat, baru ${persenAbsen}% yang kamu hadiri. Uang memang penting, tapi ilmu SH hanya didapat dari latihan rutin. Jangan malas turun ke lapangan!`;
         } else {
-            nasihat = `Ini peringatan keras, Dek ${namaPanggilan}! Tabunganmu baru ${persenUang}% dan kehadiranmu anjlok di ${persenAbsen}%. Coba tanamkan lagi niatmu. Kalau sungguh-sungguh ingin disahkan, buktikan dengan kedisiplinan dan usaha nyata!`;
+            nasihat = `Dek ${namaPanggilan}, ada dua hal yang perlu dibenahi: tabunganmu baru ${persenUang}%, dan dari sesi latihan yang tercatat baru ${persenAbsen}% yang kamu hadiri. ${konteksWaktu} Tanamkan lagi niatmu — kalau sungguh-sungguh ingin disahkan, buktikan dengan kedisiplinan dan usaha nyata mulai sekarang.`;
         }
 
         pesanPelatihAI.value = nasihat;
@@ -6415,7 +6470,7 @@
 
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
 
-                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi,
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi, konsistensiHadir,
 
                     formatWaktuWIB, riwayatAbsensi
 
