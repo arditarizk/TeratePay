@@ -6768,29 +6768,42 @@
                     <li class="mb-2"><strong>Persiapan Administratif:</strong> Dana siap, pastikan administrasi pendaftaran cabang dan pemesanan sakral mulai didata.</li>
                 </ul>`;
         } else if (persenAman >= 50) {
+            const infoWaktuSedang = selisihBulan <= 3
+                ? `Waktu tinggal sekitar ${Math.round(selisihBulan)} bulan lagi, pastikan cicilan kas dipertegas tanpa mengorbankan fokus latihan jurus.`
+                : `Waktu masih sekitar ${Math.round(selisihBulan)} bulan lagi, cukup untuk membiasakan cicilan rutin tanpa perlu terburu-buru.`;
             evaluasi = `
                 <ul>
                     <li class="mb-2"><strong>Pantau Siswa Tertinggal:</strong> Ada ${nunggak} siswa yang tabungannya lambat (< 40%). Segera panggil secara personal untuk menanyakan kendalanya.</li>
                     <li class="mb-2"><strong>Semangat Gotong Royong:</strong> Saldo kas lumayan. Tanamkan jiwa korsa agar warga/dulur yang mampu bisa menyemangati yang sedang kesulitan.</li>
-                    <li class="mb-2"><strong>Manajemen Suro:</strong> Waktu semakin dekat. Pastikan cicilan kas dipertegas tanpa mengorbankan fokus latihan jurus.</li>
+                    <li class="mb-2"><strong>Manajemen Waktu:</strong> ${infoWaktuSedang}</li>
                 </ul>`;
         } else {
-            // --- PECAHAN KONDISI DARURAT BERDASARKAN WAKTU ---
-            if (selisihBulan <= 3) { 
-                // Jika waktu pengesahan tinggal 3 bulan atau kurang, dan mayoritas menunggak parah
+            // --- PECAHAN KONDISI BERDASARKAN WAKTU (3 tingkat, nadanya konsisten
+            // dengan sisa waktu -- jangan sebut "darurat" kalau waktu masih longgar,
+            // dan jangan terlalu santai kalau waktu sudah mepet) ---
+            if (selisihBulan <= 3) {
+                // Waktu pengesahan tinggal 3 bulan atau kurang, dan mayoritas menunggak parah
                 evaluasi = `
                     <ul>
-                        <li class="mb-2"><strong>Validasi Data Krusial (Waktu Mepet):</strong> Waktu pengesahan sudah dekat, tapi mayoritas siswa (${nunggak} orang) tertinggal sangat jauh dari target. Segera kumpulkan data seakurat mungkin untuk memfilter mana siswa yang benar-benar sanggup lanjut, dan mana yang sebaiknya ditunda tahun depan.</li>
+                        <li class="mb-2"><strong>Validasi Data Krusial (Waktu Mepet):</strong> Waktu pengesahan sudah dekat (± ${Math.round(selisihBulan)} bulan lagi), tapi mayoritas siswa (${nunggak} orang) tertinggal sangat jauh dari target. Segera kumpulkan data seakurat mungkin untuk memfilter mana siswa yang benar-benar sanggup lanjut, dan mana yang sebaiknya ditunda tahun depan.</li>
                         <li class="mb-2"><strong>Panggil Wali Siswa Segera:</strong> Jangan dipendam di rayon. Panggil orang tua/wali siswa sekarang juga untuk membicarakan rincian riil biaya pengesahan agar ada keputusan tegas bersama.</li>
                         <li class="mb-2"><strong>Sikap Realistis Pelatih:</strong> Jika dari target jutaan uang siswa masih di angka ratusan ribu, jangan memaksakan keadaan yang bisa membebani siswa. Fokus amankan data dan dana bagi siswa yang dipastikan siap.</li>
                     </ul>`;
-            } else {
-                // Jika waktu pengesahan masih lama (lebih dari 3 bulan), masih bisa dipacu
+            } else if (selisihBulan <= 6) {
+                // Waktu 3-6 bulan lagi: sudah perlu diseriusi, tapi belum genting
                 evaluasi = `
                     <ul>
-                        <li class="mb-2"><strong>Tindakan Darurat Kas:</strong> Mayoritas siswa (${nunggak} orang) sangat tertinggal target tabungannya. Mumpung waktu masih agak panjang, pelatih wajib segera mengadakan kumpulan khusus membahas kendala dana ini.</li>
-                        <li class="mb-2"><strong>Libatkan Wali Siswa:</strong> Komunikasikan rincian biaya pengesahan kepada orang tua/wali siswa sejak dini agar tidak kaget menjelang hari H.</li>
-                        <li class="mb-2"><strong>Pencarian Dana Mandiri:</strong> Seluruh warga rayon harus turun tangan membantu, misalnya dengan membuat bumbung kemanusiaan, iuran sukarela, atau mencari dana tambahan agar beban siswa lebih ringan.</li>
+                        <li class="mb-2"><strong>Percepat Tanpa Panik:</strong> Mayoritas siswa (${nunggak} orang) masih tertinggal target tabungannya. Waktu tersisa sekitar ${Math.round(selisihBulan)} bulan — cukup untuk mengejar asal mulai diseriusi dari sekarang, jangan ditunda lagi.</li>
+                        <li class="mb-2"><strong>Evaluasi Rutin:</strong> Buat sesi cek tabungan tiap minggu/latihan agar siswa yang tertinggal segera terlihat dan bisa dibantu lebih awal, bukan menjelang hari H.</li>
+                        <li class="mb-2"><strong>Libatkan Wali Siswa:</strong> Sampaikan rincian biaya pengesahan ke orang tua/wali sekarang, supaya ada waktu menyiapkan dana bertahap.</li>
+                    </ul>`;
+            } else {
+                // Waktu pengesahan masih panjang (>6 bulan): bangun kebiasaan, bukan waktunya panik
+                evaluasi = `
+                    <ul>
+                        <li class="mb-2"><strong>Mumpung Waktu Masih Panjang:</strong> Mayoritas siswa (${nunggak} orang) memang masih tertinggal target tabungannya, tapi wajar karena waktu ke Suro masih sekitar ${Math.round(selisihBulan)} bulan lagi. Ini saatnya membangun kebiasaan menabung rutin, bukan waktunya panik.</li>
+                        <li class="mb-2"><strong>Libatkan Wali Siswa Sejak Dini:</strong> Komunikasikan rincian biaya pengesahan kepada orang tua/wali siswa dari sekarang agar tidak kaget menjelang hari H.</li>
+                        <li class="mb-2"><strong>Pencarian Dana Mandiri:</strong> Ajak warga rayon membantu, misalnya lewat bumbung kemanusiaan atau iuran sukarela, agar beban siswa lebih ringan sejak awal.</li>
                     </ul>`;
             }
         }
