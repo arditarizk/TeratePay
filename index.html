@@ -5471,37 +5471,36 @@
             // LENGKAP: Kirim Notifikasi Absensi via WhatsApp
 
             const kirimNotifAbsen = async (siswa, status) => { 
+    const nomorWa = siswa.wa_ortu || siswa.wa;
+    if (!nomorWa) {
+        showToast(`Nomor WA untuk ${siswa.nama} tidak tersedia.`, 'error');
+        return;
+    }
+    
+    // 1. Simpan data ke Backend (Supabase) terlebih dahulu
+    try {
+        const payloadAbsen = {
+            nis: siswa.nis,
+            status: status,
+            tanggal: new Date().toISOString()
+        };
+        const { error } = await supabase.from('absensi').insert([payloadAbsen]);
+        if (error) throw error;
+        
+        showToast(`Data absensi ${siswa.nama} tersimpan ke database`, 'success');
+    } catch (err) {
+        showToast("Gagal menyimpan ke database", 'error');
+        console.error("Error DB:", err);
+        return; // Hentikan eksekusi jika gagal simpan ke DB
+    }
 
-                const nomorWa = siswa.wa_ortu || siswa.wa;
-
-                if (!nomorWa) {
-
-                    showToast(`Nomor WA untuk ${siswa.nama} tidak tersedia.`, 'error');
-
-                    return;
-
-                }
-
-                
-
-                // Format nomor WA dari awalan 0 menjadi 62
-
-                let nomorTujuan = nomorWa.startsWith('0') ? '62' + nomorWa.substring(1) : nomorWa;
-
-                
-
-                const pesan = `*INFO ABSENSI LATIHAN*\n\nNama Siswa: *${siswa.nama}*\nStatus: *${status.toUpperCase()}*\nTanggal: ${waktuLengkap.value.tanggal}\nPukul: ${waktuLengkap.value.jam} WIB\n\n_Pesan otomatis dari Sistem Manajemen Rayon_`;
-
-                const urlWa = `https://wa.me/${nomorTujuan}?text=${encodeURIComponent(pesan)}`;
-
-                
-
-                window.open(urlWa, '_blank');
-
-                showToast(`Membuka WhatsApp untuk ${siswa.nama}`, 'success');
-
-            };
-
+    // 2. Lanjutkan mengirim notifikasi WhatsApp
+    let nomorTujuan = nomorWa.startsWith('0') ? '62' + nomorWa.substring(1) : nomorWa;
+    const pesan = `*INFO ABSENSI LATIHAN*\n\nNama Siswa: *${siswa.nama}*\nStatus: *${status.toUpperCase()}*\nTanggal: ${waktuLengkap.value.tanggal}\nPukul: ${waktuLengkap.value.jam} WIB\n\n_Pesan otomatis dari Sistem Manajemen Rayon_`;
+    const urlWa = `https://wa.me/${nomorTujuan}?text=${encodeURIComponent(pesan)}`;
+    
+    window.open(urlWa, '_blank');
+};
 
 
             const prosesTransaksi = async () => {
@@ -6204,112 +6203,34 @@
 
 
 
-                const dapatkanEvaluasiAI = async () => {
-
-    const targetUrl = window.TERATE_CONFIG?.API_URL || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
-
-    
-
-    if (!targetUrl) {
-
-        console.error("❌ ERROR KONFIGURASI: API_URL tidak ditemukan di TERATE_CONFIG (config.js)!");
-
-        pesanPelatihAI.value = "Konfigurasi sistem (API_URL) belum diatur di config.js.";
-
-        return;
-
-    }
-
-
-
+                const dapatkanEvaluasiAI = () => {
     isAnalyzingAI.value = true;
+    
+    // Simulasi loading sebentar agar UX tetap terasa interaktif
+    setTimeout(() => {
+        // Ambil data aktual siswa
+        const namaPanggilan = siswa.value.nama ? siswa.value.nama.split(' ')[0] : 'Siswa';
+        const persenUang = parseFloat(persentase.value);
+        const persenAbsen = progresAbsensi.value.persen;
+        
+        let nasihat = "";
 
-    try {
-
-        const response = await fetch(targetUrl, {
-
-            method: "POST",
-
-            headers: { "Content-Type": "text/plain" },
-
-            body: JSON.stringify({
-
-                tipe: "ASK_AI",
-
-                prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama || 'Siswa'}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Persentase Kehadiran: ${progresAbsensi.value.persen}%. Berikan nasihat pendek yang tegas khas warga PSHT agar dia semakin giat berlatih dan semangat menabung untuk pengesahan.`
-
-            })
-
-        });
-
-
-
-        if (!response.ok) {
-
-            // Melempar error spesifik agar ditangkap di catch
-
-            throw new Error(`HTTP Error Status: ${response.status} - ${response.statusText}`);
-
-        }
-
-
-
-        const result = await response.json();
-
-
-
-        if (result.status === "success") {
-
-            pesanPelatihAI.value = result.data;
-
+        // Logika merangkai kalimat pelatih yang mengalir berdasarkan kondisi
+        if (persenUang >= 100 && persenAbsen >= 70) {
+            nasihat = `Luar biasa, Dek ${namaPanggilan}! Tabungan pengesahanmu sudah LUNAS dan kehadiranmu sangat baik (${persenAbsen}%). Pertahankan kedisiplinan ini, fokus perbanyak hafalan jurus, dan bantu dulur-dulurmu yang lain.`;
+        } else if (persenUang >= 50 && persenAbsen >= 70) {
+            nasihat = `Perkembanganmu bagus, Dek ${namaPanggilan}. Tabungan sudah mencapai ${persenUang}% dan absensi aman di angka ${persenAbsen}%. Tetap konsisten, sedikit lagi targetmu tercapai. Jangan kasih kendor!`;
+        } else if (persenUang < 50 && persenAbsen >= 70) {
+            nasihat = `Kehadiran latihanmu patut diacungi jempol (${persenAbsen}%), pelatih bangga. Tapi ingat, Dek ${namaPanggilan}, target tabunganmu baru ${persenUang}%. Coba lebih berhemat lagi ya, agar urusan Suro nanti tenang.`;
+        } else if (persenUang >= 50 && persenAbsen < 70) {
+            nasihat = `Dek ${namaPanggilan}, tabunganmu lumayan bagus (${persenUang}%), tapi sayang kehadiran latihanmu sangat kurang (${persenAbsen}%). Uang memang penting, tapi ilmu SH hanya didapat dari latihan rutin. Jangan malas turun ke lapangan!`;
         } else {
-
-            throw new Error(`API Response Error: ${result.message || result.code}`);
-
+            nasihat = `Ini peringatan keras, Dek ${namaPanggilan}! Tabunganmu baru ${persenUang}% dan kehadiranmu anjlok di ${persenAbsen}%. Coba tanamkan lagi niatmu. Kalau sungguh-sungguh ingin disahkan, buktikan dengan kedisiplinan dan usaha nyata!`;
         }
 
-        
-
-    } catch (error) {
-
-        // PERBAIKAN LOGGING: Identifikasi error lebih spesifik
-
-        console.group("🚨 Gagal Terhubung ke AI Pelatih");
-
-        
-
-        if (error instanceof TypeError && error.message === "Failed to fetch") {
-
-            console.error("Tipe Error: Masalah Jaringan / CORS");
-
-            console.error("Penjelasan: Perangkat tidak terkoneksi internet, URL API Script diblokir oleh browser (CORS), atau URL API di config.js salah.");
-
-        } else {
-
-            console.error("Tipe Error: Eksekusi / Server");
-
-            console.error("Detail Message:", error.message || error);
-
-        }
-
-        
-
-        console.error("Target URL yang dituju:", targetUrl);
-
-        console.groupEnd();
-
-
-
-        // Pesan yang tampil di layar HP user
-
-        pesanPelatihAI.value = "Koneksi ke sistem pelatih terputus. Pastikan internet lancar atau hubungi admin.";
-
-    } finally {
-
+        pesanPelatihAI.value = nasihat;
         isAnalyzingAI.value = false;
-
-    }
-
+    }, 600); // loading 0.6 detik
 };
 
 
@@ -6616,62 +6537,72 @@
                 });
             };
 
-            const mintaAnalisisAI = async () => {
-                if (!supabase) return showToast("Supabase tidak aktif.", "error");
-                if (dataSiswaSinkron.value.length === 0) {
-                    return showToast("Lakukan sinkronisasi terlebih dahulu.", "error");
-                }
-                
-                const STORAGE_KEY = 'terate_ai_limit_evaluasi';
-                const LIMIT_HARIAN = 5; 
-                const SATU_HARI_MS = 24 * 60 * 60 * 1000;
-                const waktuSekarang = Date.now();
-                
-                let aiUsage = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"count": 0, "timestamp": 0}');
-                
-                if (waktuSekarang - aiUsage.timestamp > SATU_HARI_MS) {
-                    aiUsage = { count: 0, timestamp: waktuSekarang };
-                }
-                
-                if (aiUsage.count >= LIMIT_HARIAN) {
-                    return showToast(`Batas AI harian (${LIMIT_HARIAN}x) tercapai. Coba lagi besok.`, "error");
-                }
+            const mintaAnalisisAI = () => {
+    isAnalyzing.value = true;
+    
+    setTimeout(() => {
+        const nunggak = jumlahMenunggak.value;
+        const saldo = saldoKas.value;
+        const totalSiswa = dataSiswaSinkron.value.length;
+        const persenAman = totalSiswa > 0 ? Math.round((jumlahAman.value / totalSiswa) * 100) : 0;
+        
+        // --- TAMBAHAN: Logika Waktu ---
+        // Asumsi bulan Suro/Pengesahan. Ganti sesuai dengan variabel target di aplikasi Anda jika ada.
+        // Format: YYYY-MM-DD
+        const tanggalPengesahan = new Date('2027-06-06'); 
+        const hariIni = new Date();
+        
+        // Hitung selisih dalam bulan
+        const selisihBulan = (tanggalPengesahan - hariIni) / (1000 * 60 * 60 * 24 * 30);
+        
+        let evaluasi = "";
 
-                isAnalyzing.value = true;
-                
-                try {
-                    const promptText = `Bertindaklah sebagai Pelatih atau Sesepuh PSHT yang tegas, bijak, dan mengayomi. Analisa laporan tabungan pengesahan siswa di rayon berikut: 
-                     - SALDO KAS BERSAMA: Rp ${formatRp(saldoKas.value)}. 
-                     - PEMASUKAN: Rp ${formatRp(totalMasuk.value)}. 
-                     - PENGELUARAN KAS: Rp ${formatRp(totalKeluar.value)}. 
-                     - KONDISI SISWA: ${jumlahMenunggak.value} orang tabungannya masih jauh tertinggal. 
-                     Berikan 3 poin instruksi atau nasihat lugas khas dulur SH Terate. Tekankan agar pelatih memantau siswa, gotong royong, dan carikan solusi agar cicilan tidak memberatkan jelang Suro. 
-                     Format wajib HTML: <ul><li class="mb-2"><strong>[Fokus Arahan]:</strong> [Nasihat lugas]</li></ul> tanpa awalan \`\`\`html.`;
+        if (totalSiswa === 0) {
+            evaluasi = `<ul><li class="mb-2"><strong>Data Kosong:</strong> Belum ada data siswa untuk dievaluasi. Sinkronkan data terlebih dahulu.</li></ul>`;
+        } else if (nunggak === 0) {
+            evaluasi = `
+                <ul>
+                    <li class="mb-2"><strong>Apresiasi & Konsistensi:</strong> Alhamdulillah, seluruh siswa (${totalSiswa} orang) sudah tertib menabung di jalur yang aman. Pertahankan kedisiplinan ini.</li>
+                    <li class="mb-2"><strong>Fokus Materi SH:</strong> Karena urusan finansial sudah stabil (Saldo: Rp ${formatRp(saldo)}), pelatih bisa lebih fokus menggembleng fisik dan kerohanian (Ke-SH-an).</li>
+                    <li class="mb-2"><strong>Persiapan Administratif:</strong> Dana siap, pastikan administrasi pendaftaran cabang dan pemesanan sakral mulai didata.</li>
+                </ul>`;
+        } else if (persenAman >= 50) {
+            evaluasi = `
+                <ul>
+                    <li class="mb-2"><strong>Pantau Siswa Tertinggal:</strong> Ada ${nunggak} siswa yang tabungannya lambat (< 40%). Segera panggil secara personal untuk menanyakan kendalanya.</li>
+                    <li class="mb-2"><strong>Semangat Gotong Royong:</strong> Saldo kas lumayan. Tanamkan jiwa korsa agar warga/dulur yang mampu bisa menyemangati yang sedang kesulitan.</li>
+                    <li class="mb-2"><strong>Manajemen Suro:</strong> Waktu semakin dekat. Pastikan cicilan kas dipertegas tanpa mengorbankan fokus latihan jurus.</li>
+                </ul>`;
+        } else {
+            // --- PECAHAN KONDISI DARURAT BERDASARKAN WAKTU ---
+            if (selisihBulan <= 3) { 
+                // Jika waktu pengesahan tinggal 3 bulan atau kurang, dan mayoritas menunggak parah
+                evaluasi = `
+                    <ul>
+                        <li class="mb-2"><strong>Validasi Data Krusial (Waktu Mepet):</strong> Waktu pengesahan sudah dekat, tapi mayoritas siswa (${nunggak} orang) tertinggal sangat jauh dari target. Segera kumpulkan data seakurat mungkin untuk memfilter mana siswa yang benar-benar sanggup lanjut, dan mana yang sebaiknya ditunda tahun depan.</li>
+                        <li class="mb-2"><strong>Panggil Wali Siswa Segera:</strong> Jangan dipendam di rayon. Panggil orang tua/wali siswa sekarang juga untuk membicarakan rincian riil biaya pengesahan agar ada keputusan tegas bersama.</li>
+                        <li class="mb-2"><strong>Sikap Realistis Pelatih:</strong> Jika dari target jutaan uang siswa masih di angka ratusan ribu, jangan memaksakan keadaan yang bisa membebani siswa. Fokus amankan data dan dana bagi siswa yang dipastikan siap.</li>
+                    </ul>`;
+            } else {
+                // Jika waktu pengesahan masih lama (lebih dari 3 bulan), masih bisa dipacu
+                evaluasi = `
+                    <ul>
+                        <li class="mb-2"><strong>Tindakan Darurat Kas:</strong> Mayoritas siswa (${nunggak} orang) sangat tertinggal target tabungannya. Mumpung waktu masih agak panjang, pelatih wajib segera mengadakan kumpulan khusus membahas kendala dana ini.</li>
+                        <li class="mb-2"><strong>Libatkan Wali Siswa:</strong> Komunikasikan rincian biaya pengesahan kepada orang tua/wali siswa sejak dini agar tidak kaget menjelang hari H.</li>
+                        <li class="mb-2"><strong>Pencarian Dana Mandiri:</strong> Seluruh warga rayon harus turun tangan membantu, misalnya dengan membuat bumbung kemanusiaan, iuran sukarela, atau mencari dana tambahan agar beban siswa lebih ringan.</li>
+                    </ul>`;
+            }
+        }
 
-                    const { data, error } = await supabase.functions.invoke('gemini-proxy', {
-                        body: { prompt: promptText }
-                    });
+        hasilAI.value = evaluasi;
+        showToast("Insight pelatih berhasil disusun.", "success");
+        isAnalyzing.value = false;
+        
+        setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 200);
+    }, 800);
+};
 
-                    if (error) throw error;
-                    if (data && data.error) throw new Error(data.error.message);
 
-                    const aiText = data.candidates[0].content.parts[0].text;
-                    
-                    hasilAI.value = aiText.replace(/```html/g, "").replace(/```/g, "");
-                    showToast("Analisa AI berhasil ditarik.", "success");
-
-                    aiUsage.count += 1;
-                    if (aiUsage.count === 1) aiUsage.timestamp = waktuSekarang; 
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(aiUsage));
-
-                } catch (error) {
-                    console.error("🚨 [DEBUG AI] Gagal memanggil Backend Supabase:", error);
-                    showToast("Sistem Gagal: Gagal terhubung ke backend AI.", "error");
-                } finally {
-                    isAnalyzing.value = false;
-                    setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 200);
-                }
-            };
 
             const formatTanggalSimpel = (tanggalUTC) => {
                 if (!tanggalUTC) return '-';

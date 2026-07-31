@@ -539,22 +539,16 @@
             total_hadir: profileData.total_hadir || 0
         };
 
-       // 2. Ambil Data Absensi (Disesuaikan dengan nama kolom database yang benar)
+        // 2. Ambil Data Pengaturan untuk Pengumuman Portal (setelah data siswa sukses)
         const { data: absenData, error: absenError } = await supabase
-            .from('absensi')
-            .select('waktu_absen, status') // Ubah 'tanggal' jadi 'waktu_absen'
-            .eq('nis_siswa', userNis)      // Ubah 'nis' jadi 'nis_siswa'
-            .order('waktu_absen', { ascending: false }) // Urutkan berdasarkan 'waktu_absen'
+            .from('absensi') // Sesuaikan dengan nama tabel presensi Anda
+            .select('tanggal, status')
+            .eq('nis', userNis)
+            .order('tanggal', { ascending: false })
             .limit(5);
 
         if (absenData && !absenError) {
-            // Mapping data agar properti 'waktu_absen' dari DB dibaca sebagai 'tanggal' oleh Vue/HTML
-            riwayatAbsensi.value = absenData.map(item => ({
-                tanggal: item.waktu_absen,
-                status: item.status
-            }));
-        } else if (absenError) {
-            console.error("Gagal menarik data absensi:", absenError.message);
+            riwayatAbsensi.value = absenData;
         }
 
     } catch (error) {
@@ -587,60 +581,36 @@
                     return hasil > 100 ? 100 : hasil.toFixed(1);
                 });
 
-                const dapatkanEvaluasiAI = async () => {
-    const targetUrl = window.TERATE_CONFIG?.API_URL || (typeof TERATE_CONFIG !== 'undefined' ? TERATE_CONFIG.API_URL : '');
-    
-    if (!targetUrl) {
-        console.error("❌ ERROR KONFIGURASI: API_URL tidak ditemukan di TERATE_CONFIG (config.js)!");
-        pesanPelatihAI.value = "Konfigurasi sistem (API_URL) belum diatur di config.js.";
-        return;
-    }
-
+                const dapatkanEvaluasiAI = () => {
     isAnalyzingAI.value = true;
-    try {
-        const response = await fetch(targetUrl, {
-            method: "POST",
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                tipe: "ASK_AI",
-                prompt: `Berikan evaluasi singkat dan motivasi untuk siswa PSHT bernama ${siswa.value.nama || 'Siswa'}. Progres tabungannya saat ini: ${saldoTerformat.value} dari target ${targetTerformat.value}. Persentase Kehadiran: ${progresAbsensi.value.persen}%. Berikan nasihat pendek yang tegas khas warga PSHT agar dia semakin giat berlatih dan semangat menabung untuk pengesahan.`
-            })
-        });
+    
+    // Simulasi loading sebentar agar UX tetap terasa interaktif
+    setTimeout(() => {
+        // Ambil data aktual siswa
+        const namaPanggilan = siswa.value.nama ? siswa.value.nama.split(' ')[0] : 'Siswa';
+        const persenUang = parseFloat(persentase.value);
+        const persenAbsen = progresAbsensi.value.persen;
+        
+        let nasihat = "";
 
-        if (!response.ok) {
-            // Melempar error spesifik agar ditangkap di catch
-            throw new Error(`HTTP Error Status: ${response.status} - ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-            pesanPelatihAI.value = result.data;
+        // Logika merangkai kalimat pelatih yang mengalir berdasarkan kondisi
+        if (persenUang >= 100 && persenAbsen >= 70) {
+            nasihat = `Luar biasa, Dek ${namaPanggilan}! Tabungan pengesahanmu sudah LUNAS dan kehadiranmu sangat baik (${persenAbsen}%). Pertahankan kedisiplinan ini, fokus perbanyak hafalan jurus, dan bantu dulur-dulurmu yang lain.`;
+        } else if (persenUang >= 50 && persenAbsen >= 70) {
+            nasihat = `Perkembanganmu bagus, Dek ${namaPanggilan}. Tabungan sudah mencapai ${persenUang}% dan absensi aman di angka ${persenAbsen}%. Tetap konsisten, sedikit lagi targetmu tercapai. Jangan kasih kendor!`;
+        } else if (persenUang < 50 && persenAbsen >= 70) {
+            nasihat = `Kehadiran latihanmu patut diacungi jempol (${persenAbsen}%), pelatih bangga. Tapi ingat, Dek ${namaPanggilan}, target tabunganmu baru ${persenUang}%. Coba lebih berhemat lagi ya, agar urusan Suro nanti tenang.`;
+        } else if (persenUang >= 50 && persenAbsen < 70) {
+            nasihat = `Dek ${namaPanggilan}, tabunganmu lumayan bagus (${persenUang}%), tapi sayang kehadiran latihanmu sangat kurang (${persenAbsen}%). Uang memang penting, tapi ilmu SH hanya didapat dari latihan rutin. Jangan malas turun ke lapangan!`;
         } else {
-            throw new Error(`API Response Error: ${result.message || result.code}`);
+            nasihat = `Ini peringatan keras, Dek ${namaPanggilan}! Tabunganmu baru ${persenUang}% dan kehadiranmu anjlok di ${persenAbsen}%. Coba tanamkan lagi niatmu. Kalau sungguh-sungguh ingin disahkan, buktikan dengan kedisiplinan dan usaha nyata!`;
         }
-        
-    } catch (error) {
-        // PERBAIKAN LOGGING: Identifikasi error lebih spesifik
-        console.group("🚨 Gagal Terhubung ke AI Pelatih");
-        
-        if (error instanceof TypeError && error.message === "Failed to fetch") {
-            console.error("Tipe Error: Masalah Jaringan / CORS");
-            console.error("Penjelasan: Perangkat tidak terkoneksi internet, URL API Script diblokir oleh browser (CORS), atau URL API di config.js salah.");
-        } else {
-            console.error("Tipe Error: Eksekusi / Server");
-            console.error("Detail Message:", error.message || error);
-        }
-        
-        console.error("Target URL yang dituju:", targetUrl);
-        console.groupEnd();
 
-        // Pesan yang tampil di layar HP user
-        pesanPelatihAI.value = "Koneksi ke sistem pelatih terputus. Pastikan internet lancar atau hubungi admin.";
-    } finally {
+        pesanPelatihAI.value = nasihat;
         isAnalyzingAI.value = false;
-    }
+    }, 600); // loading 0.6 detik
 };
+
 
                 const logout = () => {
                     localStorage.removeItem('terate_user_nis');
