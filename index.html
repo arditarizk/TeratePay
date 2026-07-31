@@ -2720,7 +2720,7 @@
 
                                 </div>
 
-                                <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Pertemuan Menuju Kurikulum Sabuk {{ siswa.sabuk }}</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase">Progres Pertemuan Menuju Kurikulum Sabuk {{ sabukTujuan }}</p>
 
                             </div>
 
@@ -6071,6 +6071,26 @@
 
 
 
+                // Progres pertemuan itu progres MENUJU kenaikan sabuk berikutnya,
+
+                // jadi labelnya harus sabuk tujuan, bukan sabuk yang sedang dipakai.
+
+                const sabukTujuan = computed(() => {
+
+                    const sabuk = (siswa.value.sabuk || 'polos').toLowerCase();
+
+                    if (sabuk.includes('jambon') || sabuk.includes('merah muda')) return 'Hijau';
+
+                    if (sabuk.includes('hijau')) return 'Putih';
+
+                    if (sabuk.includes('putih')) return 'Pengesahan (Warga)';
+
+                    return 'Jambon';
+
+                });
+
+
+
                 const formatRp = (angka) => {
 
                     const nilai = Number(angka);
@@ -6470,7 +6490,7 @@
 
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
 
-                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi, konsistensiHadir,
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi, konsistensiHadir, sabukTujuan,
 
                     formatWaktuWIB, riwayatAbsensi
 
