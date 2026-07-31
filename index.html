@@ -6125,6 +6125,22 @@
 
         
 
+        // Sama untuk kehadiran: hitung langsung dari tabel absensi (count status
+
+        // 'Hadir'), jangan andalkan kolom total_hadir yang gampang basi.
+
+        const { count: totalHadirNyata, error: hadirError } = await supabase
+
+            .from('absensi')
+
+            .select('*', { count: 'exact', head: true })
+
+            .eq('nis', userNis)
+
+            .eq('status', 'Hadir');
+
+        
+
         siswa.value = {
 
             nis: profileData.nis,
@@ -6137,7 +6153,7 @@
 
             terkumpul: totalTerkumpulNyata,
 
-            total_hadir: profileData.total_hadir || 0
+            total_hadir: hadirError ? (profileData.total_hadir || 0) : (totalHadirNyata || 0)
 
         };
 
