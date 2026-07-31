@@ -6101,6 +6101,30 @@
 
         
 
+        // LOGIKA SINKRON (sama seperti halaman Report): jangan percaya kolom
+
+        // tabungan_pengesahan di data_siswa karena bisa basi. Hitung ulang
+
+        // langsung dari log transaksi_kas asli agar selalu akurat tanpa SQL manual.
+
+        const { data: trxMasukData, error: trxMasukError } = await supabase
+
+            .from('transaksi_kas')
+
+            .select('nominal')
+
+            .eq('nis_siswa', userNis)
+
+            .eq('jenis', 'MASUK');
+
+        const totalTerkumpulNyata = trxMasukError
+
+            ? (profileData.tabungan_pengesahan || 0)
+
+            : trxMasukData.reduce((sum, curr) => sum + (Number(curr.nominal) || 0), 0);
+
+        
+
         siswa.value = {
 
             nis: profileData.nis,
@@ -6111,7 +6135,7 @@
 
             target: profileData.target_pengesahan || 0, 
 
-            terkumpul: profileData.tabungan_pengesahan || 0,
+            terkumpul: totalTerkumpulNyata,
 
             total_hadir: profileData.total_hadir || 0
 
