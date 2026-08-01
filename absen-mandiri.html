@@ -28,12 +28,11 @@ const TERATE_CONFIG = {
 <style>
   body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
-    background-color: #020617; /* Darker slate/black theme */
+    background-color: #020617; 
     color: #f8fafc; 
     -webkit-tap-highlight-color: transparent; 
   }
   
-  /* Modern Animated Mesh Background - PSHT Gold/Amber Theme */
   .mesh-bg { 
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
     background-color: #020617;
@@ -49,18 +48,16 @@ const TERATE_CONFIG = {
     100% { transform: scale(1.1); opacity: 1; }
   }
 
-  /* Premium Glassmorphism Card */
   .glass-card { 
     background: rgba(15, 23, 42, 0.65); 
     backdrop-filter: blur(24px); 
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(245, 158, 11, 0.15); /* Subtle amber border */
+    border: 1px solid rgba(245, 158, 11, 0.15); 
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05); 
   }
   
   [v-cloak] { display: none !important; }
   
-  /* Smooth Transitions */
   .pop-in { animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
   @keyframes popIn { 
     0% { opacity: 0; transform: scale(0.95) translateY(20px); } 
@@ -69,14 +66,13 @@ const TERATE_CONFIG = {
   
   .ring-pulse { animation: ringPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
   @keyframes ringPulse { 
-    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); } /* Amber shadow */
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); } 
     100% { box-shadow: 0 0 0 25px rgba(245, 158, 11, 0); } 
   }
 
-  /* Custom Input Styling */
   .input-glow:focus {
     box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
-    border-color: #f59e0b; /* Amber 500 */
+    border-color: #f59e0b; 
   }
 </style>
 </head>
@@ -124,7 +120,6 @@ const TERATE_CONFIG = {
 
   <!-- STATE: FORM ABSEN -->
   <div v-else-if="fase==='form'" class="glass-card rounded-[2.5rem] p-6 sm:p-8 pop-in">
-    <!-- Countdown Card -->
     <div class="flex items-center justify-between mb-8 p-4 bg-slate-950/70 rounded-2xl border border-slate-800 shadow-inner">
       <div class="flex flex-col">
         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Batas Waktu Absen</span>
@@ -157,9 +152,10 @@ const TERATE_CONFIG = {
 
       <button @click="cariSiswa" :disabled="isLoading || !nisInput"
         class="w-full mt-6 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-black py-4 rounded-2xl active:scale-[0.98] transition-all shadow-lg shadow-amber-600/20 text-sm uppercase tracking-widest hover:from-amber-400 hover:to-amber-500 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2 border border-amber-400/30">
-        <i v-if="isLoading" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+        <!-- Wrapper div/span melindungi Icon agar tidak bentrok dengan Vue -->
+        <span v-if="isLoading" class="flex items-center justify-center"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i></span>
         <span>{{ isLoading ? 'Memverifikasi...' : 'Verifikasi NIS' }}</span>
-        <i v-if="!isLoading" data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+        <span v-if="!isLoading" class="flex items-center justify-center"><i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></span>
       </button>
     </template>
 
@@ -182,8 +178,8 @@ const TERATE_CONFIG = {
         </button>
         <button @click="kirimAbsen" :disabled="isSaving"
           class="w-2/3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-black py-4 rounded-2xl active:scale-95 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:from-amber-400 hover:to-amber-500 disabled:opacity-70 shadow-lg shadow-amber-500/20">
-          <i v-if="isSaving" data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
-          <i v-else data-lucide="check-circle" class="w-5 h-5"></i>
+          <span v-if="isSaving" class="flex items-center"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i></span>
+          <span v-else class="flex items-center"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
           <span>{{ isSaving ? 'Memproses...' : 'Konfirmasi Hadir' }}</span>
         </button>
       </div>
@@ -222,9 +218,9 @@ const TERATE_CONFIG = {
 </div>
 
 <script>
-const { createApp, ref, computed, onMounted, onUnmounted, nextTick } = Vue;
+const { createApp, ref, computed, onMounted, onUnmounted, nextTick, watch } = Vue;
 
-const HARI_LATIHAN = [3, 6]; // 3 = Rabu, 6 = Sabtu (getDay(): 0=Minggu ... 6=Sabtu)
+const HARI_LATIHAN = [3, 6]; 
 const JAM_TUTUP = { jam: 18, menit: 30 }; 
 
 createApp({
@@ -244,11 +240,22 @@ createApp({
     const sisaDetik = ref(0);
     let timerInterval = null;
 
+    // Helper Fungsi Tanggal Standar agar aman di seluruh browser / in-app WebView
+    const formatTanggalLokal = (dateObj) => {
+      const d = dateObj || new Date();
+      const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return `${String(d.getDate()).padStart(2,'0')} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
+    };
+    const formatJamLokal = (dateObj) => {
+      const d = dateObj || new Date();
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    };
+
     const namaHari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
     const namaHariIni = computed(() => namaHari[new Date().getDay()]);
-    const tanggalLabel = computed(() => new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }));
+    const tanggalLabel = computed(() => formatTanggalLokal());
     const jamTutupLabel = computed(() => `${String(JAM_TUTUP.jam).padStart(2,'0')}.${String(JAM_TUTUP.menit).padStart(2,'0')}`);
-    const jamSekarangLabel = computed(() => new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }));
+    const jamSekarangLabel = computed(() => formatJamLokal());
 
     const sisaWaktuLabel = computed(() => {
       const j = Math.floor(sisaDetik.value / 3600);
@@ -256,11 +263,6 @@ createApp({
       const s = sisaDetik.value % 60;
       return `${String(j).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     });
-
-    const tanggalHariIniISO = () => {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    };
 
     const hitungDetikMenujuTutup = () => {
       const now = new Date();
@@ -300,11 +302,6 @@ createApp({
       const mulaiHari = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
       const akhirHari = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
 
-      // FIX: query lama pakai .eq('tanggal', '2026-08-01') padahal kolom tanggal
-      // adalah timestamptz (ada jam-nya) -- hampir tidak pernah persis sama,
-      // jadi absen ganda tidak pernah kedeteksi. Sekarang pakai rentang satu hari
-      // penuh, dan .limit(1) bukan .maybeSingle() supaya tidak error kalau
-      // kebetulan ada lebih dari 1 baris untuk NIS+tanggal yang sama.
       const { data } = await supabase
         .from('absensi')
         .select('nis, tanggal, status, created_at')
@@ -332,7 +329,7 @@ createApp({
         if (existing) {
           dataAbsenLama.value = {
             nama: data.nama,
-            jam: existing.created_at ? new Date(existing.created_at).toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'}) : '-'
+            jam: existing.created_at ? formatJamLokal(new Date(existing.created_at)) : '-'
           };
           fase.value = 'sudah_absen';
           return;
@@ -342,7 +339,6 @@ createApp({
         errorMsg.value = 'Koneksi ke server terputus. Silakan coba lagi.';
       } finally {
         isLoading.value = false;
-        nextTick(() => { if (window.lucide) lucide.createIcons(); });
       }
     };
 
@@ -350,17 +346,12 @@ createApp({
       siswaKonfirmasi.value = null;
       nisInput.value = '';
       errorMsg.value = '';
-      nextTick(() => { if (window.lucide) lucide.createIcons(); });
     };
 
     const kirimAbsen = async () => {
       isSaving.value = true;
       try {
         const sekarang = new Date().toISOString();
-        // FIX PALING KRUSIAL: tabel absensi punya kolom waktu_absen yang wajib
-        // diisi (NOT NULL) -- sebelumnya kolom ini tidak pernah dikirim sama
-        // sekali, jadi SETIAP kali siswa absen, insert-nya pasti gagal dengan
-        // error database dan tidak pernah benar-benar tersimpan.
         const payload = {
           nis: siswaKonfirmasi.value.nis,
           tanggal: sekarang,
@@ -373,12 +364,10 @@ createApp({
         namaPanggilan.value = (siswaKonfirmasi.value.nama || '').split(' ')[0];
         fase.value = 'sukses';
       } catch (e) {
-        console.error('Gagal insert absensi:', e);
         errorMsg.value = 'Gagal memproses absensi.';
         siswaKonfirmasi.value = null;
       } finally {
         isSaving.value = false;
-        nextTick(() => { if (window.lucide) lucide.createIcons(); });
       }
     };
 
@@ -389,20 +378,16 @@ createApp({
 
     const inisial = (nama) => (nama || '').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
     
-    // Penyesuaian warna sabuk untuk Dark Theme
     const warnaSabuk = (sabuk) => {
       const s = (sabuk || '').toLowerCase();
       if (s.includes('jambon')) return 'bg-pink-500/20 text-pink-400 border-pink-500/50';
       if (s.includes('hijau')) return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50';
       if (s.includes('putih')) return 'bg-slate-100 text-slate-800 border-white/80';
-      return 'bg-slate-800 text-slate-300 border-slate-600'; // Default Polos/Hitam
+      return 'bg-slate-800 text-slate-300 border-slate-600'; 
     };
 
     const cobaLagi = () => { window.location.reload(); };
 
-    // Dipisah jadi fungsi sendiri + dibungkus try/catch supaya kalau ada error
-    // tak terduga (mis. koneksi putus di tengah), fase TIDAK nyangkut selamanya
-    // di 'cek' -- langsung dialihkan ke pesan yang jelas + tombol muat ulang.
     const jalankanCekAwal = () => {
       try {
         if (cekWaktuSesi()) {
@@ -413,15 +398,16 @@ createApp({
               sisaDetik.value = hitungDetikMenujuTutup();
               if (sisaDetik.value <= 0) {
                 clearInterval(timerInterval);
-                cekWaktuSesi();
+                pesanTutup.value = {
+                    judul: 'Sesi Telah Berakhir',
+                    isi: `Gerbang absensi digital untuk hari ini telah dikunci secara otomatis pada pukul ${jamTutupLabel.value} WIB.`
+                };
+                fase.value = 'tutup';
               }
-            } catch (e) {
-              console.error('Timer sesi error:', e);
-            }
+            } catch (e) {}
           }, 1000);
         }
       } catch (e) {
-        console.error('Gagal cek waktu sesi:', e);
         pesanTutup.value = {
           judul: 'Terjadi Kendala',
           isi: 'Sistem gagal memuat data sesi. Periksa koneksi internet Anda lalu coba muat ulang halaman.',
@@ -431,14 +417,16 @@ createApp({
       }
     };
 
+    // Watchers untuk merender ulang Ikon Lucide secara aman tanpa MutationObserver yang berbahaya
+    const refreshIcons = () => {
+      nextTick(() => { try { if (window.lucide) lucide.createIcons(); } catch(e){} });
+    };
+    watch([fase, isLoading, isSaving, siswaKonfirmasi], refreshIcons);
+
     onMounted(() => {
-      if (window.lucide) lucide.createIcons();
-      // Simulasi delay kecil agar UI 'sinkronisasi' terlihat lebih premium sebelum masuk form
+      refreshIcons();
       setTimeout(jalankanCekAwal, 800);
 
-      // JARING PENGAMAN: kalau karena sebab apa pun (koneksi sangat lambat, dll)
-      // masih 'cek' setelah 6 detik, coba lagi sekali; kalau masih gagal juga,
-      // tampilkan pesan jelas + tombol muat ulang -- jangan biarkan berputar terus.
       setTimeout(() => {
         if (fase.value === 'cek') {
           jalankanCekAwal();
@@ -463,9 +451,6 @@ createApp({
     };
   }
 }).mount('#app');
-
-const observer = new MutationObserver(() => { if (window.lucide) lucide.createIcons(); });
-observer.observe(document.getElementById('app'), { childList: true, subtree: true });
 </script>
 </body>
 </html>
