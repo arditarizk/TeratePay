@@ -117,6 +117,9 @@ const TERATE_CONFIG = {
     <div class="mt-8 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
       <p class="text-[11px] font-bold text-amber-400 leading-relaxed">Pintu absen digital tertutup. Silakan melapor ke pelatih piket untuk konfirmasi manual.</p>
     </div>
+    <button v-if="pesanTutup.isKendala" @click="cobaLagi" class="mt-6 px-6 py-3 w-full bg-slate-800 border border-slate-700 text-xs font-bold text-white rounded-xl hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Muat Ulang Halaman
+    </button>
   </div>
 
   <!-- STATE: FORM ABSEN -->
@@ -395,21 +398,60 @@ createApp({
       return 'bg-slate-800 text-slate-300 border-slate-600'; // Default Polos/Hitam
     };
 
-    onMounted(() => {
-      if (window.lucide) lucide.createIcons();
-      // Simulasi delay kecil agar UI 'sinkronisasi' terlihat lebih premium sebelum masuk form
-      setTimeout(() => {
+    const cobaLagi = () => { window.location.reload(); };
+
+    // Dipisah jadi fungsi sendiri + dibungkus try/catch supaya kalau ada error
+    // tak terduga (mis. koneksi putus di tengah), fase TIDAK nyangkut selamanya
+    // di 'cek' -- langsung dialihkan ke pesan yang jelas + tombol muat ulang.
+    const jalankanCekAwal = () => {
+      try {
         if (cekWaktuSesi()) {
           fase.value = 'form';
+          if (timerInterval) clearInterval(timerInterval);
           timerInterval = setInterval(() => {
-            sisaDetik.value = hitungDetikMenujuTutup();
-            if (sisaDetik.value <= 0) {
-              clearInterval(timerInterval);
-              cekWaktuSesi();
+            try {
+              sisaDetik.value = hitungDetikMenujuTutup();
+              if (sisaDetik.value <= 0) {
+                clearInterval(timerInterval);
+                cekWaktuSesi();
+              }
+            } catch (e) {
+              console.error('Timer sesi error:', e);
             }
           }, 1000);
         }
-      }, 800);
+      } catch (e) {
+        console.error('Gagal cek waktu sesi:', e);
+        pesanTutup.value = {
+          judul: 'Terjadi Kendala',
+          isi: 'Sistem gagal memuat data sesi. Periksa koneksi internet Anda lalu coba muat ulang halaman.',
+          isKendala: true
+        };
+        fase.value = 'tutup';
+      }
+    };
+
+    onMounted(() => {
+      if (window.lucide) lucide.createIcons();
+      // Simulasi delay kecil agar UI 'sinkronisasi' terlihat lebih premium sebelum masuk form
+      setTimeout(jalankanCekAwal, 800);
+
+      // JARING PENGAMAN: kalau karena sebab apa pun (koneksi sangat lambat, dll)
+      // masih 'cek' setelah 6 detik, coba lagi sekali; kalau masih gagal juga,
+      // tampilkan pesan jelas + tombol muat ulang -- jangan biarkan berputar terus.
+      setTimeout(() => {
+        if (fase.value === 'cek') {
+          jalankanCekAwal();
+          if (fase.value === 'cek') {
+            pesanTutup.value = {
+              judul: 'Koneksi Lambat',
+              isi: 'Sistem butuh waktu lebih lama dari biasanya untuk sinkron. Periksa koneksi internet Anda lalu muat ulang halaman.',
+              isKendala: true
+            };
+            fase.value = 'tutup';
+          }
+        }
+      }, 6000);
     });
 
     onUnmounted(() => { if (timerInterval) clearInterval(timerInterval); });
@@ -417,7 +459,7 @@ createApp({
     return {
       fase, pesanTutup, nisInput, errorMsg, isLoading, isSaving, siswaKonfirmasi,
       dataAbsenLama, namaPanggilan, sisaWaktuLabel, namaHariIni, tanggalLabel, configName,
-      jamTutupLabel, jamSekarangLabel, cariSiswa, batalKonfirmasi, kirimAbsen, inisial, warnaSabuk, resetForm
+      jamTutupLabel, jamSekarangLabel, cariSiswa, batalKonfirmasi, kirimAbsen, inisial, warnaSabuk, resetForm, cobaLagi
     };
   }
 }).mount('#app');
