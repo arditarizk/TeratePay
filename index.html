@@ -678,7 +678,6 @@
 
 
 
-
             <section id="donasi" class="mb-24 max-w-5xl mx-auto scroll-mt-24 px-4">
 
                 <div class="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 rounded-[3rem] p-8 lg:p-12 shadow-[0_30px_60px_-15px_rgba(15,23,42,0.3)] border border-slate-800 relative overflow-hidden group">
@@ -1547,7 +1546,7 @@
 
                             <button type="submit" :disabled="isLoading" class="w-full font-black py-4 rounded-2xl active:scale-95 flex items-center justify-center gap-2 transition-all disabled:opacity-50 text-lg shadow-lg" :class="modalLogin.type === 'siswa' ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/30' : (modalLogin.type === 'pelatih' ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/30')">
 
-                                <i v-if="isLoading" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+                                <span v-if="isLoading" class="inline-flex"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i></span>
 
                                 <span v-else>Masuk Sekarang</span>
 
@@ -1886,7 +1885,7 @@
 
                                 <button type="submit" :disabled="!isFormValid || isSaving" class="w-full text-white font-black py-4.5 py-4 rounded-2xl active:scale-95 flex justify-center items-center gap-2 transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm uppercase tracking-wider" :class="modeTransaksi === 'masuk' ? 'bg-slate-900 hover:bg-slate-800' : 'bg-rose-600 hover:bg-rose-700'">
 
-                                    <i v-if="isSaving" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+                                    <span v-if="isSaving" class="inline-flex"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i></span>
 
                                     <span v-else class="flex items-center gap-2"><i data-lucide="save" class="w-5 h-5"></i> Simpan Transaksi</span>
 
@@ -2206,7 +2205,7 @@
 
                             <button @click="simpanPresensiBulk" :disabled="isSubmittingAbsen" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-xl text-sm uppercase tracking-wider transition-all active:scale-98 disabled:opacity-50">
 
-                                <i v-if="isSubmittingAbsen" data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+                                <span v-if="isSubmittingAbsen" class="inline-flex"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i></span>
 
                                 <template v-else>
 
@@ -3181,8 +3180,8 @@
                                             <div class="flex items-center gap-2 bg-white/50 w-max px-3 py-1 rounded-lg border border-slate-100">
                                                 <span class="text-sm font-black text-slate-800">{{ s.kehadiran }}</span>
                                                 <span class="text-[10px] text-slate-400 font-bold">/ {{ getTargetAbsen(s.sabuk) }}</span>
-                                                <i v-if="(s.kehadiran / getTargetAbsen(s.sabuk)) >= 0.7" data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 ml-1"></i>
-                                                <i v-else data-lucide="alert-circle" class="w-4 h-4 text-amber-500 ml-1"></i>
+                                                <span v-if="(s.kehadiran / getTargetAbsen(s.sabuk)) >= 0.7" class="inline-flex"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 ml-1"></i></span>
+                                                <span v-else class="inline-flex"><i data-lucide="alert-circle" class="w-4 h-4 text-amber-500 ml-1"></i></span>
                                             </div>
                                         </td>
                                         <td class="py-4 pr-4">
@@ -3960,7 +3959,7 @@
                         <!-- Step 1 -->
                         <div class="flex items-center gap-3 flex-1 lg:flex-none">
                             <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all" :class="step >= 1 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/10 font-black' : 'bg-white border border-slate-200 text-slate-400'">
-                                <i v-if="step > 1" data-lucide="check" class="w-4 h-4"></i>
+                                <span v-if="step > 1" class="inline-flex"><i data-lucide="check" class="w-4 h-4"></i></span>
                                 <span v-else>1</span>
                             </div>
                             <span class="text-xs font-bold transition-colors hidden md:inline" :class="step === 1 ? 'text-slate-900' : 'text-slate-400'">Biodata Calon Siswa</span>
@@ -3968,7 +3967,7 @@
                         <!-- Step 2 -->
                         <div class="flex items-center gap-3 flex-1 lg:flex-none">
                             <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all" :class="step >= 2 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/10 font-black' : 'bg-white border border-slate-200 text-slate-400'">
-                                <i v-if="step > 2" data-lucide="check" class="w-4 h-4"></i>
+                                <span v-if="step > 2" class="inline-flex"><i data-lucide="check" class="w-4 h-4"></i></span>
                                 <span v-else>2</span>
                             </div>
                             <span class="text-xs font-bold transition-colors hidden md:inline" :class="step === 2 ? 'text-slate-900' : 'text-slate-400'">Pakta Persaudaraan</span>
@@ -3988,7 +3987,7 @@
                     <div class="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 -z-10 rounded-full"></div>
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 h-0.5 bg-emerald-600 -z-10 rounded-full transition-all duration-300" :style="`width: calc(${(step - 1) / 2} * 87%)`"></div>
                     <div v-for="i in 3" :key="i" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all" :class="step >= i ? 'bg-emerald-600 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-400'">
-                        <i v-if="step > i" data-lucide="check" class="w-4 h-4"></i>
+                        <span v-if="step > i" class="inline-flex"><i data-lucide="check" class="w-4 h-4"></i></span>
                         <span v-else>{{ i }}</span>
                     </div>
                 </div>
@@ -4084,7 +4083,7 @@
                         <button v-if="step > 1" @click="step--" class="px-5 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl active:scale-95 transition-all text-xs hover:bg-slate-50 shadow-sm">Kembali</button>
                         <button v-if="step < 3" @click="nextStep" class="flex-grow bg-emerald-600 text-white font-extrabold py-3 rounded-xl active:scale-95 transition-all shadow-md shadow-emerald-600/10 text-xs hover:bg-emerald-700 flex items-center justify-center gap-1.5">Lanjut Terus <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>
                         <button v-if="step === 3" @click="submitForm" :disabled="isSubmitting" class="flex-grow bg-slate-900 text-white font-black py-3 rounded-xl active:scale-95 transition-all shadow-md text-xs hover:bg-slate-800 flex justify-center items-center gap-2 disabled:opacity-50">
-                            <i v-if="isSubmitting" data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                            <span v-if="isSubmitting" class="inline-flex"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i></span>
                             <span v-else>Kirim Pendaftaran</span>
                         </button>
                     </div>
@@ -4163,7 +4162,7 @@
 
                             <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all" :class="step >= 1 ? 'bg-teal-600 text-white shadow-md shadow-teal-600/10 font-black' : 'bg-white border border-slate-200 text-slate-400'">
 
-                                <i v-if="step > 1" data-lucide="check" class="w-4 h-4"></i>
+                                <span v-if="step > 1" class="inline-flex"><i data-lucide="check" class="w-4 h-4"></i></span>
 
                                 <span v-else>1</span>
 
@@ -4179,7 +4178,7 @@
 
                             <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all" :class="step >= 2 ? 'bg-teal-600 text-white shadow-md shadow-teal-600/10 font-black' : 'bg-white border border-slate-200 text-slate-400'">
 
-                                <i v-if="step > 2" data-lucide="check" class="w-4 h-4"></i>
+                                <span v-if="step > 2" class="inline-flex"><i data-lucide="check" class="w-4 h-4"></i></span>
 
                                 <span v-else>2</span>
 
@@ -4219,7 +4218,7 @@
 
                     <div v-for="i in 3" :key="i" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all" :class="step >= i ? 'bg-teal-600 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-400'">
 
-                        <i v-if="step > i" data-lucide="check" class="w-4 h-4"></i>
+                        <span v-if="step > i" class="inline-flex"><i data-lucide="check" class="w-4 h-4"></i></span>
 
                         <span v-else>{{ i }}</span>
 
@@ -4421,7 +4420,7 @@
 
                         <button v-if="step === 3" @click="submitForm" :disabled="isSubmitting" class="flex-grow bg-slate-900 text-white font-black py-3 rounded-xl active:scale-95 transition-all shadow-md text-xs hover:bg-slate-800 flex justify-center items-center gap-2 disabled:opacity-50">
 
-                            <i v-if="isSubmitting" data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                            <span v-if="isSubmitting" class="inline-flex"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i></span>
 
                             <span v-else>Selesaikan Pendaftaran</span>
 
@@ -5390,26 +5389,65 @@
 
             // Mode Bulk: simpan semua status sekaligus ke tabel absensi (kolom: nis, status, tanggal)
             const simpanPresensiBulk = async () => {
-                if (Object.keys(statusAbsen.value).length === 0) {
+                const nisList = Object.keys(statusAbsen.value);
+                if (nisList.length === 0) {
                     showToast("Klik 'Set Semua Hadir' dulu sebelum menyimpan", "error");
                     return;
                 }
                 isSubmittingAbsen.value = true;
                 try {
-                    const payload = Object.keys(statusAbsen.value).map(nis => ({
+                    // Cek dulu siapa yang HARI INI sudah punya catatan absensi --
+                    // misalnya siswa sudah absen sendiri lewat Absen Mandiri, atau
+                    // sudah diinput pelatih lain di lokasi lain. Supaya tidak bentrok
+                    // (dobel catatan), siswa yang sudah tercatat dilewati, bukan ditimpa.
+                    const mulaiHari = new Date(); mulaiHari.setHours(0, 0, 0, 0);
+                    const akhirHari = new Date(); akhirHari.setHours(23, 59, 59, 999);
+
+                    const { data: sudahAda } = await supabase
+                        .from('absensi')
+                        .select('nis')
+                        .in('nis', nisList)
+                        .gte('tanggal', mulaiHari.toISOString())
+                        .lte('tanggal', akhirHari.toISOString());
+
+                    const nisSudahAda = new Set((sudahAda || []).map(r => String(r.nis)));
+                    const nisBaru = nisList.filter(nis => !nisSudahAda.has(String(nis)));
+
+                    if (nisBaru.length === 0) {
+                        showToast("Semua siswa yang dipilih sudah tercatat absen hari ini (mis. lewat Absen Mandiri)", "error");
+                        statusAbsen.value = {};
+                        return;
+                    }
+
+                    const sekarang = new Date().toISOString();
+                    // FIX: kolom waktu_absen di tabel absensi bersifat NOT NULL, tapi
+                    // sebelumnya tidak pernah dikirim sama sekali -- itu sebabnya
+                    // setiap kali coba simpan massal selalu gagal (error 400 dari database).
+                    const payload = nisBaru.map(nis => ({
                         nis: nis,
                         status: statusAbsen.value[nis],
-                        tanggal: new Date().toISOString()
+                        tanggal: sekarang,
+                        waktu_absen: sekarang
                     }));
 
                     const { error } = await supabase.from('absensi').insert(payload);
                     if (error) throw error;
 
-                    showToast("Presensi massal berhasil disimpan!", "success");
+                    const jumlahDilewati = nisList.length - nisBaru.length;
+                    showToast(
+                        jumlahDilewati > 0
+                            ? `Tersimpan ${nisBaru.length} siswa. ${jumlahDilewati} siswa dilewati karena sudah tercatat lebih dulu.`
+                            : "Presensi massal berhasil disimpan!",
+                        "success"
+                    );
                     statusAbsen.value = {};
                 } catch (err) {
                     console.error("Gagal simpan presensi massal:", err);
-                    showToast("Gagal menyimpan presensi massal", "error");
+                    if (err && err.code === '23505') {
+                        showToast("Sebagian siswa sudah tercatat absen di waktu bersamaan, coba simpan ulang.", "error");
+                    } else {
+                        showToast("Gagal menyimpan presensi massal", "error");
+                    }
                 } finally {
                     isSubmittingAbsen.value = false;
                 }
