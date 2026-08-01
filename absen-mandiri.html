@@ -221,7 +221,7 @@ const TERATE_CONFIG = {
 <script>
 const { createApp, ref, computed, onMounted, onUnmounted, nextTick } = Vue;
 
-const HARI_LATIHAN = [1, 2, 3, 4, 5, 6, 7]; 
+const HARI_LATIHAN = [3, 6]; // 3 = Rabu, 6 = Sabtu (getDay(): 0=Minggu ... 6=Sabtu)
 const JAM_TUTUP = { jam: 18, menit: 30 }; 
 
 createApp({
@@ -292,13 +292,25 @@ createApp({
     };
 
     const cekSudahAbsen = async () => {
+      const nisTarget = siswaKonfirmasi.value?.nis || nisInput.value.trim();
+      const now = new Date();
+      const mulaiHari = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+      const akhirHari = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+
+      // FIX: query lama pakai .eq('tanggal', '2026-08-01') padahal kolom tanggal
+      // adalah timestamptz (ada jam-nya) -- hampir tidak pernah persis sama,
+      // jadi absen ganda tidak pernah kedeteksi. Sekarang pakai rentang satu hari
+      // penuh, dan .limit(1) bukan .maybeSingle() supaya tidak error kalau
+      // kebetulan ada lebih dari 1 baris untuk NIS+tanggal yang sama.
       const { data } = await supabase
         .from('absensi')
         .select('nis, tanggal, status, created_at')
-        .eq('nis', siswaKonfirmasi.value?.nis || nisInput.value.trim())
-        .eq('tanggal', tanggalHariIniISO())
-        .maybeSingle();
-      return data || null;
+        .eq('nis', nisTarget)
+        .gte('tanggal', mulaiHari.toISOString())
+        .lte('tanggal', akhirHari.toISOString())
+        .order('tanggal', { ascending: false })
+        .limit(1);
+      return (data && data[0]) || null;
     };
 
     const cariSiswa = async () => {
@@ -341,9 +353,15 @@ createApp({
     const kirimAbsen = async () => {
       isSaving.value = true;
       try {
+        const sekarang = new Date().toISOString();
+        // FIX PALING KRUSIAL: tabel absensi punya kolom waktu_absen yang wajib
+        // diisi (NOT NULL) -- sebelumnya kolom ini tidak pernah dikirim sama
+        // sekali, jadi SETIAP kali siswa absen, insert-nya pasti gagal dengan
+        // error database dan tidak pernah benar-benar tersimpan.
         const payload = {
           nis: siswaKonfirmasi.value.nis,
-          tanggal: tanggalHariIniISO(),
+          tanggal: sekarang,
+          waktu_absen: sekarang,
           status: 'Hadir'
         };
         const { error } = await supabase.from('absensi').insert([payload]);
@@ -352,6 +370,7 @@ createApp({
         namaPanggilan.value = (siswaKonfirmasi.value.nama || '').split(' ')[0];
         fase.value = 'sukses';
       } catch (e) {
+        console.error('Gagal insert absensi:', e);
         errorMsg.value = 'Gagal memproses absensi.';
         siswaKonfirmasi.value = null;
       } finally {
