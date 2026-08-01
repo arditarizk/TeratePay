@@ -60,6 +60,16 @@
             box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); 
 
         }
+
+/* Varian gelap eksplisit -- dipakai kartu seperti "Malam Sakral" supaya TIDAK
+   ketiban background putih dari .glass-card umum di atas (background solid,
+   tanpa opacity, biar tidak tergantung backdrop-filter yang bisa saja tidak
+   didukung sebagian WebView). */
+.view-index .glass-card-dark {
+    background: #0b1120;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
 .view-index .glass-nav {
 
             background: rgba(255, 255, 255, 0.85);
@@ -615,66 +625,159 @@
 
 
 
-            <section id="sejarah" class="mb-24 max-w-6xl mx-auto scroll-mt-24 px-4">
-    <!-- Header Section -->
-    <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-[10px] font-black tracking-widest uppercase border border-amber-200/40">
-            <i data-lucide="history" class="w-3 h-3"></i> Jejak Warisan Tradisi
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight">Kilas Sejarah Rayon Japanan</h2>
-        <p class="text-xs sm:text-sm text-slate-500 font-medium">Merawat ingatan perjuangan para pendahulu, mengembangkan pencak silat dari masa ke masa.</p>
-    </div>
+            <section id="sejarah" class="relative mb-24 max-w-6xl mx-auto scroll-mt-24 px-4 py-10 overflow-hidden">
 
-    <!-- Timeline Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-        <!-- Connecting Dashed Line (Desktop Only) -->
-        <div class="hidden md:block absolute top-1/2 left-12 right-12 border-t-2 border-dashed border-slate-300 -translate-y-16 z-0"></div>
+                <div class="absolute top-0 left-1/4 w-72 h-72 bg-amber-300/10 rounded-full blur-3xl -z-10 animate-blob"></div>
 
-        <!-- Card 1: 1992 -->
-        <div class="bg-white/90 backdrop-blur-md border border-slate-200/80 p-6 rounded-[2rem] shadow-sm relative z-10 hover:border-amber-400 hover:shadow-md transition-all duration-300 group flex flex-col justify-between min-h-[250px]">
-            <div>
-                <div class="text-5xl font-black text-slate-200 group-hover:text-amber-500/30 transition-colors mb-4 font-mono select-none">1992</div>
-                <span class="text-[10px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100">Fase Perintisan</span>
-                <h4 class="text-lg font-black text-slate-800 mt-3 mb-2">Batu Pondasi Pertama</h4>
-                <p class="text-xs font-medium text-slate-500 leading-relaxed">
-                    Didirikan resmi oleh <strong class="text-slate-800">Mas Khasanan (Rembu Tengah)</strong>. Dalam babak awal perjuangan ini, beliau dibantu oleh <strong class="text-slate-700">Mas Dadang (Gedeg)</strong> dan <strong class="text-slate-700">Alm. Taufik (Jetis)</strong> untuk menyebarkan ajaran di tanah Japanan.
-                </p>
-            </div>
-        </div>
+                <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-300/10 rounded-full blur-3xl -z-10 animate-blob" style="animation-delay: 2s;"></div>
 
-        <!-- Card 2: 1995 (Dark Highlight Card) -->
-        <div class="bg-slate-950 p-6 rounded-[2rem] shadow-xl relative z-10 border border-slate-800 group overflow-hidden flex flex-col justify-between min-h-[250px]">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 blur-xl rounded-full"></div>
-            <div>
-                <div class="text-5xl font-black text-slate-800 group-hover:text-amber-500/30 transition-colors mb-4 font-mono select-none">1995</div>
-                <span class="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">Malam Sakral</span>
-                <h4 class="text-lg font-black text-white mt-3 mb-2">Pengesahan Perdana</h4>
-                <p class="text-xs font-medium text-slate-300 leading-relaxed mb-4">
-                    Buah keringat perintisan melahirkan angkatan warga pertama yang disahkan, yaitu: 
-                    <span class="inline-flex flex-wrap gap-1 mt-1 font-bold text-amber-300">
-                        Mas Nanang, Mas Yudi, Mas Marji, Mbak Murti, dan Mas Agus.
-                    </span>
-                </p>
-            </div>
-            <div class="pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-semibold text-slate-400">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-400 shrink-0"></i>
-                <span>Tempat Latihan Pertama: <strong class="text-slate-200">Balai Dukuh Rembu Kidul</strong></span>
-            </div>
-        </div>
+                <div class="text-center max-w-2xl mx-auto mb-16 space-y-4 relative z-10 reveal-up">
 
-        <!-- Card 3: NOW -->
-        <div class="bg-white/90 backdrop-blur-md border border-slate-200/80 p-6 rounded-[2rem] shadow-sm relative z-10 hover:border-emerald-500 hover:shadow-md transition-all duration-300 group flex flex-col justify-between min-h-[250px]">
-            <div>
-                <div class="text-5xl font-black text-slate-200 group-hover:text-emerald-500/30 transition-colors mb-4 font-mono select-none">NOW</div>
-                <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">Keberlanjutan</span>
-                <h4 class="text-lg font-black text-slate-800 mt-3 mb-2">Era Transformasi Digital</h4>
-                <p class="text-xs font-medium text-slate-500 leading-relaxed">
-                    Terus berkembang pesat, mencetak generasi pesilat berprestasi dan berkarakter, hingga kini beradaptasi di era modern lewat ekosistem keuangan digital <strong class="text-emerald-600">TeratePay</strong>.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-700 rounded-full text-[10px] font-black tracking-widest uppercase border border-amber-300/50 shadow-sm hover:scale-105 transition-transform duration-300 cursor-default">
+
+                        <i data-lucide="history" class="w-3.5 h-3.5 animate-[spin_5s_linear_infinite]"></i> Jejak Warisan Tradisi
+
+                    </div>
+
+                    <h2 class="text-4xl sm:text-5xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900">Kilas Sejarah Rayon Japanan</h2>
+
+                    <p class="text-xs sm:text-sm text-slate-500 font-semibold max-w-lg mx-auto">Merawat ingatan perjuangan para pendahulu, mengembangkan pencak silat dari masa ke masa.</p>
+
+                </div>
+
+
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative z-10">
+
+                    <div class="hidden md:block absolute top-1/2 left-10 right-10 h-[2px] -translate-y-24 z-0 opacity-70 timeline-track">
+
+                        <div class="w-full h-full bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-pulse opacity-60"></div>
+
+                    </div>
+
+
+
+                    <div class="timeline-card glass-card bg-white/80 border border-white/80 p-7 sm:p-8 rounded-[2.5rem] shadow-lg shadow-slate-200/50 relative z-10 hover:shadow-2xl hover:shadow-amber-500/20 group flex flex-col justify-between min-h-[270px] overflow-hidden reveal-up" style="transition-delay: 0ms;">
+
+                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br from-amber-100 to-transparent rounded-full opacity-60 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+
+                        <div class="relative z-10">
+
+                            <div class="flex justify-between items-start mb-5">
+
+                                <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-gradient-to-r from-amber-100 to-orange-50 px-2.5 py-1.5 rounded-lg border border-amber-200/60 group-hover:from-amber-200 transition-colors duration-300">Fase Perintisan</span>
+
+                                <div class="year-figure text-5xl sm:text-6xl font-black text-slate-100 group-hover:text-amber-500/15 font-mono tracking-tighter -mt-2 select-none">1992</div>
+
+                            </div>
+
+                            <h4 class="text-lg font-black text-slate-900 mb-2 group-hover:text-amber-700 transition-colors duration-300">Batu Pondasi Pertama</h4>
+
+                            <p class="text-xs font-medium text-slate-600 leading-relaxed">
+
+                                Didirikan resmi oleh <strong class="text-slate-900 border-b border-amber-300/60 pb-0.5">Mas Khasanan (Rembu Tengah)</strong>. Dalam babak awal perjuangan ini, beliau dibantu oleh <strong class="text-slate-800">Mas Dadang (Gedeg)</strong> dan <strong class="text-slate-800">Alm. Taufik (Jetis)</strong> untuk menyebarkan ajaran di tanah Japanan.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="timeline-card glass-card-dark bg-slate-950 border border-slate-800 p-7 sm:p-8 rounded-[2.5rem] shadow-2xl shadow-slate-900/50 relative z-10 hover:shadow-amber-500/20 group flex flex-col justify-between min-h-[270px] overflow-hidden md:-translate-y-4 reveal-up" style="transition-delay: 120ms;">
+
+                        <div class="absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl pointer-events-none"></div>
+
+                        <div class="absolute -right-6 -top-6 w-28 h-28 bg-amber-500/20 blur-2xl rounded-full group-hover:bg-amber-400/30 transition-colors duration-500 animate-pulse"></div>
+
+                        <div class="relative z-10 flex-1">
+
+                            <div class="flex justify-between items-start mb-5">
+
+                                <span class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-300 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+
+                                    Malam Sakral
+
+                                </span>
+
+                                <div class="year-figure text-5xl sm:text-6xl font-black text-slate-800/80 group-hover:text-amber-500/20 font-mono tracking-tighter -mt-2 select-none">1995</div>
+
+                            </div>
+
+                            <h4 class="text-lg font-black text-white mb-2 group-hover:text-amber-300 transition-colors duration-300">Pengesahan Perdana</h4>
+
+                            <p class="text-xs font-medium text-slate-300 leading-relaxed mb-4">
+
+                                Buah keringat perintisan melahirkan angkatan warga pertama yang disahkan, yaitu: 
+
+                                <span class="inline-block mt-1.5 font-bold text-amber-300 bg-amber-400/10 px-2 py-1 rounded-md border border-amber-400/20">
+
+                                    Mas Nanang, Mas Yudi, Mas Marji, Mbak Murti, dan Mas Agus.
+
+                                </span>
+
+                            </p>
+
+                        </div>
+
+                        <div class="relative z-10 pt-3 border-t border-slate-800/80 flex items-center gap-2.5 text-[11px] font-semibold text-slate-300">
+
+                            <div class="p-1.5 rounded-full bg-rose-500/20 text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition-all duration-300 shrink-0">
+
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+
+                            </div>
+
+                            <span>Tempat Latihan Pertama: <strong class="text-white">Balai Dukuh Rembu Kidul</strong></span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="timeline-card glass-card bg-white/80 border border-white/80 p-7 sm:p-8 rounded-[2.5rem] shadow-lg shadow-slate-200/50 relative z-10 hover:shadow-2xl hover:shadow-emerald-500/20 group flex flex-col justify-between min-h-[270px] overflow-hidden reveal-up" style="transition-delay: 240ms;">
+
+                        <div class="absolute -left-8 -bottom-8 w-32 h-32 bg-gradient-to-tr from-emerald-100 to-transparent rounded-full opacity-60 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+
+                        <div class="relative z-10">
+
+                            <div class="flex justify-between items-start mb-5">
+
+                                <span class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-gradient-to-r from-emerald-100 to-teal-50 px-2.5 py-1.5 rounded-lg border border-emerald-200/60 group-hover:from-emerald-200 transition-colors duration-300">
+
+                                    <span class="relative flex h-1.5 w-1.5">
+
+                                        <span class="live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500"></span>
+
+                                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+
+                                    </span>
+
+                                    Keberlanjutan
+
+                                </span>
+
+                                <div class="year-figure text-5xl sm:text-6xl font-black text-slate-100 group-hover:text-emerald-500/15 font-mono tracking-tighter -mt-2 select-none">NOW</div>
+
+                            </div>
+
+                            <h4 class="text-lg font-black text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors duration-300">Era Transformasi Digital</h4>
+
+                            <p class="text-xs font-medium text-slate-600 leading-relaxed">
+
+                                Terus berkembang pesat, mencetak generasi pesilat berprestasi dan berkarakter, hingga kini beradaptasi di era modern lewat ekosistem keuangan digital <strong class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">TeratePay</strong>.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
 
 
 
@@ -3069,6 +3172,11 @@
                     class="px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all border border-slate-200">
                 Mode Buku Kas
             </button>
+            <button @click="activeTab = 'kelola'" 
+                    :class="activeTab === 'kelola' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'" 
+                    class="px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all border border-slate-200 flex items-center gap-1.5">
+                <i data-lucide="users-round" class="w-3.5 h-3.5"></i> Kelola Siswa
+            </button>
         </div>
 
         <div v-show="activeTab === 'dashboard'">
@@ -3479,8 +3587,114 @@
             </div>
 
         </div>
+
+        <div v-show="activeTab === 'kelola'" class="animate-fade-in bg-white p-6 md:p-10 border border-slate-200 shadow-sm rounded-3xl pb-28">
+
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div>
+                    <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <i data-lucide="users-round" class="w-5 h-5 text-indigo-500"></i> Kelola Siswa
+                    </h3>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Naik sabuk & status keanggotaan massal -- tanpa SQL manual</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button v-for="f in [{v:'aktif', l:'Aktif'}, {v:'nonaktif', l:'Non-Aktif'}, {v:'semua', l:'Semua'}]" :key="f.v"
+                        @click="filterStatusSiswa = f.v"
+                        :class="filterStatusSiswa === f.v ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'"
+                        class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors">
+                        {{ f.l }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative mb-4">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input v-model="searchKelola" type="text" placeholder="Cari nama atau NIS..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                <table class="w-full text-left whitespace-nowrap">
+                    <thead class="bg-slate-50 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                        <tr>
+                            <th class="p-4 w-10"><input type="checkbox" :checked="isSemuaTerpilih" @change="toggleSemuaSiswaKelola" class="w-4 h-4 accent-indigo-600"></th>
+                            <th class="p-4">Nama & NIS</th>
+                            <th class="p-4">Sabuk</th>
+                            <th class="p-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr v-if="daftarSiswaKelola.length === 0">
+                            <td colspan="4" class="p-8 text-center text-xs font-bold text-slate-400">Tidak ada siswa yang cocok.</td>
+                        </tr>
+                        <tr v-for="s in daftarSiswaKelola" :key="s.nis" class="hover:bg-slate-50" :class="{'opacity-50': s.is_aktif === false}">
+                            <td class="p-4"><input type="checkbox" :value="s.nis" v-model="siswaTerpilih" class="w-4 h-4 accent-indigo-600"></td>
+                            <td class="p-4">
+                                <p class="font-bold text-slate-800 text-sm">{{ s.nama }}</p>
+                                <p class="text-[10px] font-bold text-slate-400">NIS: {{ s.nis }}</p>
+                            </td>
+                            <td class="p-4">
+                                <span :class="warnaBadgeSabuk(s.sabuk)" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide">{{ s.sabuk }}</span>
+                            </td>
+                            <td class="p-4">
+                                <span v-if="s.is_aktif === false" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-slate-200 text-slate-500">Non-Aktif</span>
+                                <span v-else class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-emerald-100 text-emerald-600">Aktif</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+                        <!-- Floating Action Bar menggunakan Flex Wrapper -->
+            <div v-if="siswaTerpilih.length > 0" class="fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+                
+                <!-- Kotak Utama (Tambahkan pointer-events-auto agar bisa diklik) -->
+                <div class="w-full max-w-2xl bg-slate-900 text-white rounded-2xl shadow-2xl p-4 animate-fade-in pointer-events-auto">
+                    
+               <div class="flex items-center justify-between mb-3">
+    <span class="text-xs font-black">{{ siswaTerpilih.length }} siswa dipilih</span>
     
+    <!-- Tombol Close Anti-Gagal & Kontras Tinggi -->
+    <button @click="siswaTerpilih = []" 
+            class="w-7 h-7 flex items-center justify-center bg-slate-700 hover:bg-rose-500 text-slate-200 hover:text-white rounded-full transition-all shrink-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-400">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
 </div>
+
+                    
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        
+                        <!-- Group 1: Naik Sabuk -->
+                        <div class="flex gap-2 w-full sm:flex-1">
+                            <select v-model="sabukTujuanBulk" class="flex-1 min-w-0 px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-[11px] font-bold outline-none">
+                                <option value="">Naik sabuk ke...</option>
+                                <option value="Polos">Polos</option>
+                                <option value="Jambon">Jambon</option>
+                                <option value="Hijau">Hijau</option>
+                                <option value="Putih">Putih</option>
+                            </select>
+                            <button @click="terapkanNaikSabukBulk" :disabled="!sabukTujuanBulk || isSavingKelola" class="px-3.5 py-2.5 bg-indigo-500 hover:bg-indigo-400 rounded-lg text-[11px] font-black uppercase tracking-wide disabled:opacity-40 transition-colors shrink-0">
+                                Terapkan
+                            </button>
+                        </div>
+
+                        <!-- Group 2: Status Keanggotaan -->
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button @click="ubahStatusAktifBulk(false)" :disabled="isSavingKelola" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-rose-500 hover:bg-rose-400 rounded-lg text-[11px] font-black uppercase tracking-wide disabled:opacity-40 transition-colors text-center whitespace-nowrap">
+                                Non-Aktif
+                            </button>
+                            <button @click="ubahStatusAktifBulk(true)" :disabled="isSavingKelola" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[11px] font-black uppercase tracking-wide disabled:opacity-40 transition-colors text-center whitespace-nowrap">
+                                Aktifkan
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
     </script>
 
     <script type="text/x-template" id="tpl-setting">
@@ -5171,7 +5385,11 @@
 
                     
 
-                    dataSiswa.value = data.map(item => ({
+                    dataSiswa.value = data
+
+                        .filter(item => item.is_aktif !== false) // siswa non-aktif (mrotol) disembunyikan dari Kasir
+
+                        .map(item => ({
 
                         nis: item.nis, 
 
@@ -6476,6 +6694,98 @@
             });
 
             // Hitung statistik menggunakan data yang sudah disinkronisasi
+            // ===== KELOLA SISWA: bulk naik sabuk & status keanggotaan =====
+            const searchKelola = ref('');
+            const filterStatusSiswa = ref('aktif');
+            const siswaTerpilih = ref([]);
+            const sabukTujuanBulk = ref('');
+            const isSavingKelola = ref(false);
+
+            const daftarSiswaKelola = computed(() => {
+                const q = searchKelola.value.trim().toLowerCase();
+                return (dataSiswaSinkron.value || []).filter(s => {
+                    const cocokFilter = filterStatusSiswa.value === 'semua'
+                        ? true
+                        : filterStatusSiswa.value === 'aktif'
+                            ? s.is_aktif !== false
+                            : s.is_aktif === false;
+                    const cocokSearch = !q || (s.nama || '').toLowerCase().includes(q) || String(s.nis).includes(q);
+                    return cocokFilter && cocokSearch;
+                });
+            });
+
+            const isSemuaTerpilih = computed(() => {
+                return daftarSiswaKelola.value.length > 0 &&
+                    daftarSiswaKelola.value.every(s => siswaTerpilih.value.includes(s.nis));
+            });
+
+            const toggleSemuaSiswaKelola = () => {
+                if (isSemuaTerpilih.value) {
+                    const nisDitampilkan = daftarSiswaKelola.value.map(s => s.nis);
+                    siswaTerpilih.value = siswaTerpilih.value.filter(nis => !nisDitampilkan.includes(nis));
+                } else {
+                    const gabungan = new Set([...siswaTerpilih.value, ...daftarSiswaKelola.value.map(s => s.nis)]);
+                    siswaTerpilih.value = Array.from(gabungan);
+                }
+            };
+
+            const warnaBadgeSabuk = (sabuk) => {
+                const s = (sabuk || '').toLowerCase();
+                if (s.includes('jambon')) return 'bg-pink-100 text-pink-600';
+                if (s.includes('hijau')) return 'bg-emerald-100 text-emerald-600';
+                if (s.includes('putih')) return 'bg-slate-200 text-slate-700';
+                return 'bg-slate-100 text-slate-500';
+            };
+
+            // Naik sabuk massal: update kolom sabuk + tanggal_naik_sabuk (dipakai
+            // sebagai titik acuan progres baru). Target/tabungan pengesahan TIDAK
+            // direset karena itu tabungan menuju Suro secara keseluruhan, bukan
+            // per level sabuk.
+            const terapkanNaikSabukBulk = async () => {
+                if (!sabukTujuanBulk.value || siswaTerpilih.value.length === 0) return;
+                isSavingKelola.value = true;
+                try {
+                    const { error } = await supabase
+                        .from('data_siswa')
+                        .update({ sabuk: sabukTujuanBulk.value, tanggal_naik_sabuk: new Date().toISOString() })
+                        .in('nis', siswaTerpilih.value);
+                    if (error) throw error;
+
+                    showToast(`${siswaTerpilih.value.length} siswa naik sabuk ke ${sabukTujuanBulk.value}`, "success");
+                    siswaTerpilih.value = [];
+                    sabukTujuanBulk.value = '';
+                    await fetchDataSiswa();
+                } catch (err) {
+                    console.error('Gagal update sabuk massal:', err);
+                    showToast("Gagal memperbarui sabuk. Pastikan kolom tanggal_naik_sabuk sudah dibuat di database.", "error");
+                } finally {
+                    isSavingKelola.value = false;
+                }
+            };
+
+            // Non-aktifkan / aktifkan massal (soft delete) -- data historis (kas &
+            // absensi) TETAP UTUH, siswa cuma disembunyikan dari daftar aktif.
+            const ubahStatusAktifBulk = async (statusAktif) => {
+                if (siswaTerpilih.value.length === 0) return;
+                isSavingKelola.value = true;
+                try {
+                    const { error } = await supabase
+                        .from('data_siswa')
+                        .update({ is_aktif: statusAktif })
+                        .in('nis', siswaTerpilih.value);
+                    if (error) throw error;
+
+                    showToast(`${siswaTerpilih.value.length} siswa di-set ${statusAktif ? 'Aktif' : 'Non-Aktif'}`, "success");
+                    siswaTerpilih.value = [];
+                    await fetchDataSiswa();
+                } catch (err) {
+                    console.error('Gagal update status aktif massal:', err);
+                    showToast("Gagal memperbarui status. Pastikan kolom is_aktif sudah dibuat di database.", "error");
+                } finally {
+                    isSavingKelola.value = false;
+                }
+            };
+
             const jumlahMenunggak = computed(() => {
                 const ambangIdeal = progresIdealSaatIni.value;
                 return (dataSiswaSinkron.value || []).filter(s => {
@@ -6553,7 +6863,8 @@
                         sabuk: item.sabuk || 'Polos',
                         terkumpul: Number(item.tabungan_pengesahan) || 0,
                         target: Number(item.target_pengesahan) || 3500000,
-                        kehadiran: Number(item.total_hadir) || 0
+                        kehadiran: Number(item.total_hadir) || 0,
+                        is_aktif: item.is_aktif !== false // default aktif kalau kolomnya belum ada / null
                     })); 
 
                     const { data: kData, error: kErr } = await supabase.from('transaksi_kas').select('nominal').eq('jenis', 'KELUAR');
@@ -7020,7 +7331,10 @@
                 formatRp, getProgres, getTargetAbsen, mintaAnalisisAI, fetchDataSiswa, fetchLogTransaksi,
                 formatTanggalSimpel, renderChartKeuangan, logBukuKas, transaksiPerSiswa, activeTab,
                 logTransaksiTerbaru, waktuRelatif,
-                selectedNisDetail
+                selectedNisDetail,
+                searchKelola, filterStatusSiswa, siswaTerpilih, sabukTujuanBulk, isSavingKelola,
+                daftarSiswaKelola, isSemuaTerpilih, toggleSemuaSiswaKelola, warnaBadgeSabuk,
+                terapkanNaikSabukBulk, ubahStatusAktifBulk
             };
         }
     
