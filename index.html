@@ -4196,23 +4196,21 @@
             NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
         </p>
 
-        <!-- Tombol WA menutup modal -->
-        <a :href="linkKonfirmasiWaPelatih" 
-           target="_blank" 
-           @click="pendaftaranSukses = false; statusKonfirmasiWa = true;"
-           class="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-emerald-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-                <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>
-            </svg>
-            Konfirmasi via WhatsApp
-        </a>
+        <!-- Contoh pada tombol Konfirmasi WhatsApp -->
+<a :href="linkWhatsAppAnda" 
+   target="_blank" 
+   @click="setTimeout(() => { window.location.replace(window.location.pathname) }, 500)" 
+   class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
+    Konfirmasi Pendaftaran ke WhatsApp
+</a>
+
 
         <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-emerald-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
 
         <!-- Tombol Kembali menggunakan window.location.hash -->
-        <button @click="pendaftaranSukses = false; window.location.hash = '#/'" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
-            Lewati, Kembali ke Beranda
-        </button>
+        <button @click="window.location.replace(window.location.pathname)" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
+    Lewati, Kembali ke Beranda
+</button>
     </div>
 </div>
 
@@ -4414,23 +4412,21 @@
             NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
         </p>
 
-        <!-- Tombol WA menutup modal -->
-        <a :href="linkKonfirmasiWaPelatih" 
-           target="_blank" 
-           @click="pendaftaranSukses = false; statusKonfirmasiWa = true;"
-           class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-                <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>
-            </svg>
-            Konfirmasi via WhatsApp
-        </a>
+        <!-- Contoh pada tombol Konfirmasi WhatsApp -->
+<a :href="linkWhatsAppAnda" 
+   target="_blank" 
+   @click="setTimeout(() => { window.location.replace(window.location.pathname) }, 500)" 
+   class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
+    Konfirmasi Pendaftaran ke WhatsApp
+</a>
+
 
         <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
 
         <!-- Tombol Kembali menggunakan window.location.hash -->
-        <button @click="pendaftaranSukses = false; window.location.hash = '#/'" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
-            Lewati, Kembali ke Beranda
-        </button>
+        <button @click="window.location.replace(window.location.pathname)" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
+    Lewati, Kembali ke Beranda
+</button>
     </div>
 </div>
 
@@ -7926,26 +7922,55 @@ const handleAfterEnter = () => {
             tanggal_lahir: form.tanggal_lahir,
             alamat: form.alamat,
             wa_siswa: form.wa_siswa,
-            nama_ortu: form.nama_ortu.toUpperCase(), // <-- PERBAIKAN DI SINI
+            nama_ortu: form.nama_ortu.toUpperCase(),
             wa_ortu: form.wa_ortu, 
             target_pengesahan: 4500000, 
             tabungan_pengesahan: 0,
             tabungan_sabuk: 0,
             ttd_base64: signatureData,
-            jalur_pendaftaran: 'Reguler' // <-- PERBAIKAN DI SINI
+            jalur_pendaftaran: 'Reguler' 
         }]);
 
         if (error) throw error;
 
-        // Tampilkan overlay sukses + tombol konfirmasi WA ke pelatih (tidak auto-redirect lagi)
+        // Tampilkan overlay sukses
         nisTersimpan.value = generatedNIS;
         localStorage.setItem('terate_user_nis', generatedNIS);
         pendaftaranSukses.value = true;
+
+        // --- SOLUSI ANTI DUPLIKAT: RESET FORM ---
+        // 1. Kosongkan semua isian form
+        form.nama_siswa = '';
+        form.tanggal_lahir = '';
+        form.alamat = '';
+        form.wa_siswa = '';
+        form.nama_ortu = '';
+        form.wa_ortu = '';
+        form.gender = 'Laki-laki'; // Kembalikan ke default
+
+        // 2. Kosongkan centang pakta (asumsi nama variabel Anda 'pakta')
+        if (typeof pakta !== 'undefined') {
+            for (let key in pakta) {
+                pakta[key] = false;
+            }
+        }
+
+        // 3. Bersihkan Canvas Tanda Tangan (Panggil fungsi clearSignature Anda)
+        if (typeof clearSignature === 'function') {
+            clearSignature();
+        }
+
+        // 4. Kembalikan stepper ke Langkah 1
+        step.value = 1;
+
     } catch (error) { 
         console.error(error);
         showToast("Sinkronisasi cloud gagal. Periksa jaringan Anda.", false); 
-    } finally { isSubmitting.value = false; }
+    } finally { 
+        isSubmitting.value = false; 
+    }
 };
+
 
 
                 onMounted(() => { triggerIcons(); });
