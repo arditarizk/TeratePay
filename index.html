@@ -244,6 +244,35 @@
 .view-daftarprivat .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); border-radius: 10px; }
 .view-daftarprivat .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 .view-daftarprivat .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(13, 148, 136, 0.3); }
+
+/* Animasi Menggambar Lingkaran */
+  .animate-circle {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+  
+  /* Animasi Menggambar Centang */
+  .animate-check {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+  }
+  
+  @keyframes draw-stroke {
+    100% { stroke-dashoffset: 0; }
+  }
+
+  /* Animasi Pop-up untuk Wadah Ikon */
+  .pop-icon {
+    animation: pop-in-icon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  @keyframes pop-in-icon {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
 </style>
 </head>
 <body>
@@ -4179,38 +4208,33 @@
             </div>
         </div>
 
-        <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih (REGULER) -->
+        <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih -->
 <div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
         
-        <!-- Ikon Centang SVG (Anti Blank) Tema Emerald -->
-        <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        <!-- Ikon Centang Animasi Startup Unicorn (Pengganti Lucide) -->
+        <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5 pop-icon shadow-inner">
+            <svg class="w-12 h-12 text-teal-600" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Lingkaran luar -->
+                <circle class="animate-circle" cx="26" cy="26" r="23" />
+                <!-- Tanda centang -->
+                <path class="animate-check" d="M15 27l7 7 15-15" />
             </svg>
         </div>
+        <!-- Akhir Ikon Centang -->
 
         <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
-        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-            NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
-        </p>
+        <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
 
-        <!-- Contoh pada tombol Konfirmasi WhatsApp -->
-<a :href="linkWhatsAppAnda" 
-   target="_blank" 
-   @click="setTimeout(() => { window.location.replace(window.location.pathname) }, 500)" 
-   class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
-    Konfirmasi Pendaftaran ke WhatsApp
-</a>
+        <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true"
+            class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
+            <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
+        </a>
+        <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
 
-
-        <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-emerald-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
-
-        <button @click="window.location.replace(window.location.pathname)" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
-    Lewati, Kembali ke Beranda
-</button>
-
+        <a href="#/" @click="pendaftaranSukses = false; statusKonfirmasiWa = false" class="mt-3 block text-center w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors cursor-pointer">
+            Lewati, Kembali ke Beranda
+        </a>
     </div>
 </div>
 
@@ -4395,43 +4419,35 @@
 
         </div>
 
-        <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih (PRIVAT) -->
+        <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih -->
 <div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
         
-        <!-- Ikon Centang SVG (Anti Blank) Tema Teal -->
-        <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-teal-600">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        <!-- Ikon Centang Animasi Startup Unicorn (Pengganti Lucide) -->
+        <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5 pop-icon shadow-inner">
+            <svg class="w-12 h-12 text-teal-600" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Lingkaran luar -->
+                <circle class="animate-circle" cx="26" cy="26" r="23" />
+                <!-- Tanda centang -->
+                <path class="animate-check" d="M15 27l7 7 15-15" />
             </svg>
         </div>
+        <!-- Akhir Ikon Centang -->
 
         <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
-        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-            NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
-        </p>
+        <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
 
-        <!-- Contoh pada tombol Konfirmasi WhatsApp -->
-<a :href="linkWhatsAppAnda" 
-   target="_blank" 
-   @click="setTimeout(() => { window.location.replace(window.location.pathname) }, 500)" 
-   class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
-    Konfirmasi Pendaftaran ke WhatsApp
-</a>
-
-
-
+        <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true"
+            class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
+            <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
+        </a>
         <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
 
-        <button @click="window.location.replace(window.location.pathname)" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
-    Lewati, Kembali ke Beranda
-</button>
-
+        <a href="#/" @click="pendaftaranSukses = false; statusKonfirmasiWa = false" class="mt-3 block text-center w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors cursor-pointer">
+            Lewati, Kembali ke Beranda
+        </a>
     </div>
 </div>
-
-
 
 
         <!-- Grid Container Split Screen -->
