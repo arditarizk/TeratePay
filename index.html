@@ -14,6 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
 <style>
     /* ===== GLOBAL SHARED STYLE ===== */
@@ -172,6 +173,8 @@
 .view-portal .fade-enter-from, .view-portal .fade-leave-to { opacity: 0; transform: scale(0.95); }
 @keyframes shimmer__portal { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 .view-portal .animate-shimmer { animation: shimmer__portal 2.5s infinite linear; }
+@keyframes popIn__portal { 0% { opacity: 0; transform: scale(0.9) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+.view-portal .pop-in { animation: popIn__portal 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .view-report .mesh-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
             background-color: #f8fafc;
@@ -2513,6 +2516,22 @@
 
 
 
+                <div v-if="isUlangTahun" class="relative overflow-hidden mb-8 rounded-3xl bg-gradient-to-br from-pink-500 via-fuchsia-500 to-indigo-500 p-6 text-center shadow-xl shadow-fuchsia-500/20 pop-in">
+
+                    <div class="absolute -top-4 -left-4 text-5xl opacity-30 rotate-[-15deg]">🎉</div>
+
+                    <div class="absolute -bottom-4 -right-4 text-5xl opacity-30 rotate-[15deg]">🎈</div>
+
+                    <p class="text-white/80 text-[10px] font-black uppercase tracking-[0.2em]">Selamat Ulang Tahun</p>
+
+                    <h3 class="text-white text-2xl font-black mt-1">🎂 {{ siswa.nama.split(' ')[0] }}! 🎂</h3>
+
+                    <p class="text-white/90 text-xs font-semibold mt-2">Semoga panjang umur, sehat selalu, dan makin semangat berlatih. Selamat merayakan hari lahirmu, Dek!</p>
+
+                </div>
+
+
+
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
 
                     
@@ -3595,7 +3614,7 @@
                     <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                         <i data-lucide="users-round" class="w-5 h-5 text-indigo-500"></i> Kelola Siswa
                     </h3>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Naik sabuk & status keanggotaan massal -- tanpa SQL manual</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Naik sabuk & status keanggotaan massal</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button v-for="f in [{v:'aktif', l:'Aktif'}, {v:'nonaktif', l:'Non-Aktif'}, {v:'semua', l:'Semua'}]" :key="f.v"
@@ -3620,11 +3639,12 @@
                             <th class="p-4">Nama & NIS</th>
                             <th class="p-4">Sabuk</th>
                             <th class="p-4">Status</th>
+                            <th class="p-4">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <tr v-if="daftarSiswaKelola.length === 0">
-                            <td colspan="4" class="p-8 text-center text-xs font-bold text-slate-400">Tidak ada siswa yang cocok.</td>
+                            <td colspan="5" class="p-8 text-center text-xs font-bold text-slate-400">Tidak ada siswa yang cocok.</td>
                         </tr>
                         <tr v-for="s in daftarSiswaKelola" :key="s.nis" class="hover:bg-slate-50" :class="{'opacity-50': s.is_aktif === false}">
                             <td class="p-4"><input type="checkbox" :value="s.nis" v-model="siswaTerpilih" class="w-4 h-4 accent-indigo-600"></td>
@@ -3639,12 +3659,18 @@
                                 <span v-if="s.is_aktif === false" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-slate-200 text-slate-500">Non-Aktif</span>
                                 <span v-else class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-emerald-100 text-emerald-600">Aktif</span>
                             </td>
+                            <td class="p-4">
+                                <button @click="kirimKonfirmasiWaOrtu(s)" :disabled="!s.wa_ortu"
+                                    class="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black uppercase tracking-wide disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Konfirmasi WA
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-                        <!-- Floating Action Bar menggunakan Flex Wrapper -->
+            <!-- Floating Action Bar menggunakan Flex Wrapper -->
             <div v-if="siswaTerpilih.length > 0" class="fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
                 
                 <!-- Kotak Utama (Tambahkan pointer-events-auto agar bisa diklik) -->
@@ -3695,6 +3721,9 @@
                 
             </div>
 
+        </div>
+
+    </div>
     </script>
 
     <script type="text/x-template" id="tpl-setting">
@@ -4150,6 +4179,40 @@
             </div>
         </div>
 
+        <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih -->
+<div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
+        
+        <!-- [PERBAIKAN 2] Mengganti ikon centang menjadi Logo Rayon -->
+        <!-- Pastikan path 'src' sesuai dengan lokasi file gambar Anda -->
+        <div class="w-24 h-24 mx-auto rounded-full bg-slate-50 flex items-center justify-center mb-5 overflow-hidden border-4 border-emerald-100 shadow-sm">
+            <img src="./assets/rayon_japanan.webp" alt="Logo Rayon" class="w-full h-full object-cover" onerror="this.src='fallback-image.png'" />
+        </div>
+
+        <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
+        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
+        </p>
+
+        <!-- [PERBAIKAN 1] Tombol WA membuka tab baru, lalu SEGERA menutup modal dan mengarahkan hash ke beranda -->
+        <a :href="linkKonfirmasiWaPelatih" 
+           target="_blank" 
+           @click="statusKonfirmasiWa = true; pendaftaranSukses = false; location.hash = '#/'"
+           class="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-emerald-500/20">
+            <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
+        </a>
+
+        <!-- Catatan: Baris status "Terbuka di WhatsApp" bisa dihapus jika Anda mau, 
+             karena modal akan otomatis tertutup setelah tombol diklik. -->
+             
+        <!-- Tombol Lewati juga disesuaikan agar menutup modal -->
+        <button @click="pendaftaranSukses = false; location.hash = '#/'" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
+            Lewati, Kembali ke Beranda
+        </button>
+    </div>
+</div>
+
+
         <!-- Grid Container Split Screen -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
@@ -4227,8 +4290,9 @@
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">Umur (Tahun)</label>
-                                        <input type="number" inputmode="numeric" v-model="form.umur" placeholder="15" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none input-glow transition-all text-center placeholder:text-slate-400 shadow-sm">
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">Tanggal Lahir</label>
+                                        <input type="date" v-model="form.tanggal_lahir" :max="tanggalHariIniInput" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none input-glow transition-all shadow-sm">
+                                        <p v-if="umurDariTanggalLahir !== null" class="text-[10px] font-bold text-slate-400 mt-1 ml-0.5">Umur: {{ umurDariTanggalLahir }} tahun</p>
                                     </div>
                                     <div>
                                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">Gender</label>
@@ -4326,6 +4390,27 @@
 
             </div>
 
+        </div>
+
+        <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih -->
+        <div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
+                <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5">
+                    <i data-lucide="check-circle-2" class="w-11 h-11 text-teal-600"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
+
+                <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true"
+                    class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
+                </a>
+                <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
+
+                <button @click="location.hash = '#/'" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
+                    Lewati, Kembali ke Beranda
+                </button>
+            </div>
         </div>
 
 
@@ -4488,9 +4573,11 @@
 
                                     <div>
 
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">Umur (Tahun)</label>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">Tanggal Lahir</label>
 
-                                        <input type="number" inputmode="numeric" v-model="form.umur" placeholder="25" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none input-glow transition-all text-center placeholder:text-slate-400 shadow-sm">
+                                        <input type="date" v-model="form.tanggal_lahir" :max="tanggalHariIniInput" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none input-glow transition-all shadow-sm">
+
+                                        <p v-if="umurDariTanggalLahir !== null" class="text-[10px] font-bold mt-1 ml-0.5" :class="umurDariTanggalLahir < 25 ? 'text-rose-500' : 'text-slate-400'">Umur: {{ umurDariTanggalLahir }} tahun {{ umurDariTanggalLahir !== null && umurDariTanggalLahir < 25 ? '(minimal 25 tahun)' : '' }}</p>
 
                                     </div>
 
@@ -6159,6 +6246,24 @@
 
                 // jadi labelnya harus sabuk tujuan, bukan sabuk yang sedang dipakai.
 
+                // Cek apakah hari ini tanggal lahir siswa (bandingkan bulan & tanggal saja)
+                const isUlangTahun = computed(() => {
+                    if (!siswa.value.tanggal_lahir) return false;
+                    const lahir = new Date(siswa.value.tanggal_lahir);
+                    if (isNaN(lahir.getTime())) return false;
+                    const now = new Date();
+                    return lahir.getDate() === now.getDate() && lahir.getMonth() === now.getMonth();
+                });
+
+                // Tembakkan confetti sekali begitu status ulang tahun terdeteksi true
+                watch(isUlangTahun, (val) => {
+                    if (val && window.confetti) {
+                        window.confetti({ particleCount: 140, spread: 90, origin: { y: 0.3 }, colors: ['#ec4899', '#d946ef', '#6366f1', '#fbbf24'] });
+                        setTimeout(() => window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.4, x: 0.2 } }), 300);
+                        setTimeout(() => window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.4, x: 0.8 } }), 500);
+                    }
+                }, { immediate: true });
+
                 const sabukTujuan = computed(() => {
 
                     const sabuk = (siswa.value.sabuk || 'polos').toLowerCase();
@@ -6354,6 +6459,8 @@
             nama: profileData.nama,
 
             sabuk: profileData.sabuk,
+
+            tanggal_lahir: profileData.tanggal_lahir || null,
 
             target: profileData.target_pengesahan || 0, 
 
@@ -6574,7 +6681,7 @@
 
                     formatTanggalOtomatis, dapatkanTanggal, dapatkanBulanPendek, hitungSisaHari,
 
-                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi, konsistensiHadir, sabukTujuan,
+                    pesanPelatihAI, isAnalyzingAI, dapatkanEvaluasiAI, progresAbsensi, konsistensiHadir, sabukTujuan, isUlangTahun,
 
                     formatWaktuWIB, riwayatAbsensi
 
@@ -6657,9 +6764,19 @@
                         .filter(trx => trx.jenis === 'MASUK' && String(trx.nis_siswa) === String(siswa.nis))
                         .reduce((sum, curr) => sum + curr.nominal, 0);
 
+                    // FIX: kehadiran sebelumnya dari kolom data_siswa.total_hadir yang
+                    // basi (tidak pernah diupdate aplikasi) -- itu sebabnya Leaderboard
+                    // selalu tampil 0 padahal Portal Siswa (yang hitung dari tabel
+                    // absensi langsung) sudah benar. Sekarang dihitung sama persis:
+                    // count status 'Hadir' dari dataAbsensiSemua.
+                    const hadirNyata = (dataAbsensiSemua.value || [])
+                        .filter(a => String(a.nis) === String(siswa.nis) && a.status === 'Hadir')
+                        .length;
+
                     return {
                         ...siswa,
-                        terkumpul: totalNyata // Timpa angka lama database dengan kalkulasi pasti
+                        terkumpul: totalNyata, // Timpa angka lama database dengan kalkulasi pasti
+                        kehadiran: hadirNyata
                     };
                 }).sort((a, b) => b.terkumpul - a.terkumpul);
             });
@@ -6735,6 +6852,25 @@
                 if (s.includes('hijau')) return 'bg-emerald-100 text-emerald-600';
                 if (s.includes('putih')) return 'bg-slate-200 text-slate-700';
                 return 'bg-slate-100 text-slate-500';
+            };
+
+            // Tombol "Konfirmasi WA" per siswa: pesan template beda tergantung
+            // jalur_pendaftaran -- ke orang tua/wali untuk Reguler, ke istri/saudara
+            // untuk Privat. Pelatih tinggal klik, WA terbuka dengan teks siap kirim.
+            const kirimKonfirmasiWaOrtu = (siswa) => {
+                if (!siswa.wa_ortu) {
+                    showToast(`Nomor WA untuk ${siswa.nama} tidak tersedia`, "error");
+                    return;
+                }
+                const nomorTujuan = siswa.wa_ortu.startsWith('0') ? '62' + siswa.wa_ortu.substring(1) : siswa.wa_ortu;
+                const isPrivat = (siswa.jalur_pendaftaran || '').toLowerCase() === 'privat';
+
+                const pesan = isPrivat
+                    ? `Assalamualaikum Wr. Wb. Halo, perkenalkan saya pelatih dari PSHT Rayon Japanan. Kami ingin mengonfirmasi bahwa Saudara/Suami Anda, *${siswa.nama}*, telah mendaftar di kelas Privat. Mohon doa restu dan dukungannya untuk kelancaran latihan beliau.`
+                    : `Assalamualaikum Wr. Wb. Halo Bapak/Ibu${siswa.nama_ortu ? ' ' + siswa.nama_ortu : ''}, perkenalkan saya pelatih dari PSHT Rayon Japanan. Kami ingin mengonfirmasi bahwa ananda *${siswa.nama}* telah mendaftar untuk mengikuti latihan. Mohon izin dan restunya agar proses latihannya berjalan lancar dan bermanfaat.`;
+
+                const urlWa = `https://wa.me/${nomorTujuan}?text=${encodeURIComponent(pesan)}`;
+                window.open(urlWa, '_blank');
             };
 
             // Naik sabuk massal: update kolom sabuk + tanggal_naik_sabuk (dipakai
@@ -6864,7 +7000,11 @@
                         terkumpul: Number(item.tabungan_pengesahan) || 0,
                         target: Number(item.target_pengesahan) || 3500000,
                         kehadiran: Number(item.total_hadir) || 0,
-                        is_aktif: item.is_aktif !== false // default aktif kalau kolomnya belum ada / null
+                        is_aktif: item.is_aktif !== false, // default aktif kalau kolomnya belum ada / null
+                        wa_ortu: item.wa_ortu || item.wa_siswa || '',
+                        nama_ortu: item.nama_ortu || '',
+                        jalur_pendaftaran: item.jalur_pendaftaran || 'Reguler',
+                        tanggal_lahir: item.tanggal_lahir || null
                     })); 
 
                     const { data: kData, error: kErr } = await supabase.from('transaksi_kas').select('nominal').eq('jenis', 'KELUAR');
@@ -7333,7 +7473,7 @@
                 logTransaksiTerbaru, waktuRelatif,
                 selectedNisDetail,
                 searchKelola, filterStatusSiswa, siswaTerpilih, sabukTujuanBulk, isSavingKelola,
-                daftarSiswaKelola, isSemuaTerpilih, toggleSemuaSiswaKelola, warnaBadgeSabuk,
+                daftarSiswaKelola, isSemuaTerpilih, toggleSemuaSiswaKelola, warnaBadgeSabuk, kirimKonfirmasiWaOrtu,
                 terapkanNaikSabukBulk, ubahStatusAktifBulk
             };
         }
@@ -7596,9 +7736,39 @@
                 const supabase = window.supabase.createClient(TERATE_CONFIG.SUPABASE_URL, TERATE_CONFIG.SUPABASE_ANON_KEY);
                 const step = ref(1);
                 const isSubmitting = ref(false);
+                const pendaftaranSukses = ref(false);
+                const nisTersimpan = ref('');
+                const statusKonfirmasiWa = ref(false);
+
+                // Nomor pelatih penerima notifikasi pendaftaran baru
+                const NOMOR_WA_PELATIH = '6289660061234';
+                const linkKonfirmasiWaPelatih = computed(() => {
+                    const pesan = `*PENDAFTARAN SISWA BARU (REGULER)*\n\nAssalamualaikum Wr. Wb. Pelatih, ada pendaftaran baru yang perlu dikonfirmasi:\n\nNama: *${form.nama_siswa.toUpperCase()}*\nNIS: *${nisTersimpan.value}*\nUmur: ${umurDariTanggalLahir.value} tahun\nOrang Tua/Wali: ${form.nama_ortu.toUpperCase()}\nWA Ortu: ${form.wa_ortu}\n\nMohon diproses & dikonfirmasi ke orang tua. Terima kasih.`;
+                    return `https://wa.me/${NOMOR_WA_PELATIH}?text=${encodeURIComponent(pesan)}`;
+                });
                                 
                 const form = reactive({
-                    nama_siswa: '', gender: 'Laki-laki', umur: '', alamat: '', wa_siswa: '', nama_ortu: '', wa_ortu: ''
+                    nama_siswa: '', gender: 'Laki-laki', tanggal_lahir: '', alamat: '', wa_siswa: '', nama_ortu: '', wa_ortu: ''
+                });
+
+                // Tanggal hari ini dalam format YYYY-MM-DD, dipakai sebagai batas
+                // atas (max) input tanggal lahir supaya tidak bisa pilih tanggal masa depan
+                const tanggalHariIniInput = computed(() => {
+                    const d = new Date();
+                    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                });
+
+                // Umur dihitung otomatis dari tanggal lahir -- sumber kebenaran tunggal,
+                // tidak lagi input manual yang gampang salah ketik / kedaluwarsa tahun depan
+                const umurDariTanggalLahir = computed(() => {
+                    if (!form.tanggal_lahir) return null;
+                    const lahir = new Date(form.tanggal_lahir);
+                    if (isNaN(lahir.getTime())) return null;
+                    const now = new Date();
+                    let umur = now.getFullYear() - lahir.getFullYear();
+                    const belumUlangTahun = (now.getMonth() < lahir.getMonth()) || (now.getMonth() === lahir.getMonth() && now.getDate() < lahir.getDate());
+                    if (belumUlangTahun) umur--;
+                    return umur;
                 });
 
                 const pakta = reactive({
@@ -7629,7 +7799,7 @@ const handleAfterEnter = () => {
 };
                 const nextStep = () => {
                     if (step.value === 1) {
-                        if (!form.nama_siswa || !form.umur || !form.alamat || !form.wa_siswa || !form.nama_ortu || !form.wa_ortu) {
+                        if (!form.nama_siswa || !form.tanggal_lahir || !form.alamat || !form.wa_siswa || !form.nama_ortu || !form.wa_ortu) {
                             return showToast("Mohon isi seluruh data diri dan orang tua!", false);
                         }
                         if (form.wa_siswa.length < 10 || form.wa_ortu.length < 10) {
@@ -7730,7 +7900,8 @@ const handleAfterEnter = () => {
             nis: generatedNIS,
             nama: form.nama_siswa.toUpperCase(),
             gender: form.gender,
-            umur: form.umur,
+            umur: umurDariTanggalLahir.value,
+            tanggal_lahir: form.tanggal_lahir,
             alamat: form.alamat,
             wa_siswa: form.wa_siswa,
             nama_ortu: form.nama_ortu.toUpperCase(), // <-- PERBAIKAN DI SINI
@@ -7744,10 +7915,10 @@ const handleAfterEnter = () => {
 
         if (error) throw error;
 
-        // <-- PERBAIKAN PESAN SUKSES
-        showToast(`Pendaftaran Reguler Berhasil! NIS: ${generatedNIS}`, true); 
+        // Tampilkan overlay sukses + tombol konfirmasi WA ke pelatih (tidak auto-redirect lagi)
+        nisTersimpan.value = generatedNIS;
         localStorage.setItem('terate_user_nis', generatedNIS);
-        setTimeout(() => { location.hash = '#/'; }, 2200);
+        pendaftaranSukses.value = true;
     } catch (error) { 
         console.error(error);
         showToast("Sinkronisasi cloud gagal. Periksa jaringan Anda.", false); 
@@ -7757,7 +7928,7 @@ const handleAfterEnter = () => {
 
                 onMounted(() => { triggerIcons(); });
 
-                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons, handleAfterEnter };
+                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons, handleAfterEnter, tanggalHariIniInput, umurDariTanggalLahir, pendaftaranSukses, nisTersimpan, statusKonfirmasiWa, linkKonfirmasiWaPelatih };
 }
         
     };
@@ -7777,12 +7948,38 @@ const handleAfterEnter = () => {
 
                 const isSubmitting = ref(false);
 
+                const pendaftaranSukses = ref(false);
+                const nisTersimpan = ref('');
+                const statusKonfirmasiWa = ref(false);
+
+                const NOMOR_WA_PELATIH = '6289660061234';
+                const linkKonfirmasiWaPelatih = computed(() => {
+                    const pesan = `*PENDAFTARAN SISWA BARU (PRIVAT)*\n\nAssalamualaikum Wr. Wb. Pelatih, ada pendaftaran baru yang perlu dikonfirmasi:\n\nNama: *${form.nama_siswa.toUpperCase()}*\nNIS: *${nisTersimpan.value}*\nUmur: ${umurDariTanggalLahir.value} tahun\nPekerjaan: ${form.pekerjaan}\nWA Kontak Darurat (istri/saudara): ${form.wa_ortu}\n\nMohon diproses & dikonfirmasi ke kontak darurat beliau. Terima kasih.`;
+                    return `https://wa.me/${NOMOR_WA_PELATIH}?text=${encodeURIComponent(pesan)}`;
+                });
+
                 
 
                 const form = reactive({
 
-                    nama_siswa: '', gender: 'Laki-laki', umur: '', alamat: '', wa_siswa: '', pekerjaan: '', wa_ortu: ''
+                    nama_siswa: '', gender: 'Laki-laki', tanggal_lahir: '', alamat: '', wa_siswa: '', pekerjaan: '', wa_ortu: ''
 
+                });
+
+                const tanggalHariIniInput = computed(() => {
+                    const d = new Date();
+                    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                });
+
+                const umurDariTanggalLahir = computed(() => {
+                    if (!form.tanggal_lahir) return null;
+                    const lahir = new Date(form.tanggal_lahir);
+                    if (isNaN(lahir.getTime())) return null;
+                    const now = new Date();
+                    let umur = now.getFullYear() - lahir.getFullYear();
+                    const belumUlangTahun = (now.getMonth() < lahir.getMonth()) || (now.getMonth() === lahir.getMonth() && now.getDate() < lahir.getDate());
+                    if (belumUlangTahun) umur--;
+                    return umur;
                 });
 
 
@@ -7847,13 +8044,13 @@ const handleAfterEnter = () => {
 
                     if (step.value === 1) {
 
-                        if (!form.nama_siswa || !form.umur || !form.alamat || !form.wa_siswa || !form.pekerjaan || !form.wa_ortu) {
+                        if (!form.nama_siswa || !form.tanggal_lahir || !form.alamat || !form.wa_siswa || !form.pekerjaan || !form.wa_ortu) {
 
                             return showToast("Mohon lengkapi seluruh kolom identitas diri!", false);
 
                         }
 
-                        if (form.umur < 25) {
+                        if (umurDariTanggalLahir.value === null || umurDariTanggalLahir.value < 25) {
 
                             return showToast("Pendaftaran privat dispesifikasikan untuk usia 25 tahun ke atas.", false);
 
@@ -8055,7 +8252,9 @@ const handleAfterEnter = () => {
 
             gender: form.gender,
 
-            umur: form.umur,
+            umur: umurDariTanggalLahir.value,
+
+            tanggal_lahir: form.tanggal_lahir,
 
             alamat: form.alamat,
 
@@ -8083,11 +8282,12 @@ const handleAfterEnter = () => {
 
 
 
-        showToast(`Pendaftaran Privat Berhasil! NIS: ${generatedNIS}`, true);
+        // Tampilkan overlay sukses + tombol konfirmasi WA ke pelatih (tidak auto-redirect lagi)
+        nisTersimpan.value = generatedNIS;
 
         localStorage.setItem('terate_user_nis', generatedNIS);
 
-        setTimeout(() => { location.hash = '#/'; }, 2200);
+        pendaftaranSukses.value = true;
 
     } catch (error) { 
 
@@ -8107,7 +8307,7 @@ const handleAfterEnter = () => {
 
 
 
-                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons, handleAfterEnter };
+                return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons, handleAfterEnter, tanggalHariIniInput, umurDariTanggalLahir, pendaftaranSukses, nisTersimpan, statusKonfirmasiWa, linkKonfirmasiWaPelatih };
 
 }
 
