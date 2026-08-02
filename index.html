@@ -4196,21 +4196,21 @@
             NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
         </p>
 
-        <a :href="linkWhatsAppAnda" 
+        <!-- Contoh pada tombol Konfirmasi WhatsApp -->
+<a :href="linkWhatsAppAnda" 
    target="_blank" 
-   @click="setTimeout(() => { window.location.href = '/#/index'; window.location.reload(true); }, 500)" 
+   @click="setTimeout(() => { window.location.replace(window.location.pathname) }, 500)" 
    class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
     Konfirmasi Pendaftaran ke WhatsApp
 </a>
 
 
-
         <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-emerald-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
 
-        <!-- Tombol Kembali menggunakan window.location.hash -->
-        <button @click="window.location.href = '/#/index'; window.location.reload(true);" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
+        <button @click="window.location.replace(window.location.pathname)" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
     Lewati, Kembali ke Beranda
 </button>
+
     </div>
 </div>
 
@@ -4412,9 +4412,10 @@
             NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.
         </p>
 
-        <a :href="linkWhatsAppAnda" 
+        <!-- Contoh pada tombol Konfirmasi WhatsApp -->
+<a :href="linkWhatsAppAnda" 
    target="_blank" 
-   @click="setTimeout(() => { window.location.href = '/#/index'; window.location.reload(true); }, 500)" 
+   @click="setTimeout(() => { window.location.replace(window.location.pathname) }, 500)" 
    class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
     Konfirmasi Pendaftaran ke WhatsApp
 </a>
@@ -4423,7 +4424,7 @@
 
         <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
 
-     <button @click="window.location.href = '/#/index'; window.location.reload(true);" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
+        <button @click="window.location.replace(window.location.pathname)" class="mt-3 w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors">
     Lewati, Kembali ke Beranda
 </button>
 
