@@ -174,6 +174,34 @@
 @keyframes shimmer__portal { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 .view-portal .animate-shimmer { animation: shimmer__portal 2.5s infinite linear; }
 @keyframes popIn__portal { 0% { opacity: 0; transform: scale(0.9) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+/* Animasi Menggambar Lingkaran (overlay sukses pendaftaran) */
+.animate-circle {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+/* Animasi Menggambar Centang */
+.animate-check {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+}
+
+@keyframes draw-stroke {
+    100% { stroke-dashoffset: 0; }
+}
+
+/* Animasi Pop-up untuk Wadah Ikon */
+.pop-icon {
+    animation: pop-in-icon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes pop-in-icon {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 .view-portal .pop-in { animation: popIn__portal 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .view-report .mesh-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
@@ -244,35 +272,6 @@
 .view-daftarprivat .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); border-radius: 10px; }
 .view-daftarprivat .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 .view-daftarprivat .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(13, 148, 136, 0.3); }
-
-/* Animasi Menggambar Lingkaran */
-  .animate-circle {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-  }
-  
-  /* Animasi Menggambar Centang */
-  .animate-check {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
-  }
-  
-  @keyframes draw-stroke {
-    100% { stroke-dashoffset: 0; }
-  }
-
-  /* Animasi Pop-up untuk Wadah Ikon */
-  .pop-icon {
-    animation: pop-in-icon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
-
-  @keyframes pop-in-icon {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  
 </style>
 </head>
 <body>
@@ -3643,7 +3642,7 @@
                     <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                         <i data-lucide="users-round" class="w-5 h-5 text-indigo-500"></i> Kelola Siswa
                     </h3>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Naik sabuk & status keanggotaan massal</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Naik sabuk & status keanggotaan massal -- tanpa SQL manual</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button v-for="f in [{v:'aktif', l:'Aktif'}, {v:'nonaktif', l:'Non-Aktif'}, {v:'semua', l:'Semua'}]" :key="f.v"
@@ -4209,36 +4208,30 @@
         </div>
 
         <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih -->
-<div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
-        
-        <!-- Ikon Centang Animasi Startup Unicorn (Pengganti Lucide) -->
-        <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5 pop-icon shadow-inner">
-            <svg class="w-12 h-12 text-teal-600" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                <!-- Lingkaran luar -->
-                <circle class="animate-circle" cx="26" cy="26" r="23" />
-                <!-- Tanda centang -->
-                <path class="animate-check" d="M15 27l7 7 15-15" />
-            </svg>
+        <div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
+                <!-- Ikon Centang Animasi Startup Unicorn (Pengganti Lucide) -->
+                <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-5 pop-icon shadow-inner">
+                    <svg class="w-12 h-12 text-emerald-600" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle class="animate-circle" cx="26" cy="26" r="23" />
+                        <path class="animate-check" d="M15 27l7 7 15-15" />
+                    </svg>
+                </div>
+                <!-- Akhir Ikon Centang -->
+                <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
+
+                <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true; location.hash = '#/'"
+                    class="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
+                </a>
+                <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-emerald-600 mt-2">✓ WhatsApp terbuka di tab baru, jangan lupa tekan kirim</p>
+
+                <a href="#/" @click="pendaftaranSukses = false; statusKonfirmasiWa = false" class="mt-3 block w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors cursor-pointer">
+                    Lewati, Kembali ke Beranda
+                </a>
+            </div>
         </div>
-        <!-- Akhir Ikon Centang -->
-
-        <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
-        <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
-
-        <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true"
-            class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
-            <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
-        </a>
-        <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
-
-        <a href="#/" @click="pendaftaranSukses = false; statusKonfirmasiWa = false" class="mt-3 block text-center w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors cursor-pointer">
-            Lewati, Kembali ke Beranda
-        </a>
-    </div>
-</div>
-
-
 
         <!-- Grid Container Split Screen -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -4420,34 +4413,31 @@
         </div>
 
         <!-- Overlay Sukses Pendaftaran + Konfirmasi WA ke Pelatih -->
-<div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
-        
-        <!-- Ikon Centang Animasi Startup Unicorn (Pengganti Lucide) -->
-        <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5 pop-icon shadow-inner">
-            <svg class="w-12 h-12 text-teal-600" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                <!-- Lingkaran luar -->
-                <circle class="animate-circle" cx="26" cy="26" r="23" />
-                <!-- Tanda centang -->
-                <path class="animate-check" d="M15 27l7 7 15-15" />
-            </svg>
+        <div v-if="pendaftaranSukses" class="fixed inset-0 z-[10000] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl pop-in">
+                <!-- Ikon Centang Animasi Startup Unicorn (Pengganti Lucide) -->
+                <div class="w-20 h-20 mx-auto rounded-full bg-teal-100 flex items-center justify-center mb-5 pop-icon shadow-inner">
+                    <svg class="w-12 h-12 text-teal-600" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle class="animate-circle" cx="26" cy="26" r="23" />
+                        <path class="animate-check" d="M15 27l7 7 15-15" />
+                    </svg>
+                </div>
+                <!-- Akhir Ikon Centang -->
+                <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
+
+                <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true; location.hash = '#/'"
+                    class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
+                </a>
+                <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ WhatsApp terbuka di tab baru, jangan lupa tekan kirim</p>
+
+                <a href="#/" @click="pendaftaranSukses = false; statusKonfirmasiWa = false" class="mt-3 block w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors cursor-pointer">
+                    Lewati, Kembali ke Beranda
+                </a>
+            </div>
         </div>
-        <!-- Akhir Ikon Centang -->
 
-        <h2 class="text-xl font-black text-slate-900">Pendaftaran Berhasil!</h2>
-        <p class="text-xs text-slate-500 mt-2 leading-relaxed">NIS kamu: <strong class="text-slate-800">{{ nisTersimpan }}</strong>. Satu langkah lagi -- konfirmasi ke pelatih lewat WhatsApp supaya pendaftaranmu segera diproses.</p>
-
-        <a :href="linkKonfirmasiWaPelatih" target="_blank" @click="statusKonfirmasiWa = true"
-            class="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase tracking-wide transition-colors shadow-lg shadow-teal-500/20">
-            <i data-lucide="message-circle" class="w-4 h-4"></i> Konfirmasi via WhatsApp
-        </a>
-        <p v-if="statusKonfirmasiWa" class="text-[10px] font-bold text-teal-600 mt-2">✓ Terbuka di WhatsApp, jangan lupa tekan kirim</p>
-
-        <a href="#/" @click="pendaftaranSukses = false; statusKonfirmasiWa = false" class="mt-3 block text-center w-full text-slate-400 hover:text-slate-600 font-bold text-[11px] py-2 uppercase tracking-wide transition-colors cursor-pointer">
-            Lewati, Kembali ke Beranda
-        </a>
-    </div>
-</div>
 
 
         <!-- Grid Container Split Screen -->
@@ -7777,10 +7767,16 @@
 
                 // Nomor pelatih penerima notifikasi pendaftaran baru
                 const NOMOR_WA_PELATIH = '6289660061234';
-                const linkKonfirmasiWaPelatih = computed(() => {
-                    const pesan = `*PENDAFTARAN SISWA BARU (REGULER)*\n\nAssalamualaikum Wr. Wb. Pelatih, ada pendaftaran baru yang perlu dikonfirmasi:\n\nNama: *${form.nama_siswa.toUpperCase()}*\nNIS: *${nisTersimpan.value}*\nUmur: ${umurDariTanggalLahir.value} tahun\nOrang Tua/Wali: ${form.nama_ortu.toUpperCase()}\nWA Ortu: ${form.wa_ortu}\n\nMohon diproses & dikonfirmasi ke orang tua. Terima kasih.`;
-                    return `https://wa.me/${NOMOR_WA_PELATIH}?text=${encodeURIComponent(pesan)}`;
-                });
+                // FIX: sebelumnya ini computed() yang membaca form.* secara live --
+                // begitu form direset setelah submit sukses (biar tidak dobel kirim),
+                // pesan WA ikut kosong karena computed langsung baca ulang form yang
+                // sudah kosong. Sekarang jadi snapshot (ref) yang dibangun SEKALI saat
+                // submit berhasil, SEBELUM form direset, jadi datanya tetap utuh.
+                const linkKonfirmasiWaPelatih = ref('');
+                const buatLinkKonfirmasiWaPelatih = (nis) => {
+                    const pesan = `*PENDAFTARAN SISWA BARU (REGULER)*\n\nAssalamualaikum Wr. Wb. Pelatih, ada pendaftaran baru yang perlu dikonfirmasi:\n\nNama: *${form.nama_siswa.toUpperCase()}*\nNIS: *${nis}*\nUmur: ${umurDariTanggalLahir.value} tahun\nOrang Tua/Wali: ${form.nama_ortu.toUpperCase()}\nWA Ortu: ${form.wa_ortu}\n\nMohon diproses & dikonfirmasi ke orang tua. Terima kasih.`;
+                    linkKonfirmasiWaPelatih.value = `https://wa.me/${NOMOR_WA_PELATIH}?text=${encodeURIComponent(pesan)}`;
+                };
                                 
                 const form = reactive({
                     nama_siswa: '', gender: 'Laki-laki', tanggal_lahir: '', alamat: '', wa_siswa: '', nama_ortu: '', wa_ortu: ''
@@ -7939,55 +7935,45 @@ const handleAfterEnter = () => {
             tanggal_lahir: form.tanggal_lahir,
             alamat: form.alamat,
             wa_siswa: form.wa_siswa,
-            nama_ortu: form.nama_ortu.toUpperCase(),
+            nama_ortu: form.nama_ortu.toUpperCase(), // <-- PERBAIKAN DI SINI
             wa_ortu: form.wa_ortu, 
             target_pengesahan: 4500000, 
             tabungan_pengesahan: 0,
             tabungan_sabuk: 0,
             ttd_base64: signatureData,
-            jalur_pendaftaran: 'Reguler' 
+            jalur_pendaftaran: 'Reguler' // <-- PERBAIKAN DI SINI
         }]);
 
         if (error) throw error;
 
-        // Tampilkan overlay sukses
+        // Tampilkan overlay sukses + tombol konfirmasi WA ke pelatih (tidak auto-redirect lagi)
         nisTersimpan.value = generatedNIS;
         localStorage.setItem('terate_user_nis', generatedNIS);
+
+        // PENTING: bangun pesan WA di sini, SEBELUM form direset di bawah --
+        // supaya datanya (nama, umur, wa ortu) masih lengkap saat pesan dibuat.
+        buatLinkKonfirmasiWaPelatih(generatedNIS);
+
         pendaftaranSukses.value = true;
 
-        // --- SOLUSI ANTI DUPLIKAT: RESET FORM ---
-        // 1. Kosongkan semua isian form
+        // Reset form supaya tidak ke-submit dobel kalau pelatih/siswa balik ke form ini lagi
         form.nama_siswa = '';
         form.tanggal_lahir = '';
         form.alamat = '';
         form.wa_siswa = '';
         form.nama_ortu = '';
         form.wa_ortu = '';
-        form.gender = 'Laki-laki'; // Kembalikan ke default
-
-        // 2. Kosongkan centang pakta (asumsi nama variabel Anda 'pakta')
+        form.gender = 'Laki-laki';
         if (typeof pakta !== 'undefined') {
-            for (let key in pakta) {
-                pakta[key] = false;
-            }
+            for (let key in pakta) { pakta[key] = false; }
         }
-
-        // 3. Bersihkan Canvas Tanda Tangan (Panggil fungsi clearSignature Anda)
-        if (typeof clearSignature === 'function') {
-            clearSignature();
-        }
-
-        // 4. Kembalikan stepper ke Langkah 1
+        if (typeof clearSignature === 'function') { clearSignature(); }
         step.value = 1;
-
     } catch (error) { 
         console.error(error);
         showToast("Sinkronisasi cloud gagal. Periksa jaringan Anda.", false); 
-    } finally { 
-        isSubmitting.value = false; 
-    }
+    } finally { isSubmitting.value = false; }
 };
-
 
 
                 onMounted(() => { triggerIcons(); });
@@ -8017,10 +8003,12 @@ const handleAfterEnter = () => {
                 const statusKonfirmasiWa = ref(false);
 
                 const NOMOR_WA_PELATIH = '6289660061234';
-                const linkKonfirmasiWaPelatih = computed(() => {
-                    const pesan = `*PENDAFTARAN SISWA BARU (PRIVAT)*\n\nAssalamualaikum Wr. Wb. Pelatih, ada pendaftaran baru yang perlu dikonfirmasi:\n\nNama: *${form.nama_siswa.toUpperCase()}*\nNIS: *${nisTersimpan.value}*\nUmur: ${umurDariTanggalLahir.value} tahun\nPekerjaan: ${form.pekerjaan}\nWA Kontak Darurat (istri/saudara): ${form.wa_ortu}\n\nMohon diproses & dikonfirmasi ke kontak darurat beliau. Terima kasih.`;
-                    return `https://wa.me/${NOMOR_WA_PELATIH}?text=${encodeURIComponent(pesan)}`;
-                });
+                // Sama seperti Reguler: snapshot ref, dibangun sebelum form direset
+                const linkKonfirmasiWaPelatih = ref('');
+                const buatLinkKonfirmasiWaPelatih = (nis) => {
+                    const pesan = `*PENDAFTARAN SISWA BARU (PRIVAT)*\n\nAssalamualaikum Wr. Wb. Pelatih, ada pendaftaran baru yang perlu dikonfirmasi:\n\nNama: *${form.nama_siswa.toUpperCase()}*\nNIS: *${nis}*\nUmur: ${umurDariTanggalLahir.value} tahun\nPekerjaan: ${form.pekerjaan}\nWA Kontak Darurat (istri/saudara): ${form.wa_ortu}\n\nMohon diproses & dikonfirmasi ke kontak darurat beliau. Terima kasih.`;
+                    linkKonfirmasiWaPelatih.value = `https://wa.me/${NOMOR_WA_PELATIH}?text=${encodeURIComponent(pesan)}`;
+                };
 
                 
 
@@ -8351,7 +8339,24 @@ const handleAfterEnter = () => {
 
         localStorage.setItem('terate_user_nis', generatedNIS);
 
+        // PENTING: bangun pesan WA di sini, SEBELUM form direset di bawah
+        buatLinkKonfirmasiWaPelatih(generatedNIS);
+
         pendaftaranSukses.value = true;
+
+        // Reset form supaya tidak ke-submit dobel
+        form.nama_siswa = '';
+        form.tanggal_lahir = '';
+        form.alamat = '';
+        form.wa_siswa = '';
+        form.pekerjaan = '';
+        form.wa_ortu = '';
+        form.gender = 'Laki-laki';
+        if (typeof pakta !== 'undefined') {
+            for (let key in pakta) { pakta[key] = false; }
+        }
+        if (typeof clearSignature === 'function') { clearSignature(); }
+        step.value = 1;
 
     } catch (error) { 
 
