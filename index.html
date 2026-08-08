@@ -3859,6 +3859,22 @@
 
                         </div>
 
+                        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+
+                            <h3 class="text-sm font-bold text-slate-800">Target Biaya Pengesahan (Siswa Baru)</h3>
+
+                            <p class="text-[10px] text-slate-500 mt-1 mb-3 font-medium">Nominal ini otomatis dipakai sebagai target tabungan untuk semua pendaftar baru (Reguler & Privat).</p>
+
+                            <div class="relative">
+
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">Rp</span>
+
+                                <input type="number" inputmode="numeric" v-model.number="form.targetPendaftaranBaru" placeholder="3500000" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-black text-slate-800 outline-none focus:border-emerald-500 transition-all shadow-inner">
+
+                            </div>
+
+                        </div>
+
                         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between transition-all" :class="!form.statusPendaftaran ? 'border-rose-200 bg-rose-50/30' : ''">
 
                             <div>
@@ -7544,7 +7560,9 @@
 
                 noWa: '', tanggalSuro: '',
 
-                statusPendaftaran: true
+                statusPendaftaran: true,
+
+                targetPendaftaranBaru: 3500000
 
             });
 
@@ -7598,6 +7616,8 @@
 
                     form.statusPendaftaran = data.status_pendaftaran !== false;
 
+                    form.targetPendaftaranBaru = Number(data.target_pendaftaran_baru) || 3500000;
+
                 }
 
             };
@@ -7636,7 +7656,9 @@
 
                     tanggal_suro: form.tanggalSuro,
 
-                    status_pendaftaran: form.statusPendaftaran
+                    status_pendaftaran: form.statusPendaftaran,
+
+                    target_pendaftaran_baru: form.targetPendaftaranBaru
 
                 };
 
@@ -7937,7 +7959,7 @@ const handleAfterEnter = () => {
             wa_siswa: form.wa_siswa,
             nama_ortu: form.nama_ortu.toUpperCase(), // <-- PERBAIKAN DI SINI
             wa_ortu: form.wa_ortu, 
-            target_pengesahan: 4500000, 
+            target_pengesahan: targetPendaftaranBaru.value, 
             tabungan_pengesahan: 0,
             tabungan_sabuk: 0,
             ttd_base64: signatureData,
@@ -7976,7 +7998,19 @@ const handleAfterEnter = () => {
 };
 
 
-                onMounted(() => { triggerIcons(); });
+                // Target biaya pengesahan sekarang diambil dari System Control
+                // (tabel pengaturan), bukan hardcode lagi -- bisa diubah admin kapan saja
+                const targetPendaftaranBaru = ref(3500000);
+                const muatTargetPendaftaran = async () => {
+                    try {
+                        const { data } = await supabase.from('pengaturan').select('target_pendaftaran_baru').eq('id', 1).single();
+                        if (data && data.target_pendaftaran_baru) targetPendaftaranBaru.value = Number(data.target_pendaftaran_baru);
+                    } catch (e) {
+                        console.error('Gagal memuat target pendaftaran, pakai default:', e);
+                    }
+                };
+
+                onMounted(() => { triggerIcons(); muatTargetPendaftaran(); });
 
                 return { step, form, pakta, toasts, isSubmitting, nextStep, submitForm, clearSignature, formatWa, triggerIcons, handleAfterEnter, tanggalHariIniInput, umurDariTanggalLahir, pendaftaranSukses, nisTersimpan, statusKonfirmasiWa, linkKonfirmasiWaPelatih };
 }
@@ -8316,7 +8350,7 @@ const handleAfterEnter = () => {
 
             wa_ortu: form.wa_ortu, 
 
-            target_pengesahan: 4500000, 
+            target_pengesahan: targetPendaftaranBaru.value, 
 
             tabungan_pengesahan: 0,
 
@@ -8372,7 +8406,17 @@ const handleAfterEnter = () => {
 
 
 
-                onMounted(() => { triggerIcons(); });
+                const targetPendaftaranBaru = ref(3500000);
+                const muatTargetPendaftaran = async () => {
+                    try {
+                        const { data } = await supabase.from('pengaturan').select('target_pendaftaran_baru').eq('id', 1).single();
+                        if (data && data.target_pendaftaran_baru) targetPendaftaranBaru.value = Number(data.target_pendaftaran_baru);
+                    } catch (e) {
+                        console.error('Gagal memuat target pendaftaran, pakai default:', e);
+                    }
+                };
+
+                onMounted(() => { triggerIcons(); muatTargetPendaftaran(); });
 
 
 
